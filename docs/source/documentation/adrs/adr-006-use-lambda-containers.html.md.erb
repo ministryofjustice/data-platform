@@ -1,0 +1,36 @@
+---
+owner_slack: "#data-platform-notifications"
+title: ADR-006 Use Lambda Containers
+last_reviewed_on: 2023-05-05
+review_in: 3 months
+---
+
+# <%= current_page.data.title %>
+
+## Status
+
+✅ Accepted
+
+## Context
+
+The modernisation platform have a lambda module which uses lambda containers with an ECR image. Alternatively, code can be zipped with a lambda directly.
+
+## Decision
+
+We are going to use containerised lambdas.
+
+## Consequences
+
+### General consequences
+
+* All lambda images will be pushed to an ECR repo
+
+### Advantages
+
+* Ease of lambda versioning
+* Larger memory to add custom libraries than normal lambda (10GB vs 250mb in base lambda)
+
+### Disadvantages
+
+* Lambda code is not visible on the AWS console.
+* Lambda images have to be pushed from a separate repo to the other infrastructure code, so deployment is more complicated.
