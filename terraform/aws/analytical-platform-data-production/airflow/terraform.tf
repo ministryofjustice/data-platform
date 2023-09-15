@@ -73,3 +73,22 @@ provider "kubernetes" {
     command = "aws"
   }
 }
+
+provider "kubernetes" {
+  alias                  = "prod-airflow-cluster"
+  host                   = aws_eks_cluster.airflow_prod_eks_cluster.endpoint
+  cluster_ca_certificate = base64decode(aws_eks_cluster.airflow_prod_eks_cluster.certificate_authority[0].data)
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    args = [
+      "eks",
+      "get-token",
+      "--cluster-name",
+      aws_eks_cluster.airflow_prod_eks_cluster.name,
+      "--role-arn",
+      "arn:aws:iam::${var.account_ids["analytical-platform-data-production"]}:role/restricted-admin"
+    ]
+    command = "aws"
+  }
+}
+

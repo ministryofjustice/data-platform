@@ -160,9 +160,9 @@ resource "kubernetes_namespace" "dev_kube2iam" {
   timeouts {}
 }
 
-import {
-  to = kubernetes_namespace.dev_kube2iam
-  id = "kube2iam-system"
+moved {
+  from = kubernetes_namespace.kube2iam
+  to   = kubernetes_namespace.dev_kube2iam
 }
 
 resource "kubernetes_config_map" "dev_aws_auth_configmap" {
@@ -181,10 +181,11 @@ resource "kubernetes_config_map" "dev_aws_auth_configmap" {
 
 }
 
-import {
-  to = kubernetes_config_map.dev_aws_auth_configmap
-  id = "kube-system/aws-auth"
+moved {
+  from = kubernetes_namespace.aws_auth_configmap
+  to   = kubernetes_namespace.dev_aws_auth_configmap
 }
+
 
 resource "kubernetes_namespace" "dev_airflow" {
   provider = kubernetes.dev-airflow-cluster
@@ -200,11 +201,13 @@ resource "kubernetes_namespace" "dev_airflow" {
   }
   timeouts {}
 }
-import {
-  to = kubernetes_namespace.dev_airflow
-  id = "airflow"
+
+moved {
+  from = kubernetes_namespace.airflow
+  to   = kubernetes_namespace.dev_airflow
 }
-resource "kubernetes_namespace" "kyverno" {
+
+resource "kubernetes_namespace" "dev_kyverno" {
   provider = kubernetes.dev-airflow-cluster
   metadata {
     name = "kyverno"
@@ -214,12 +217,13 @@ resource "kubernetes_namespace" "kyverno" {
   }
   timeouts {}
 }
-import {
-  to = kubernetes_namespace.kyverno
-  id = "kyverno"
+
+moved {
+  from = kubernetes_namespace.kyverno
+  to   = kubernetes_namespace.dev_kyverno
 }
 
-resource "kubernetes_namespace" "cluster-autoscaler-system" {
+resource "kubernetes_namespace" "dev_cluster_autoscaler_system" {
   provider = kubernetes.dev-airflow-cluster
   metadata {
     name = "cluster-autoscaler-system"
@@ -233,11 +237,10 @@ resource "kubernetes_namespace" "cluster-autoscaler-system" {
   timeouts {}
 }
 
-import {
-  to = kubernetes_namespace.cluster-autoscaler-system
-  id = "cluster-autoscaler-system"
+moved {
+  from = kubernetes_namespace.cluster-autoscaler-system
+  to   = kubernetes_namespace.dev_cluster_autoscaler_system
 }
-
 
 
 ######################################
@@ -351,4 +354,96 @@ resource "aws_eks_node_group" "prod_node_group_high_memory" {
   labels = {
     high-memory = "true"
   }
+}
+
+resource "kubernetes_namespace" "prod_kube2iam" {
+  provider = kubernetes.prod-airflow-cluster
+  metadata {
+    annotations = {
+      "iam.amazonaws.com/allowed-roles" = jsonencode(["*"])
+    }
+    labels = {
+      "app.kubernetes.io/managed-by" = "terraform"
+    }
+    name = "kube2iam-system"
+  }
+  timeouts {}
+}
+
+import {
+  to = kubernetes_namespace.prod_kube2iam
+  id = "kube2iam-system"
+}
+
+resource "kubernetes_config_map" "prod_aws_auth_configmap" {
+  provider = kubernetes.prod-airflow-cluster
+  metadata {
+    name      = "aws-auth"
+    namespace = "kube-system"
+    labels = {
+      "app.kubernetes.io/managed-by" = "terraform"
+    }
+  }
+
+  data = {
+    "mapRoles" = file("./files/dev/aws-auth-configmap.yaml")
+  }
+
+}
+
+import {
+  to = kubernetes_config_map.prod_aws_auth_configmap
+  id = "kube-system/aws-auth"
+}
+
+resource "kubernetes_namespace" "prod_airflow" {
+  provider = kubernetes.prod-airflow-cluster
+  metadata {
+
+    name = "airflow"
+    annotations = {
+      "iam.amazonaws.com/allowed-roles" = jsonencode(["airflow_prod*"])
+    }
+    labels = {
+      "app.kubernetes.io/managed-by" = "Terraform"
+    }
+  }
+  timeouts {}
+}
+import {
+  to = kubernetes_namespace.prod_airflow
+  id = "airflow"
+}
+resource "kubernetes_namespace" "prod_kyverno" {
+  provider = kubernetes.prod-airflow-cluster
+  metadata {
+    name = "kyverno"
+    labels = {
+      "app.kubernetes.io/managed-by" = "Terraform"
+    }
+  }
+  timeouts {}
+}
+import {
+  to = kubernetes_namespace.prod_kyverno
+  id = "kyverno"
+}
+
+resource "kubernetes_namespace" "prod_cluster_autoscaler_system" {
+  provider = kubernetes.prod-airflow-cluster
+  metadata {
+    name = "cluster-autoscaler-system"
+    annotations = {
+      "iam.amazonaws.com/allowed-roles" = jsonencode(["airflow-prod-cluster-autoscaler-role"])
+    }
+    labels = {
+      "app.kubernetes.io/managed-by" = "Terraform"
+    }
+  }
+  timeouts {}
+}
+
+import {
+  to = kubernetes_namespace.prod_cluster_autoscaler_system
+  id = "cluster-autoscaler-system"
 }
