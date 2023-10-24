@@ -11,6 +11,6 @@ tags = {
   is-production          = "false"
   owner                  = "data-platform:data-platform-tech@digital.justice.gov.uk"
   infrastructure-support = "data-platform:data-platform-tech@digital.justice.gov.uk"
-  source-code            = "github.com/ministryofjustice/data-platform/terraform/aws/analytical-platform-development/control-panel-message-broker"
+  source-code            = "github.com/ministryofjustice/data-platform/terraform/aws/analytical-platform-development/powerbi"
   firebreak              = "true"
 }
