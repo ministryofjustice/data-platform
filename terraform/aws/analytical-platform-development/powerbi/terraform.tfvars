@@ -3,6 +3,8 @@ account_ids = {
   analytical-platform-management-production = "042130406152"
 }
 
+bucket = "powerbi-123123123"
+
 tags = {
   business-unit          = "Platforms"
   application            = "Data Platform"
