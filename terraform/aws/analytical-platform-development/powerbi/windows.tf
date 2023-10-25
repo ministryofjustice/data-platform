@@ -3,7 +3,7 @@ module "ec2_instance" {
 
   name = "powerbi-testing"
 
-  instance_type          = "t2.micro"
+  instance_type          = "t2.small"
   key_name               = "powerbi"
   monitoring             = true
   subnet_id              = "subnet-01e566dfa9e33e4c3"
