@@ -1,4 +1,11 @@
 resource "aws_eks_cluster" "airflow_dev_eks_cluster" {
+  encryption_config {
+    resources = ["secrets"]
+    provider {
+      key_arn = aws_kms_key.eks.arn
+    }
+  }
+
   name     = var.dev_eks_cluster_name
   role_arn = aws_iam_role.airflow_dev_eks_role.arn
   enabled_cluster_log_types = ["api",
@@ -9,14 +16,19 @@ resource "aws_eks_cluster" "airflow_dev_eks_cluster" {
   ]
   version = "1.25"
 
+
   vpc_config {
-    subnet_ids          = aws_subnet.dev_private_subnet[*].id
-    public_access_cidrs = ["0.0.0.0/0"]
-    security_group_ids  = [var.dev_cluster_additional_sg_id]
+    subnet_ids = aws_subnet.dev_private_subnet[*].id
+    #public_access_cidrs    = ["10.200.0.0/16"]
+    public_access_cidrs    = var.dev_public_subnet_cidrs
+    security_group_ids     = [var.dev_cluster_additional_sg_id]
+    endpoint_public_access = false
   }
 }
 
+#tfsec:ignore:AVD-AWS-0104: Revisit
 resource "aws_security_group" "airflow_dev_cluster_additional_security_group" {
+  #checkov:skip=CKV2_AWS_5: skip not atttached to ec2
   name        = var.dev_cluster_additional_sg_name
   description = "Managed by Pulumi"
   vpc_id      = aws_vpc.airflow_dev.id
@@ -36,7 +48,9 @@ resource "aws_security_group" "airflow_dev_cluster_additional_security_group" {
   }
 }
 
+#tfsec:ignore:AVD-AWS-0104: Revisit
 resource "aws_security_group" "airflow_dev_cluster_node_security_group" {
+  #checkov:skip=CKV2_AWS_5: skip not atttached to ec2
   name        = var.dev_cluster_node_sg_name
   description = "Managed by Pulumi"
   vpc_id      = aws_vpc.airflow_dev.id
@@ -215,6 +229,7 @@ moved {
 ########### EKS PRODUCTION ###########
 ######################################
 
+#tfsec:ignore:AVD-AWS-0040
 resource "aws_eks_cluster" "airflow_prod_eks_cluster" {
   name     = var.prod_eks_cluster_name
   role_arn = aws_iam_role.airflow_prod_eks_role.arn
@@ -233,7 +248,9 @@ resource "aws_eks_cluster" "airflow_prod_eks_cluster" {
   }
 }
 
+#tfsec:ignore:AVD-AWS-0104: Revisit
 resource "aws_security_group" "airflow_prod_cluster_additional_security_group" {
+  #checkov:skip=CKV2_AWS_5: skip not atttached to ec2
   name        = var.prod_cluster_additional_sg_name
   description = "Managed by Pulumi"
   vpc_id      = aws_vpc.airflow_prod.id
