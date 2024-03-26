@@ -1,121 +1,161 @@
 locals {
-  data_platform_repositories = {
-    "data-platform" = {
-      name            = "data-platform"
-      description     = "Data Platform"
-      topics          = ["ministryofjustice", "data-platform"]
-      use_template    = false
+  data_catalogue_repositories = {
+    "data-catalogue" = {
+      name        = "data-catalogue"
+      description = "Data catalogue"
+      topics      = ["ministryofjustice", "data-platform", "data-catalogue"]
+
       has_discussions = true
       has_projects    = true
-      homepage_url    = "https://technical-documentation.data-platform.service.justice.gov.uk"
-      pages_enabled   = true
-      pages_configuration = {
-        cname = "technical-documentation.data-platform.service.justice.gov.uk"
-        source = {
-          branch = "gh-pages"
-          path   = "/docs"
-        }
-      }
+      homepage_url    = "https://user-guide.data-catalogue.service.justice.gov.uk"
+
       access = {
-        admins      = [module.data_platform_teams["data-platform-apps-and-tools"].id]
-        maintainers = [module.data_platform_teams["data-catalogue"].id]
+        admins = [module.data_platform_teams["data-catalogue"].id]
         pushers = [
           module.data_platform_team.id,
           data.github_team.data_engineering.id
         ]
       }
     }
-    "data-platform-products" = {
-      name        = "data-platform-products"
-      description = "Data Platform Products"
-      topics      = ["ministryofjustice", "data-platform"]
+    "find-moj-data" = {
+      name        = "find-moj-data"
+      description = "Find MOJ data service"
+      topics      = ["ministryofjustice", "data-platform", "data-catalogue"]
+
+      template_repository = "data-platform-app-template"
+      has_projects        = true
+      homepage_url        = null
+
       access = {
-        admins      = [module.data_platform_teams["data-platform-apps-and-tools"].id]
-        maintainers = [module.data_platform_teams["data-catalogue"].id]
-        pushers     = [module.data_platform_team.id]
-      }
-    }
-    "data-platform-support" = {
-      name                                   = "data-platform-support"
-      description                            = "Data Platform Support"
-      topics                                 = ["ministryofjustice", "data-platform"]
-      visibility                             = "internal"
-      advanced_security_status               = "disabled"
-      secret_scanning_status                 = "disabled"
-      secret_scanning_push_protection_status = "disabled"
-      access = {
-        admins  = [module.data_platform_teams["data-platform-apps-and-tools"].id]
+        admins  = [module.data_platform_teams["data-catalogue"].id]
         pushers = [module.data_platform_team.id]
       }
     }
-    "data-platform-user-guidance" = {
-      name                                   = "data-platform-user-guidance"
-      description                            = "Data Platform User Guidance"
-      topics                                 = ["ministryofjustice", "data-platform"]
-      archived                               = true
-      vulnerability_alerts                   = false
-      advanced_security_status               = "disabled"
-      secret_scanning_status                 = "enabled"
-      secret_scanning_push_protection_status = "disabled"
+    "datahub-custom-api-source" = {
+      name        = "datahub-custom-api-source"
+      description = "Custom ingestion source for Datahub to consume from https://data.justice.gov.uk/api"
+      topics      = ["ministryofjustice", "data-platform", "data-catalogue"]
+
+      has_projects = true
+      homepage_url = null
+
       access = {
-        admins  = [module.data_platform_teams["data-platform-apps-and-tools"].id]
+        admins  = [module.data_platform_teams["data-catalogue"].id]
         pushers = [module.data_platform_team.id]
       }
-    },
-    "data-platform-app-template" = {
-      name                                   = "data-platform-app-template"
-      description                            = "Data Platform App Template"
-      topics                                 = ["ministryofjustice", "data-platform"]
-      visibility                             = "internal"
-      is_template                            = true
-      advanced_security_status               = "disabled"
-      secret_scanning_status                 = "disabled"
-      secret_scanning_push_protection_status = "disabled"
-      access = {
-        admins  = [module.data_platform_teams["data-platform-apps-and-tools"].id]
-        pushers = [module.data_platform_team.id]
-      }
-    },
-    "data-platform-new-app-runthrough" = {
-      name                                   = "data-platform-new-app-runthrough"
-      description                            = "A lovely new application"
-      topics                                 = ["ministryofjustice", "data-platform"]
-      visibility                             = "internal"
+    }
+    "datahub-catalogue-metadata" = {
+      name        = "data-catalogue-metadata"
+      description = "Data Catalogue Metadata"
+      topics      = ["ministryofjustice", "data-platform", "data-catalogue"]
+      visibility  = "internal"
+
+      has_projects = true
+      homepage_url = null
+
       advanced_security_status               = "disabled"
       secret_scanning_status                 = "disabled"
       secret_scanning_push_protection_status = "disabled"
+
       access = {
-        admins  = [module.data_platform_teams["data-platform-apps-and-tools"].id]
+        admins = [module.data_platform_teams["data-catalogue"].id]
+        pushers = [
+          module.data_platform_team.id,
+          data.github_team.data_engineering.id
+        ]
+      }
+    }
+    "datahub-custom-domain-source" = {
+      name        = "datahub-custom-domain-source"
+      description = "Custom ingestion source for Datahub to consume from https://data.justice.gov.uk/api"
+      topics      = ["ministryofjustice", "data-platform", "data-catalogue"]
+
+      has_projects = true
+      homepage_url = null
+
+      access = {
+        admins  = [module.data_platform_teams["data-catalogue"].id]
         pushers = [module.data_platform_team.id]
       }
-    },
-    "data-platform-github-access" = {
-      name                                   = "data-platform-github-access"
-      description                            = "Data Platform Github Access repository"
-      topics                                 = ["ministryofjustice", "data-platform"]
-      visibility                             = "internal"
-      advanced_security_status               = "disabled"
-      secret_scanning_status                 = "disabled"
-      secret_scanning_push_protection_status = "disabled"
-      homepage_url                           = "https://technical-documentation.data-platform.service.justice.gov.uk"
+    }
+    "data-catalogue-user-guide" = {
+      name        = "data-catalogue-user-guide"
+      description = "Data Catalogue User Guide"
+      topics      = ["ministryofjustice", "data-platform", "data-catalogue"]
+
+      has_issues   = true
+      homepage_url = "https://user-guide.data-catalogue.service.justice.gov.uk"
+
+      template_repository = "template-documentation-site"
+
+      pages_enabled = true
+      pages_configuration = {
+        cname = "user-guide.data-catalogue.service.justice.gov.uk"
+        source = {
+          branch = "main"
+          path   = "/"
+        }
+      }
       access = {
-        admins  = [module.data_platform_teams["data-platform-apps-and-tools"].id]
+        admins  = [module.data_platform_teams["data-catalogue"].id]
         pushers = [module.data_platform_team.id]
       }
-    },
-    /*
-      Data Platform Repositories that could be managed in code:
-        - data-platform-terraform-modularisation-spike
-        - data-platform-django-proof-of-concept
-        - data-platform-projects-test
-    */
+    }
+    "data-catalogue-runbooks" = {
+      name        = "data-catalogue-runbooks"
+      description = "Data Catalogue Runbooks"
+      topics      = ["ministryofjustice", "data-platform", "data-catalogue"]
+
+      has_issues   = true
+      homepage_url = "https://runbooks.data-catalogue.service.justice.gov.uk"
+
+      template_repository = "template-documentation-site"
+
+      pages_enabled = true
+      pages_configuration = {
+        cname = "runbooks.data-catalogue.service.justice.gov.uk"
+        source = {
+          branch = "main"
+          path   = "/"
+        }
+      }
+      access = {
+        admins  = [module.data_platform_teams["data-catalogue"].id]
+        pushers = [module.data_platform_team.id]
+      }
+    }
   }
 }
 
-module "data_platform_repositories" {
+moved {
+  from = module.data_catalogue_repository
+  to   = module.data_catalogue_repositories[0].github_repository.this
+}
+
+moved {
+  from = module.find_moj_data_repository
+  to   = module.data_catalogue_repositories[1].github_repository.this
+}
+
+moved {
+  from = module.datahub_custom_api_source_repository
+  to   = module.data_catalogue_repositories[2].github_repository.this
+}
+
+moved {
+  from = module.data_catalogue_metadata_repository
+  to   = module.data_catalogue_repositories[3].github_repository.this
+}
+
+moved {
+  from = module.datahub_custom_domain_source_repository
+  to   = module.data_catalogue_repositories[4].github_repository.this
+}
+
+module "data_catalogue_repositories" {
   source = "./modules/repository"
 
-  for_each = { for repository in local.data_platform_repositories : repository.name => repository }
+  for_each = { for repository in local.data_catalogue_repositories : repository.name => repository }
 
   name        = each.value.name
   description = each.value.description
@@ -134,7 +174,7 @@ module "data_platform_repositories" {
   has_issues           = lookup(each.value, "has_issues", true)
   has_projects         = lookup(each.value, "has_projects", false)
   has_wiki             = lookup(each.value, "has_wiki", false)
-  homepage_url         = lookup(each.value, "homepage_url", null)
+  homepage_url         = lookup(each.value, "homepage_url", "https://data-catalogue.service.justice.gov.uk")
   vulnerability_alerts = lookup(each.value, "vulnerability_alerts", true)
 
   auto_init = lookup(each.value, "auto_init", true)
