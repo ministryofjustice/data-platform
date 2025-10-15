@@ -2,7 +2,7 @@
   "name": "analytical-platform-visual-studio-code",
   "image": "ghcr.io/ministryofjustice/devcontainer-base:latest",
   "features": {
-    "ghcr.io/devcontainers/features/github-cli:1": {}
+    "ghcr.io/devcontainers/features/github-cli:": {}
   },
   "customizations": {
     "vscode": {
