@@ -1,5 +1,5 @@
 {
-  "name": "analytical-platform-visual-studio-code",
+  "name": "data-platform",
   "image": "ghcr.io/ministryofjustice/devcontainer-base:latest",
   "features": {
     "ghcr.io/devcontainers/features/github-cli:": {}
