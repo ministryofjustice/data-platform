@@ -2,15 +2,20 @@
   "name": "data-platform",
   "image": "ghcr.io/ministryofjustice/devcontainer-base:latest",
   "features": {
-    "ghcr.io/devcontainers/features/github-cli:": {}
+    "ghcr.io/devcontainers/features/github-cli:": {},
+    "ghcr.io/ministryofjustice/devcontainer-feature/astral:": {}
   },
   "customizations": {
     "vscode": {
       "extensions": [
-        "editorconfig.editorconfig",
-        "github.vscode-github-actions",
-        "github.vscode-pull-request-github"
+        "EditorConfig.EditorConfig",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "GitHub.vscode-github-actions",
+        "GitHub.vscode-pull-request-github",
+        "streetsidesoftware.code-spell-checker"
       ]
     }
-  }
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh"
 }
