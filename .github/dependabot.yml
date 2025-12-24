@@ -3,16 +3,22 @@ version: 2
 
 updates:
   - package-ecosystem: "devcontainers"
-    directory: "/"
-    schedule:
-      interval: "daily"
     commit-message:
+      include: "scope"
       prefix: ":dependabot: devcontainers"
-      include: "scope"
-  - package-ecosystem: "github-actions"
+    cooldown:
+      default-days: 7
     directory: "/"
+    open-pull-requests-limit: 15
     schedule:
       interval: "daily"
+  - package-ecosystem: "github-actions"
     commit-message:
-      prefix: ":dependabot: github-actions"
       include: "scope"
+      prefix: ":dependabot: github-actions"
+    cooldown:
+      default-days: 7
+    directory: "/"
+    open-pull-requests-limit: 15
+    schedule:
+      interval: "daily"

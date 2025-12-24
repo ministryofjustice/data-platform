@@ -11,15 +11,7 @@ permissions: {}
 jobs:
   dependency-review:
     name: Dependency Review
-    runs-on: ubuntu-latest
     permissions:
       contents: read
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-
-      - name: Dependency Review
-        uses: actions/dependency-review-action@3c4e3dcb1aa7874d2c16be7d79418e9b7efd6261 # v4.8.2
-        with:
-          fail-on-severity: critical
+      pull-requests: write
+    uses: ministryofjustice/data-platform-github-actions/.github/workflows/dependency-review.yml@298ae0b81b463fae66f3fd5f7de2422dfa4b7fd0 # v1.1.0
