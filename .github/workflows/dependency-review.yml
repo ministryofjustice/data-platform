@@ -14,4 +14,4 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: ministryofjustice/data-platform-github-actions/.github/workflows/dependency-review.yml@298ae0b81b463fae66f3fd5f7de2422dfa4b7fd0 # v1.1.0
+    uses: ministryofjustice/data-platform-github-actions/.github/workflows/dependency-review.yml@7e871a7cdc787dd0fb4dee753f43c7f54c7913f8 # v1.1.1
