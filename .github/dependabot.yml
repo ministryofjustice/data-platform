@@ -8,6 +8,8 @@ updates:
       prefix: ":dependabot: devcontainers"
     cooldown:
       default-days: 7
+      excludes:
+        - "ghcr.io/ministryofjustice/devcontainer-feature/*"
     directory: "/"
     open-pull-requests-limit: 15
     schedule:
@@ -18,6 +20,9 @@ updates:
       prefix: ":dependabot: github-actions"
     cooldown:
       default-days: 7
+      excludes:
+        - "ministryofjustice/action*"
+        - "ministryofjustice/data-platform-github-actions*"
     directory: "/"
     groups:
       data-platform-github-actions:
