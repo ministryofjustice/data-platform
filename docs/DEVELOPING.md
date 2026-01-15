@@ -116,7 +116,7 @@ For example:
 
 ### Open in Dev Container
 
-Alternatively, you can open a repository directly in a development container using the "Open in Dev Container" button found in each repository's README.
+Alternatively, you can open a repository directly in a development container using the "Open in Dev Container" button found in each repository's readme.
 
 For example:
 
@@ -125,4 +125,4 @@ For example:
 To reopen a closed development container, you can either:
 
 - Use the Command Palette (`Cmd+Shift+P`), run "Remote Explorer: Focus on Dev Containers View", then alt-click the container and select the arrow icon to open it.
-- Use the "Open in Dev Container" button in the README again.
+- Use the "Open in Dev Container" button in the readme again.
