@@ -31,7 +31,7 @@ Git commit signing is required for all repositories.
 ## GitHub Setup
 
 Each developer is responsible for creating their own GitHub account. To create an account, follow [GitHub's documentation](https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github).
-
+<!-- markdownlint-disable MD028 -->
 > [!WARNING]
 > In accordance with GitHub's [Terms of Service](https://docs.github.com/en/site-policy/github-terms/github-terms-of-service#3-account-requirements), do not create multiple accounts.
 
@@ -42,7 +42,7 @@ Each developer is responsible for creating their own GitHub account. To create a
 >
 > - Saving your 2FA recovery codes
 > - Having a valid personal recovery email address associated with your account
-
+<!-- markdownlint-enable MD028 -->
 After creating a GitHub account, join the [Ministry of Justice's GitHub organisation](https://github.com/orgs/ministryofjustice/sso).
 
 ## Machine Setup
