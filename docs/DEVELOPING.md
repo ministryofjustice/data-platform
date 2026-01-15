@@ -57,16 +57,12 @@ After creating a GitHub account, join the Ministry of Justice GitHub organisatio
 
 - 1Password
   - Available in the Self Service app
-
 - Visual Studio Code
   - Available in the Self Service app
-
 - Dev Containers extension (`ms-vscode-remote.remote-containers`)
   - Available in the Visual Studio Code Marketplace ([link](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers))
-
 - Docker Desktop
   - Available from Docker ([link](https://docs.docker.com/desktop/setup/install/mac-install/))
-
 - GitHub CLI
   - Available from GitHub ([link](https://cli.github.com/))
 
@@ -125,3 +121,8 @@ Alternatively, you can open a repository directly in a development container usi
 For example:
 
 ![Open in Dev Container Button](./img/developing/open-in-dev-container.gif)
+
+To reopen a closed development container, you can either:
+
+- Use the Command Palette (`Cmd+Shift+P`), run "Remote Explorer: Focus on Dev Containers View", then alt-click the container and select the arrow icon to open it.
+- Use the "Open in Dev Container" button in the README again.
