@@ -26,12 +26,14 @@ They also include the following supporting configuration:
 - [`.prettierignore`](../.prettierignore)
 - [`cspell.json`](../cspell.json)
 
-Git commit signing is required for all repositories.
+We require Git commit signing for all repositories.
 
 ## GitHub Setup
 
 Each developer is responsible for creating their own GitHub account. To create an account, follow [GitHub's documentation](https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github).
+
 <!-- markdownlint-disable MD028 -->
+
 > [!WARNING]
 > In accordance with GitHub's [Terms of Service](https://docs.github.com/en/site-policy/github-terms/github-terms-of-service#3-account-requirements), do not create multiple accounts.
 
@@ -42,8 +44,12 @@ Each developer is responsible for creating their own GitHub account. To create a
 >
 > - Saving your 2FA recovery codes
 > - Having a valid personal recovery email address associated with your account
+
 <!-- markdownlint-enable MD028 -->
+
 After creating a GitHub account, join the [Ministry of Justice's GitHub organisation](https://github.com/orgs/ministryofjustice/sso).
+
+During your onboarding, you will be added to the appropriate teams via [`ministryofjustice/data-platform-access`](https://github.com/ministryofjustice/data-platform-access).
 
 ## Machine Setup
 
@@ -126,3 +132,17 @@ To reopen a closed development container, you can either:
 
 - Use the Command Palette (`Cmd+Shift+P`), run "Remote Explorer: Focus on Dev Containers View", then alt-click the container and select the arrow icon to open it.
 - Use the "Open in Dev Container" button in the readme again.
+
+## Development Workflow
+
+We follow GitHub flow, a branch-based development workflow. For more information, refer to [GitHub's documentation on GitHub flow](https://docs.github.com/en/get-started/quickstart/github-flow).
+
+### Pull Requests
+
+While working on a task, you can create a pull request in draft mode to solicit early feedback and collaboration.
+
+When your work is ready for review, convert the pull request from draft to ready for review. Ensure that all checks pass and that you have addressed any feedback before merging.
+
+Provide a clear and concise description of the changes in the pull request, along with relevant context or screenshots. The pull request title should accurately reflect the changes.
+
+Each repository may have its own contributing guidelines; be sure to review those as well.
