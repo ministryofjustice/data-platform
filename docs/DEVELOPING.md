@@ -116,7 +116,7 @@ Once you have cloned a repository, open it in Visual Studio Code. You will be pr
 
 For example:
 
-![Reopen in Container Prompt](docs/img/developing/reopen-in-container.gif)
+![Reopen in Container Prompt](./img/developing/reopen-in-container.gif)
 
 ### Open in Dev Container
 
@@ -124,4 +124,4 @@ Alternatively, you can open a repository directly in a development container usi
 
 For example:
 
-![Open in Dev Container Button](docs/img/developing/open-in-dev-container.gif)
+![Open in Dev Container Button](./docs/img/developing/open-in-dev-container.gif)
