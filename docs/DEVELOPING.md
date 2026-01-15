@@ -43,7 +43,7 @@ Each developer is responsible for creating their own GitHub account. To create a
 > - Saving your 2FA recovery codes
 > - Having a valid personal recovery email address associated with your account
 
-After creating a GitHub account, join the Ministry of Justice GitHub organisation [here](https://github.com/orgs/ministryofjustice/sso).
+After creating a GitHub account, join the [Ministry of Justice's GitHub organisation](https://github.com/orgs/ministryofjustice/sso).
 
 ## Machine Setup
 
@@ -60,11 +60,11 @@ After creating a GitHub account, join the Ministry of Justice GitHub organisatio
 - Visual Studio Code
   - Available in the Self Service app
 - Dev Containers extension (`ms-vscode-remote.remote-containers`)
-  - Available in the Visual Studio Code Marketplace ([link](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers))
+  - Available in the Visual Studio Code Marketplace ([Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers))
 - Docker Desktop
-  - Available from Docker ([link](https://docs.docker.com/desktop/setup/install/mac-install/))
+  - Available from Docker ([Docker Desktop for Mac](https://docs.docker.com/desktop/setup/install/mac-install/))
 - GitHub CLI
-  - Available from GitHub ([link](https://cli.github.com/))
+  - Available from GitHub ([GitHub CLI](https://cli.github.com/))
 
 ### SSH Setup
 
