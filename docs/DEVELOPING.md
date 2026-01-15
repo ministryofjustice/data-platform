@@ -124,4 +124,4 @@ Alternatively, you can open a repository directly in a development container usi
 
 For example:
 
-![Open in Dev Container Button](./docs/img/developing/open-in-dev-container.gif)
+![Open in Dev Container Button](./img/developing/open-in-dev-container.gif)
