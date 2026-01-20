@@ -1,0 +1,20 @@
+---
+name: CodeQL Analysis
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions: {}
+
+jobs:
+  codeql-analysis:
+    name: CodeQL Analysis
+    permissions:
+      contents: read
+      security-events: write
+    uses: ministryofjustice/data-platform-github-actions/.github/workflows/codeql-analysis.yml@82bff8810f6c42cd77e827c7a498a9d47ab3387b # v1.2.0
