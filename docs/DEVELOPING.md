@@ -146,3 +146,7 @@ When your work is ready for review, convert the pull request from draft to ready
 Provide a clear and concise description of the changes in the pull request, along with relevant context or screenshots. The pull request title should accurately reflect the changes.
 
 Each repository may have its own contributing guidelines; be sure to review those as well.
+
+## AI Assisted Coding
+
+The Ministry of Justice has enabled GitHub Copilot Enterprise, you can request access via [this form](https://forms.office.com/e/0eXS6S2j9J).
