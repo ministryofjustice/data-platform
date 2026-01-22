@@ -101,7 +101,7 @@ You can manage SSH credentials locally on macOS or via 1Password:
 
 - [1Password](https://developer.1password.com/docs/ssh)
   - [Request access](https://cloud-optimisation-and-accountability.justice.gov.uk/documentation/operations-engineering-legacy/operations-engineering-user-guide/password-management/1password.html#request-access) via Operations Engineering
-  - Follow 1Password's "[Getting started](https://developer.1password.com/docs/ssh/get-started)" documentation to complete the setup.
+  - Follow 1Password's "[Getting started](https://developer.1password.com/docs/ssh/get-started)" documentation to complete the setup
 
 Once configured, you can authenticate with GitHub and sign your commits.
 
@@ -167,3 +167,7 @@ Each repository may have its own contributing guidelines; be sure to review thos
 ## AI Assisted Coding
 
 The Ministry of Justice has enabled GitHub Copilot Enterprise. You can request access via [this form](https://forms.office.com/e/0eXS6S2j9J).
+
+There is published [guidance on using GitHub Copilot](https://github.com/ministryofjustice/.github/blob/main/docs/github-copilot-guidance.md) that you should read and understand before using these tools.
+
+Microsoft also publish guidance on using [GitHub Copilot in Visual Studio Code](https://code.visualstudio.com/docs/copilot/overview)
