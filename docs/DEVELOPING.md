@@ -2,6 +2,21 @@
 
 This document provides guidance for developers in our engineering teams on setting up their development environment, including GitHub and local machine setup.
 
+## Table of Contents
+
+- [Repository Standards](#repository-standards)
+- [GitHub Setup](#github-setup)
+- [Machine Setup](#machine-setup)
+  - [Requirements](#requirements)
+  - [SSH Setup](#ssh-setup)
+  - [GitHub CLI Setup](#github-cli-setup)
+- [Interacting with Repositories](#interacting-with-repositories)
+  - [Cloning Repositories](#cloning-repositories)
+  - [Open in Dev Container](#open-in-dev-container)
+- [Development Workflow](#development-workflow)
+  - [Pull Requests](#pull-requests)
+- [AI Assisted Coding](#ai-assisted-coding)
+
 ## Repository Standards
 
 All our repositories include a [development container](https://code.visualstudio.com/docs/devcontainers/containers) configuration. Usage is mandatory for our engineering teams as it allows us to provide an isolated environment for each project with the required tooling and configuration to develop consistently.
@@ -85,6 +100,8 @@ You can manage SSH credentials locally on macOS or via 1Password:
   - [SSH commit signature verification](https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification#ssh-commit-signature-verification)
 
 - [1Password](https://developer.1password.com/docs/ssh)
+  - [Request access](https://cloud-optimisation-and-accountability.justice.gov.uk/documentation/operations-engineering-legacy/operations-engineering-user-guide/password-management/1password.html#request-access) via Operations Engineering
+  - Follow 1Password's "[Getting started](https://developer.1password.com/docs/ssh/get-started)" documentation to complete the setup.
 
 Once configured, you can authenticate with GitHub and sign your commits.
 
@@ -149,4 +166,4 @@ Each repository may have its own contributing guidelines; be sure to review thos
 
 ## AI Assisted Coding
 
-The Ministry of Justice has enabled GitHub Copilot Enterprise, you can request access via [this form](https://forms.office.com/e/0eXS6S2j9J).
+The Ministry of Justice has enabled GitHub Copilot Enterprise. You can request access via [this form](https://forms.office.com/e/0eXS6S2j9J).
