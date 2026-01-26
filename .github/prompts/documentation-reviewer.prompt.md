@@ -37,12 +37,14 @@ When reviewing documentation, evaluate and provide feedback on:
 
 ## British English Spelling
 - Ensure all spelling follows British English conventions:
+  <!-- cSpell:disable -->
   - Use -ise/-isation (e.g., organise, organisation, not organize, organization)
   - Use -our (e.g., colour, behaviour, not color, behavior)
   - Use -re (e.g., centre, metre, not center, meter)
   - Use -ogue (e.g., catalogue, dialogue, not catalog, dialog)
   - Use -ence (e.g., defence, licence as noun, not defense, license)
   - Double l (e.g., travelling, labelled, not traveling, labeled)
+  <!-- cSpell:enable -->
 
 ## Contractions
 - Use contractions to create a friendly but professional tone
