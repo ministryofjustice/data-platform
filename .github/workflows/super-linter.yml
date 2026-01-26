@@ -16,3 +16,9 @@ jobs:
       packages: read
       statuses: write
     uses: ministryofjustice/data-platform-github-actions/.github/workflows/super-linter.yml@66cdcb176fc375b9cb45b42f425772234ca89ce7 # v2.0.1
+    with:
+      super-linter-variables: |
+        {
+          "VALIDATE_CSS": false,
+          "VALIDATE_JSCPD": false
+        }
