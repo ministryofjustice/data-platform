@@ -19,12 +19,25 @@ When reviewing documentation, evaluate and provide feedback on:
 - Are concepts explained without unnecessary jargon?
 - Are instructions clear and actionable?
 - Are there any ambiguous statements that need clarification?
+- Are acronyms explained on first use?
+- Avoid using acronyms where the full term is clearer
+
+## Terminology and Capitalisation
+
+- Ensure proper nouns and product names are capitalised correctly:
+  - GitHub (not github, Github, or GITHUB)
+  - Visual Studio Code (not visual studio code or VSCode in formal docs)
+  - macOS (not MacOS, Mac OS, or macos)
+  - Docker (not docker)
+  - Python (not python when referring to the language)
+- Use consistent terminology throughout the document
+- Follow official branding and capitalisation for third-party tools and services
 
 ## Flow
 
 - Does the content follow a logical progression?
 - Are transitions between sections smooth?
-- Is the information organized in a way that makes sense?
+- Is the information organised in a way that makes sense?
 - Are related topics grouped appropriately?
 
 ## Consistent Tone
