@@ -1,11 +1,16 @@
 {
   "features": {
-    "ghcr.io/devcontainers/features/github-cli:": {
+    "ghcr.io/devcontainers/features/docker-in-docker": {
+      "version": "2.14.0",
+      "resolved": "ghcr.io/devcontainers/features/docker-in-docker@sha256:445e84b0c213225bfdae977a72b4125f65e38eadcd49616dae04f1af24aa122d",
+      "integrity": "sha256:445e84b0c213225bfdae977a72b4125f65e38eadcd49616dae04f1af24aa122d"
+    },
+    "ghcr.io/devcontainers/features/github-cli": {
       "version": "1.0.15",
       "resolved": "ghcr.io/devcontainers/features/github-cli@sha256:1ad1ec1a806cc9926c84ca5b147427bba03b97e14e91f9df89af83726039ecaf",
       "integrity": "sha256:1ad1ec1a806cc9926c84ca5b147427bba03b97e14e91f9df89af83726039ecaf"
     },
-    "ghcr.io/ministryofjustice/devcontainer-feature/astral:": {
+    "ghcr.io/ministryofjustice/devcontainer-feature/astral": {
       "version": "1.0.0",
       "resolved": "ghcr.io/ministryofjustice/devcontainer-feature/astral@sha256:a6df118c6475e79fe15e63b815a5df591a24b0d25517ea941114cb6bee1af9a8",
       "integrity": "sha256:a6df118c6475e79fe15e63b815a5df591a24b0d25517ea941114cb6bee1af9a8"

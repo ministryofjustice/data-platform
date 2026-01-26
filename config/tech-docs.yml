@@ -1,0 +1,17 @@
+---
+host: https://manual.data-platform.service.justice.gov.uk
+show_govuk_logo: false
+service_name: Data Platform Manual
+service_link: /
+enable_search: true
+collapsible_nav: true
+max_toc_heading_level: 3
+prevent_indexing: true
+show_contribution_banner: true
+github_repo: ministryofjustice/data-platform
+github_branch: main
+full_service_name: Data Platform Manual
+show_expiry: true
+show_review_banner: true
+header_links:
+  User Guide: https://user-guide.data-platform.service.justice.gov.uk
