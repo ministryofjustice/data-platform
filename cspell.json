@@ -9,6 +9,7 @@
     "ministryofjustice",
     "openssf",
     "venv",
+    "textlint",
     "tfstate",
     "zizmor"
   ]

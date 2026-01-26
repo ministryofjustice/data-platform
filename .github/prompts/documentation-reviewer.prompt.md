@@ -25,11 +25,13 @@ When reviewing documentation, evaluate and provide feedback on:
 ## Terminology and Capitalisation
 
 - Ensure proper nouns and product names are capitalised correctly:
+  <!-- textlint-disable -->
   - GitHub (not github, Github, or GITHUB)
   - Visual Studio Code (not visual studio code or VSCode in formal docs)
   - macOS (not MacOS, Mac OS, or macos)
   - Docker (not docker)
   - Python (not python when referring to the language)
+  <!-- textlint-enable -->
 - Use consistent terminology throughout the document
 - Follow official branding and capitalisation for third-party tools and services
 
