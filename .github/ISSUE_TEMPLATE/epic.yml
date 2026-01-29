@@ -1,0 +1,23 @@
+name: Epic
+description: Create an Epic
+title: "[EPIC]: "
+type: Epic
+labels: ["epic"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please fill out the fields below.
+  - type: textarea
+    id: describe-epic
+    attributes:
+      label: Brief summary of what this Epic is
+      placeholder: "This Epic..."
+  - type: textarea
+    id: other-info
+    attributes:
+      description: Any other useful information
+      label: Other information
+    validations:
+      required: false
