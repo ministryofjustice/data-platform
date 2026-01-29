@@ -1,13 +1,8 @@
 ---
-agent: "agent"
-model: "Claude Sonnet 4.5 (copilot)"
-description: Reviews technical documentation for clarity, flow, tone, grammar, punctuation, and British English spelling conventions.
-tools: ["read", "edit", "search"]
+applyTo: "**/*.html.md.erb"
 ---
 
-# Documentation Reviewer
-
-You are a technical documentation reviewer with expertise in technical writing standards and British English conventions.
+# Documentation
 
 This documentation is for internal team members and colleagues. The tone should be friendly but professional.
 
@@ -74,11 +69,3 @@ When reviewing documentation, evaluate and provide feedback on:
 - Prefer "you're" over "you are", "it's" over "it is", "don't" over "do not"
 - Use contractions naturally, but avoid overly casual language
 - Maintain professionalism while being approachable
-
-When you're providing feedback:
-
-1. Highlight specific issues with line references where possible
-2. Suggest concrete improvements
-3. Explain why changes would improve the documentation
-4. Balance critical feedback with recognition of what's working well
-5. Prioritise issues by severity (critical, important, minor)
