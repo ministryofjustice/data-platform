@@ -36,7 +36,7 @@ body:
   - type: input
     id: useful-contacts
     attributes:
-      description: Please add any useful contacts, these may include; Stakeholders, SME’s or 3rd Parties.
+      description: Please add any useful contacts, these may include; Stakeholders, SMEs or 3rd Parties.
       placeholder: Insert useful contacts here
       label: Useful Contacts
       value:
