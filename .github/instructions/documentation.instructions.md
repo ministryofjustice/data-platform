@@ -1,5 +1,6 @@
 ---
-applyTo: "**/*.html.md.erb"
+# Applies to all Markdown documentation files, and Tech Doc's Ruby ERB files.
+applyTo: "**/*.md,**/*.html.md.erb"
 ---
 
 # Documentation

@@ -1,7 +1,9 @@
 ---
+name: "Documentation Reviewer"
+description: "Reviews technical documentation for clarity, flow, tone, grammar, punctuation, and British English spelling conventions."
+argument-hint: "Please provide the documentation content to be reviewed."
 agent: "agent"
 model: "Claude Sonnet 4.5 (copilot)"
-description: Reviews technical documentation for clarity, flow, tone, grammar, punctuation, and British English spelling conventions.
 tools: ["read", "edit", "search"]
 ---
 
