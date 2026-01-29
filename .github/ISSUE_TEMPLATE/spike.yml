@@ -30,7 +30,7 @@ body:
     id: spike-requirements
     attributes:
       description: >
-        Role required, and how many work days of effort estimated (loose timebox)
+        Role required, and how many work days of effort estimated (loose time box)
       placeholder: Developer, 2 days
       label: Spike requirements
       value:
