@@ -33,7 +33,7 @@ body:
     id: user-types
     attributes:
       description: Please add the types of users impacted
-      placeholder: Joe Bloggs
+      placeholder: e.g. Platform Engineering
       label: User Types
       value:
     validations:

@@ -37,7 +37,7 @@ body:
     id: useful-contacts
     attributes:
       description: Please add any useful contacts, these may include; Stakeholders, SME’s or 3rd Parties.
-      placeholder: Joe Bloggs
+      placeholder: Insert useful contacts here
       label: Useful Contacts
       value:
     validations:
@@ -46,7 +46,7 @@ body:
     id: user-types
     attributes:
       description: Please add the types of users impacted
-      placeholder: Joe Bloggs
+      placeholder: e.g. Platform Engineering
       label: User Types
       value:
     validations:
