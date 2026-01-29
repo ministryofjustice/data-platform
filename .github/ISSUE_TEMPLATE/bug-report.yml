@@ -1,8 +1,8 @@
 name: Bug Report
 description: File a bug report
 title: "[BUG]: "
-labels: bug
 type: Bug
+labels: ["bug"]
 
 body:
   - type: textarea
