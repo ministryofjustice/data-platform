@@ -98,7 +98,7 @@ Dedicated `/28` attachment subnets from the `100.64.255.0/24` CIDR block provide
 All traffic is inspected by AWS Network Firewall, which enforces:
 
 - Fully Qualified Domain Name (FQDN)-based HTTPS allowlists
-- IP-based SSH allowlists
+- IP-based allowlists for non-HTTP(S) TCP protocols
 - AWS managed threat intelligence blocking
 - Default deny for all other traffic
 
@@ -152,7 +152,7 @@ AWS Network Firewall provides centralised, stateful traffic inspection with:
 #### Rule Types
 
 - **FQDN-based HTTPS allowlist**: Permits HTTPS to approved domain names (e.g., GitHub API, raw.githubusercontent.com)
-- **IP-based SSH allowlist**: Permits SSH to specific IP addresses (e.g., GitHub)
+- **IP-based allowlist**: Permits other TCP protocols to specific IP addresses (e.g., SSH to GitHub)
 - **AWS managed threat intelligence**: Blocks known malware, botnet command-and-control, and attack infrastructure
 - **Default deny**: All traffic not explicitly permitted is blocked
 
@@ -280,7 +280,7 @@ To add a new firewall rule:
 
 1. **Identify the rule type needed**:
    - FQDN-based for HTTPS to domain names
-   - IP-based for non-HTTPS or specific IP addresses
+   - IP-based for non-HTTP(S) TCP protocols to specific IP addresses
 
 2. **Edit the YAML configuration** in the modernisation-platform-environments repository
 
