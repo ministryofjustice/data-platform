@@ -3,7 +3,7 @@
 applyTo: "**/*.md,**/*.html.md.erb"
 ---
 
-# Documentation
+# Documentation Review Standards
 
 This documentation is for internal team members and colleagues. The tone should be friendly but professional.
 
