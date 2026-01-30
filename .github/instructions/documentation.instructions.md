@@ -36,6 +36,7 @@ When reviewing documentation, evaluate and provide feedback on:
   - macOS (not MacOS, Mac OS, or macos)
   - Docker (not docker)
   - Python (not python when referring to the language)
+  - MOJ (not MoJ when referring to Ministry of Justice)
   <!-- textlint-enable -->
 - Use consistent terminology throughout the document
 - Follow official branding and capitalisation for third-party tools and services
