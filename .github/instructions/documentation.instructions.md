@@ -7,6 +7,14 @@ applyTo: "**/*.md,**/*.html.md.erb"
 
 This documentation is for internal team members and colleagues. The tone should be friendly but professional.
 
+## Style Guide References
+
+This documentation follows the GOV.UK style guides:
+- [GOV.UK Content Style Guide (A to Z)](https://www.gov.uk/guidance/style-guide/a-to-z) - General writing style, spelling and grammar conventions
+- [GOV.UK Technical Content Style Guide](https://www.gov.uk/guidance/style-guide/technical-content-a-to-z) - Style and structure for technical documentation
+
+Where our internal guidelines don't cover a specific topic, refer to these guides.
+
 When reviewing documentation, evaluate and provide feedback on:
 
 ## Clarity
