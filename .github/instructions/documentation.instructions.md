@@ -1,9 +1,9 @@
 ---
-# Applies to all Markdown documentation files, and Tech Doc's Ruby ERB files.
+# Applies to all Markdown documentation files, and Tech Docs Ruby ERB files.
 applyTo: "**/*.md,**/*.html.md.erb"
 ---
 
-# Documentation
+# Documentation Review Standards
 
 This documentation is for internal team members and colleagues. The tone should be friendly but professional.
 
