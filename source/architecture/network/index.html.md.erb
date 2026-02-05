@@ -16,13 +16,13 @@ The architecture is built on Amazon Web Services (AWS) infrastructure. Key featu
 - **Transit Gateway connectivity** to Ministry of Justice (MOJ) internal networks and Cloud Platform
 - **Comprehensive logging** with VPC Flow Logs, firewall logs, and DNS query logs
 
-You manage all network changes through infrastructure as code, with automated validation and security reviews required before deployment.
+You manage all network changes through infrastructure as code, with automated validation and reviews required before deployment.
 
 ## Network Architecture
 
 ### VPC Design
 
-Each environment has a dedicated Virtual Private Cloud (VPC) with CIDR allocations from previously unallocated Analytical Platform Compute ranges:
+Each environment has a dedicated VPC with CIDR allocations from previously unallocated Analytical Platform Compute ranges:
 
 | Environment   | CIDR Block        | Notes                                  |
 | ------------- | ----------------- | -------------------------------------- |
@@ -50,7 +50,6 @@ The data subnets host the isolated data tier and have no routes beyond the impli
 
 Private subnets host application workloads and provide:
 
-- NAT Gateway egress for internet access
 - All traffic routed through AWS Network Firewall for inspection
 - Transit Gateway connectivity for cross-network communication
 - Access to VPC endpoints for AWS services
@@ -98,7 +97,7 @@ Dedicated `/28` attachment subnets from the `100.64.255.0/24` CIDR block provide
 All traffic is inspected by AWS Network Firewall, which enforces:
 
 - Fully Qualified Domain Name (FQDN)-based HTTPS allowlists
-- IP-based allowlists for non-HTTP(S) TCP protocols
+- IP-based allowlists for non-HTTP(S) TCP/UDP protocols
 - AWS managed threat intelligence blocking
 - Default deny for all other traffic
 
@@ -133,6 +132,8 @@ The Data Platform uses VPC endpoints for over 30 AWS services, providing:
 - Gateway endpoint for same-region S3 access
 - Interface endpoint for cross-region S3 access (eu-west-1)
 
+Gateway endpoints only support Amazon S3 access within the same AWS Region as the VPC, so an interface endpoint is required to keep cross-region S3 traffic (for example, to eu-west-1) on the AWS private network.
+
 ### Data Subnet Isolation
 
 Data subnets are completely isolated from external networks. They can only:
@@ -151,7 +152,7 @@ AWS Network Firewall provides centralised, stateful traffic inspection with:
 
 #### Rule Types
 
-- **FQDN-based HTTPS allowlist**: Permits HTTPS to approved domain names (e.g., GitHub API, raw.githubusercontent.com)
+- **FQDN-based HTTPS allowlist**: Permits HTTPS to approved domain names (e.g., api.github.com, raw.githubusercontent.com)
 - **IP-based allowlist**: Permits other TCP protocols to specific IP addresses (e.g., SSH to GitHub)
 - **AWS managed threat intelligence**: Blocks known malware, botnet command-and-control, and attack infrastructure
 - **Default deny**: All traffic not explicitly permitted is blocked
@@ -167,11 +168,11 @@ You manage firewall rules through:
 - **Strict rule ordering**: Ensures predictable evaluation of firewall rules
 - **Fragment dropping**: Drops fragmented packets by default
 
-### Route53 Resolver Firewall
+### Route 53 Resolver Firewall
 
 Route53 Resolver Firewall provides Domain Name System (DNS)-level security with:
 
-- **Fail-closed configuration**: DNS queries fail if the firewall's unavailable
+- **Fail-closed configuration**: DNS queries fail if the firewall is unavailable
 - **AWS managed domain blocklists**: Four managed lists enabled, blocking:
   - Known malware domains
   - Botnet command-and-control domains
@@ -187,11 +188,8 @@ All network-related logs and configurations are encrypted using customer-managed
 - VPC Flow Logs encrypted at rest
 - Network Firewall configuration encrypted
 - CloudWatch log groups encrypted
-- S3 buckets for log archives encrypted
 
 ## Routing
-
-The routing strategy ensures all traffic is inspected while maintaining connectivity:
 
 ### Private Subnet Routing
 
@@ -282,7 +280,7 @@ To add a new firewall rule:
    - FQDN-based for HTTPS to domain names
    - IP-based for non-HTTP(S) TCP protocols to specific IP addresses
 
-2. **Edit the YAML configuration** in the modernisation-platform-environments repository
+2. **Edit the YAML configuration** in the [modernisation-platform-environments](https://github.com/ministryofjustice/modernisation-platform-environments/tree/main/terraform/environments/data-platform/network/configuration/network-firewall/rules) repository
 
 3. **Ensure JSON schema compliance**:
    - Unique SID
