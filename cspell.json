@@ -16,6 +16,8 @@
     "textlint",
     "tfstate",
     "zizmor",
-    "excalidraw"
+    "excalidraw",
+    "mlops",
+    "mockup"
   ]
 }
