@@ -3,7 +3,7 @@ name: "Documentation Reviewer"
 description: "Reviews technical documentation for clarity, flow, tone, grammar, punctuation, and British English spelling conventions."
 argument-hint: "Please provide the documentation content to be reviewed."
 agent: "agent"
-model: Claude Sonnet 4.6 (copilot)
+model: "Claude Sonnet 4.6 (copilot)"
 tools: ["read", "edit", "search"]
 ---
 

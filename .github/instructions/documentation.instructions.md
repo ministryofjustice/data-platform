@@ -27,6 +27,11 @@ When reviewing documentation, evaluate and provide feedback on:
 - Are acronyms explained on first use?
 - Avoid using acronyms where the full term is clearer
 
+## Headings
+
+- Use sentence case for all headings — capitalise only the first word and proper nouns
+- Do not use title case (e.g., "Getting started" not "Getting Started")
+
 ## Terminology and Capitalisation
 
 - Ensure proper nouns and product names are capitalised correctly:
