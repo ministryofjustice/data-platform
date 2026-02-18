@@ -4,203 +4,82 @@ title: Network
 
 # <%= current_page.data.title %>
 
-## Overview
+The network uses a defence-in-depth approach with deny-by-default policies. All traffic is inspected through centralised security controls before it can reach its destination. All network changes go through infrastructure as code with automated validation.
 
-The Data Platform network architecture is designed with security as the primary concern, implementing a defence-in-depth approach with deny-by-default policies. All network traffic is inspected and controlled through centralised security controls, ensuring that only explicitly permitted communication can occur.
-
-The architecture is built on Amazon Web Services (AWS) infrastructure. Key features include:
-
-- **Isolated Virtual Private Clouds (VPCs)** with dedicated Classless Inter-Domain Routing (CIDR) allocations for each environment
-- **Multi-layered security** with AWS Network Firewall and Route53 Resolver Firewall
-- **Traffic inspection** for all egress, ingress, and cross-network communications
-- **Transit Gateway connectivity** to Ministry of Justice (MOJ) internal networks and Cloud Platform
-- **Comprehensive logging** with VPC Flow Logs, firewall logs, and DNS query logs
-
-You manage all network changes through infrastructure as code, with automated validation and reviews required before deployment.
-
-## Network Architecture
-
-### VPC Design
+## VPC design
 
 Each environment has a dedicated VPC with CIDR allocations from previously unallocated Analytical Platform Compute ranges:
 
-| Environment   | CIDR Block        | Notes                                  |
-| ------------- | ----------------- | -------------------------------------- |
-| Development   | `10.199.128.0/19` | Non-routable on corporate network      |
-| Test          | `10.200.128.0/19` |                                        |
-| Preproduction | `10.200.160.0/19` |                                        |
-| Production    | `10.200.192.0/18` | Larger allocation for production scale |
+| Environment   | CIDR Block        | Notes                             |
+| ------------- | ----------------- | --------------------------------- |
+| Development   | `10.199.128.0/19` | Non-routable on corporate network |
+| Test          | `10.200.128.0/19` |                                   |
+| Preproduction | `10.200.160.0/19` |                                   |
+| Production    | `10.200.192.0/18` | Larger allocation for production  |
 
-An additional CIDR block (`100.64.255.0/24`) is dedicated to Transit Gateway attachment subnets, enabling connectivity to MOJ internal networks and Cloud Platform.
+An additional CIDR block (`100.64.255.0/24`) is dedicated to Transit Gateway attachment subnets.
 
-### Subnet Architecture
+## Subnets
 
-Each VPC includes five types of subnets, distributed across three availability zones for high availability:
+Each VPC has five subnet types across three availability zones:
 
-#### Data Subnets
-
-The data subnets host the isolated data tier and have no routes beyond the implicit VPC local route. This ensures:
-
-- No direct internet access
-- No Transit Gateway connectivity
-- Only local VPC traffic permitted
-- Complete isolation for sensitive data processing
-
-#### Private Subnets
-
-Private subnets host application workloads and provide:
-
-- All traffic routed through AWS Network Firewall for inspection
-- Transit Gateway connectivity for cross-network communication
-- Access to VPC endpoints for AWS services
-
-#### Firewall Subnets
-
-Firewall subnets host the AWS Network Firewall endpoints and serve as:
-
-- Central inspection points for all traffic
-- Routing hubs for egress and ingress traffic flows
-- Connection points to NAT Gateways and Transit Gateway
-
-#### Public Subnets
-
-Public subnets host internet-facing resources and provide:
-
-- Direct Internet Gateway connectivity
-- Ingress inspection through hairpinning traffic back through Network Firewall
-- Public IP addresses for load balancers and similar resources
-
-#### Transit Gateway Attachment Subnets
-
-Dedicated `/28` attachment subnets from the `100.64.255.0/24` CIDR block provide:
-
-- Isolated subnets for Transit Gateway attachments
-- Separate routing domain for cross-network traffic
-- Symmetric routing with appliance mode enabled
+- **Data subnets** – completely isolated with no routes beyond the implicit VPC local route. No internet access, no Transit Gateway connectivity.
+- **Private subnets** – host application workloads. All traffic routes through Network Firewall, with Transit Gateway connectivity and access to VPC endpoints.
+- **Firewall subnets** – host Network Firewall endpoints, acting as inspection points between private subnets and the NAT Gateway or Transit Gateway.
+- **Public subnets** – host internet-facing resources with direct Internet Gateway connectivity. Ingress traffic is hairpinned through Network Firewall before reaching private subnets.
+- **Transit Gateway attachment subnets** – `/28` subnets from `100.64.255.0/24`, dedicated to Transit Gateway attachments with appliance mode enabled for symmetric routing.
 
 ## Connectivity
 
-### Internet Connectivity
+### Internet
 
-**Egress traffic** flows through:
+Egress: private subnets → Network Firewall → NAT Gateway → Internet Gateway
 
-1. Private subnets → Network Firewall endpoint
-2. Firewall subnets → NAT Gateway
-3. NAT Gateway → Internet Gateway
+Ingress: Internet Gateway → public subnet → Network Firewall → private subnet
 
-**Ingress traffic** flows through:
+### Transit Gateway
 
-1. Internet Gateway → Public subnet
-2. Public subnet → Network Firewall endpoint (hairpinning - routing traffic back through the same interface for inspection)
-3. Firewall subnet → Private subnet
+Transit Gateway provides routes to `10.0.0.0/8` (MOJ internal networks) and `172.20.0.0/16` (Cloud Platform), with appliance mode enabled for symmetric routing and stateful inspection.
 
-All traffic is inspected by AWS Network Firewall, which enforces:
+Outbound: private subnets → Network Firewall → Transit Gateway → destination
 
-- Fully Qualified Domain Name (FQDN)-based HTTPS allowlists
-- IP-based allowlists for non-HTTP(S) TCP/UDP protocols
+Inbound: Transit Gateway → attachment subnets → Network Firewall → private subnets
+
+### VPC endpoints
+
+The platform uses VPC endpoints for over 30 AWS services, keeping traffic on the AWS private network. There's a gateway endpoint for same-region S3 and an interface endpoint for cross-region S3 (`eu-west-1`), since gateway endpoints only work within the same region as the VPC.
+
+## Security
+
+### Network Firewall
+
+Centralised, stateful traffic inspection with four rule types:
+
+- FQDN-based HTTPS allowlist (e.g., `api.github.com`, `raw.githubusercontent.com`)
+- IP-based allowlist for other TCP protocols (e.g., SSH to GitHub)
 - AWS managed threat intelligence blocking
-- Default deny for all other traffic
+- Default deny
 
-### Transit Gateway Connectivity
-
-Transit Gateway connectivity provides:
-
-- **Connectivity to MOJ internal networks**: Routes to `10.0.0.0/8` address space
-- **Connectivity to Cloud Platform**: Routes to `172.20.0.0/16` address space
-- **Bidirectional traffic inspection**: All Transit Gateway (TGW) traffic is routed through Network Firewall
-- **Appliance mode enabled**: Ensures symmetric routing for stateful inspection
-
-**Outbound TGW traffic** (to MOJ/Cloud Platform) flows:
-
-1. Private subnets → Network Firewall endpoint
-2. Firewall subnets → Transit Gateway
-3. Transit Gateway → destination network
-
-**Inbound TGW traffic** (from MOJ/Cloud Platform) flows:
-
-1. Transit Gateway → Attachment subnets
-2. Attachment subnets → Network Firewall endpoint
-3. Firewall subnets → Private subnets
-
-### VPC Endpoints
-
-The Data Platform uses VPC endpoints for over 30 AWS services, providing:
-
-- Private connectivity without internet traversal
-- Reduced data transfer costs
-- Lower latency for AWS API calls
-- Gateway endpoint for same-region S3 access
-- Interface endpoint for cross-region S3 access (eu-west-1)
-
-Gateway endpoints only support Amazon S3 access within the same AWS Region as the VPC, so an interface endpoint is required to keep cross-region S3 traffic (for example, to eu-west-1) on the AWS private network.
-
-### Data Subnet Isolation
-
-Data subnets are completely isolated from external networks. They can only:
-
-- Communicate with resources in the same VPC
-- Access VPC endpoints for required AWS services
-- Receive traffic from within the VPC
-
-This isolation ensures sensitive data processing occurs in a protected environment with minimal attack surface.
-
-## Security Controls
-
-### AWS Network Firewall
-
-AWS Network Firewall provides centralised, stateful traffic inspection with:
-
-#### Rule Types
-
-- **FQDN-based HTTPS allowlist**: Permits HTTPS to approved domain names (e.g., api.github.com, raw.githubusercontent.com)
-- **IP-based allowlist**: Permits other TCP protocols to specific IP addresses (e.g., SSH to GitHub)
-- **AWS managed threat intelligence**: Blocks known malware, botnet command-and-control, and attack infrastructure
-- **Default deny**: All traffic not explicitly permitted is blocked
-
-#### Configuration Management
-
-You manage firewall rules through:
-
-- **YAML-based configuration**: Human-readable, version-controlled rule definitions
-- **JSON schema validation**: Automated checks for rule structure and syntax
-- **CI/CD pipeline**: GitHub Actions validates changes before deployment
-- **Duplicate Statement ID (SID) detection**: Prevents configuration errors from duplicate rule identifiers
-- **Strict rule ordering**: Ensures predictable evaluation of firewall rules
-- **Fragment dropping**: Drops fragmented packets by default
+Rules are defined in YAML, validated against a JSON schema, and deployed through a GitHub Actions CI/CD pipeline. Duplicate SID detection and strict rule ordering are enforced. Fragmented packets are dropped by default.
 
 ### Route 53 Resolver Firewall
 
-Route53 Resolver Firewall provides Domain Name System (DNS)-level security with:
-
-- **Fail-closed configuration**: DNS queries fail if the firewall is unavailable
-- **AWS managed domain blocklists**: Four managed lists enabled, blocking:
-  - Known malware domains
-  - Botnet command-and-control domains
-  - Phishing sites
-  - Other threat domains
-- **NXDOMAIN response**: Blocked domains return non-existent domain response
-- **Query logging**: All DNS queries logged for audit and investigation
+DNS-level security with fail-closed configuration – DNS queries fail if the firewall is unavailable. Four AWS managed blocklists are enabled, covering malware, botnet, phishing, and other threat domains. Blocked domains return an NXDOMAIN response. All DNS queries are logged.
 
 ### Encryption
 
-All network-related logs and configurations are encrypted using customer-managed Key Management Service (KMS) keys:
-
-- VPC Flow Logs encrypted at rest
-- Network Firewall configuration encrypted
-- CloudWatch log groups encrypted
+VPC Flow Logs, Network Firewall configuration, and CloudWatch log groups are all encrypted with customer-managed KMS keys.
 
 ## Routing
 
-### Private Subnet Routing
+### Private subnets
 
 | Destination | Target                    |
 | ----------- | ------------------------- |
 | `0.0.0.0/0` | Network Firewall endpoint |
 | VPC CIDR    | Local                     |
 
-All non-local traffic routes through the Network Firewall for inspection.
-
-### Firewall Subnet Routing
+### Firewall subnets
 
 | Destination     | Target          |
 | --------------- | --------------- |
@@ -209,9 +88,7 @@ All non-local traffic routes through the Network Firewall for inspection.
 | `172.20.0.0/16` | Transit Gateway |
 | VPC CIDR        | Local           |
 
-Internet traffic routes to NAT Gateway, while MOJ and Cloud Platform destinations route to Transit Gateway.
-
-### Public Subnet Routing
+### Public subnets
 
 | Destination          | Target                    |
 | -------------------- | ------------------------- |
@@ -219,92 +96,31 @@ Internet traffic routes to NAT Gateway, while MOJ and Cloud Platform destination
 | Private subnet CIDRs | Network Firewall endpoint |
 | VPC CIDR             | Local                     |
 
-Internet traffic routes directly to the Internet Gateway, while traffic destined for private subnets hairpins through the Network Firewall for ingress inspection.
-
-### Transit Gateway Attachment Subnet Routing
+### Transit Gateway attachment subnets
 
 | Destination | Target                    |
 | ----------- | ------------------------- |
 | `0.0.0.0/0` | Network Firewall endpoint |
 | VPC CIDR    | Local                     |
 
-All non-local traffic routes through the Network Firewall, ensuring inspection before reaching private subnets.
-
-### Data Subnet Routing
+### Data subnets
 
 | Destination | Target |
 | ----------- | ------ |
 | VPC CIDR    | Local  |
 
-Only the implicit local route exists, providing complete isolation.
-
 ## Observability
 
-### VPC Flow Logs
+All logs go to CloudWatch with 365-day retention and customer-managed KMS encryption.
 
-VPC Flow Logs capture detailed network traffic metadata with:
-
-- **28+ fields** including source/destination IPs, ports, protocols, and encryption status
-- **CloudWatch Logs destination** for querying and analysis
-- **365-day retention** for compliance and investigation
-- **Customer-managed KMS encryption** for data at rest
-
-### Network Firewall Logging
-
-AWS Network Firewall logs both flow and alert information:
-
-- **Flow logs**: Metadata for all inspected connections (allowed and denied)
-- **Alert logs**: Details when threat intelligence rules match
-- **CloudWatch Logs destination** for centralised logging
-- **365-day retention** period
-- **Customer-managed KMS encryption**
-
-### Route53 Resolver Logging
-
-DNS query logs capture:
-
-- All DNS queries processed by Route53 Resolver
-- Query type, domain name, and response
-- Firewall rule actions (allowed/blocked)
-- **Dual destinations**: CloudWatch Logs and S3
-- **365-day retention** in CloudWatch
-- **Customer-managed KMS encryption**
-
-## Firewall Rule Management
-
-### Adding New Rules
-
-To add a new firewall rule:
-
-1. **Identify the rule type needed**:
-   - FQDN-based for HTTPS to domain names
-   - IP-based for non-HTTP(S) TCP protocols to specific IP addresses
-
-2. **Edit the YAML configuration** in the [modernisation-platform-environments](https://github.com/ministryofjustice/modernisation-platform-environments/tree/main/terraform/environments/data-platform/network/configuration/network-firewall/rules) repository
-
-3. **Ensure JSON schema compliance**:
-   - Unique SID
-   - Valid priority and action
-   - Correct protocol and port specifications
-
-4. **Submit a pull request** with:
-   - Description of why the rule is needed
-   - Security justification
-   - Evidence of schema validation passing
-
-5. **Obtain security review approval**
-
-### Schema Validation
-
-All rule changes are automatically validated using:
-
-- **JSON schema** defining valid rule structures
-- **GitHub Actions CI workflow** running on every pull request
-- **Duplicate SID checks** to prevent configuration errors
-- **Syntax validation** for YAML and rule parameters
-
-Rules that don't pass validation can't be merged.
+- **VPC Flow Logs** – 28+ fields including source/destination IPs, ports, protocols, and encryption status
+- **Network Firewall logs** – flow logs for all inspected connections, plus alert logs when threat intelligence rules fire
+- **Route 53 Resolver logs** – all DNS queries, responses, and firewall actions; also sent to S3
 
 ## Diagram
 
 ![Network Diagram](/images/architecture/network/network.drawio.png)
+
+## Source code
+
+<https://github.com/ministryofjustice/modernisation-platform-environments/tree/main/terraform/environments/data-platform/network>
