@@ -6,7 +6,7 @@ title: Developing the Data Platform
 
 This guide will help you set up your development environment, including GitHub and your local machine.
 
-## Repository Standards
+## Repository standards
 
 All our repositories include a [development container](https://code.visualstudio.com/docs/devcontainers/containers) configuration. Usage is mandatory for our engineering teams as it provides an isolated environment for each project with the required tooling and configuration for consistent development.
 
@@ -31,7 +31,7 @@ They also include the following supporting configuration:
 
 We require Git commit signing for all repositories.
 
-## GitHub Setup
+## GitHub setup
 
 You'll need to create your own GitHub account. Follow [GitHub's documentation](https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github) if you don't already have one.
 
@@ -52,7 +52,7 @@ After creating a GitHub account, join the [Ministry of Justice's GitHub organisa
 
 During your onboarding, you'll be added to the appropriate teams via [`ministryofjustice/data-platform-access`](https://github.com/ministryofjustice/data-platform-access).
 
-## Machine Setup
+## Machine setup
 
 > This documentation applies only to macOS.
 
@@ -71,7 +71,7 @@ During your onboarding, you'll be added to the appropriate teams via [`ministryo
 - GitHub CLI
   - Available from GitHub ([GitHub CLI](https://cli.github.com/))
 
-### SSH Setup
+### SSH setup
 
 > We recommend using 1Password to manage SSH keys.
 
@@ -88,7 +88,7 @@ You can manage SSH credentials locally on macOS or via 1Password:
 
 Once you've configured SSH, you can authenticate with GitHub and sign your commits, ensuring your contributions are verified.
 
-### GitHub CLI Setup
+### GitHub CLI setup
 
 To authenticate the GitHub CLI with your GitHub account, run the following command:
 
@@ -98,9 +98,9 @@ gh auth login --git-protocol ssh --hostname github.com --skip-ssh-key --web
 
 Follow the prompts to complete authentication.
 
-## Interacting with Repositories
+## Interacting with repositories
 
-### Cloning Repositories
+### Cloning repositories
 
 You can clone repositories using the GitHub CLI or Git directly. Using the GitHub CLI:
 
@@ -133,11 +133,11 @@ To reopen a closed development container, you can either:
 - Use the Command Palette (`Cmd+Shift+P`), run "Remote Explorer: Focus on Dev Containers View", then Option+click the container and select the arrow icon to open it.
 - Use the "Open in Dev Container" button in the readme again.
 
-## Development Workflow
+## Development workflow
 
 We follow GitHub flow, a branch-based development workflow. For more information, refer to [GitHub's documentation on GitHub flow](https://docs.github.com/en/get-started/quickstart/github-flow).
 
-### Pull Requests
+### Pull requests
 
 While working on a task, you can create a pull request in draft mode to get early feedback and collaboration.
 
@@ -147,7 +147,7 @@ Provide a clear and concise description of the changes in the pull request, alon
 
 Each repository may have its own contributing guidelines, so make sure to review those too.
 
-## AI Assisted Coding
+## AI assisted coding
 
 The Ministry of Justice has enabled GitHub Copilot Enterprise. You can request access via [this form](https://forms.office.com/e/0eXS6S2j9J).
 

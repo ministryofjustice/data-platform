@@ -1,0 +1,126 @@
+---
+title: Network
+---
+
+# <%= current_page.data.title %>
+
+The network uses a defence-in-depth approach with deny-by-default policies. All traffic is inspected through centralised security controls before it can reach its destination. All network changes go through infrastructure as code with automated validation.
+
+## VPC design
+
+Each environment has a dedicated VPC with CIDR allocations from previously unallocated Analytical Platform Compute ranges:
+
+| Environment   | CIDR Block        | Notes                             |
+| ------------- | ----------------- | --------------------------------- |
+| Development   | `10.199.128.0/19` | Non-routable on corporate network |
+| Test          | `10.200.128.0/19` |                                   |
+| Preproduction | `10.200.160.0/19` |                                   |
+| Production    | `10.200.192.0/18` | Larger allocation for production  |
+
+An additional CIDR block (`100.64.255.0/24`) is dedicated to Transit Gateway attachment subnets.
+
+## Subnets
+
+Each VPC has five subnet types across three availability zones:
+
+- **Data subnets** – completely isolated with no routes beyond the implicit VPC local route. No internet access, no Transit Gateway connectivity.
+- **Private subnets** – host application workloads. All traffic routes through Network Firewall, with Transit Gateway connectivity and access to VPC endpoints.
+- **Firewall subnets** – host Network Firewall endpoints, acting as inspection points between private subnets and the NAT Gateway or Transit Gateway.
+- **Public subnets** – host internet-facing resources with direct Internet Gateway connectivity. Ingress traffic is hairpinned through Network Firewall before reaching private subnets.
+- **Transit Gateway attachment subnets** – `/28` subnets from `100.64.255.0/24`, dedicated to Transit Gateway attachments with appliance mode enabled for symmetric routing.
+
+## Connectivity
+
+### Internet
+
+Egress: private subnets → Network Firewall → NAT Gateway → Internet Gateway
+
+Ingress: Internet Gateway → public subnet → Network Firewall → private subnet
+
+### Transit Gateway
+
+Transit Gateway provides routes to `10.0.0.0/8` (MOJ internal networks) and `172.20.0.0/16` (Cloud Platform), with appliance mode enabled for symmetric routing and stateful inspection.
+
+Outbound: private subnets → Network Firewall → Transit Gateway → destination
+
+Inbound: Transit Gateway → attachment subnets → Network Firewall → private subnets
+
+### VPC endpoints
+
+The platform uses VPC endpoints for over 30 AWS services, keeping traffic on the AWS private network. There's a gateway endpoint for same-region S3 and an interface endpoint for cross-region S3 (`eu-west-1`), since gateway endpoints only work within the same region as the VPC.
+
+## Security
+
+### Network Firewall
+
+Centralised, stateful traffic inspection with four rule types:
+
+- FQDN-based HTTPS allowlist (e.g., `api.github.com`, `raw.githubusercontent.com`)
+- IP-based allowlist for other TCP protocols (e.g., SSH to GitHub)
+- AWS managed threat intelligence blocking
+- Default deny
+
+Rules are defined in YAML, validated against a JSON schema, and deployed through a GitHub Actions CI/CD pipeline. Duplicate SID detection and strict rule ordering are enforced. Fragmented packets are dropped by default.
+
+### Route 53 Resolver Firewall
+
+DNS-level security with fail-closed configuration – DNS queries fail if the firewall is unavailable. Four AWS managed blocklists are enabled, covering malware, botnet, phishing, and other threat domains. Blocked domains return an NXDOMAIN response. All DNS queries are logged.
+
+### Encryption
+
+VPC Flow Logs, Network Firewall configuration, and CloudWatch log groups are all encrypted with customer-managed KMS keys.
+
+## Routing
+
+### Private subnets
+
+| Destination | Target                    |
+| ----------- | ------------------------- |
+| `0.0.0.0/0` | Network Firewall endpoint |
+| VPC CIDR    | Local                     |
+
+### Firewall subnets
+
+| Destination     | Target          |
+| --------------- | --------------- |
+| `0.0.0.0/0`     | NAT Gateway     |
+| `10.0.0.0/8`    | Transit Gateway |
+| `172.20.0.0/16` | Transit Gateway |
+| VPC CIDR        | Local           |
+
+### Public subnets
+
+| Destination          | Target                    |
+| -------------------- | ------------------------- |
+| `0.0.0.0/0`          | Internet Gateway          |
+| Private subnet CIDRs | Network Firewall endpoint |
+| VPC CIDR             | Local                     |
+
+### Transit Gateway attachment subnets
+
+| Destination | Target                    |
+| ----------- | ------------------------- |
+| `0.0.0.0/0` | Network Firewall endpoint |
+| VPC CIDR    | Local                     |
+
+### Data subnets
+
+| Destination | Target |
+| ----------- | ------ |
+| VPC CIDR    | Local  |
+
+## Observability
+
+All logs go to CloudWatch with 365-day retention and customer-managed KMS encryption.
+
+- **VPC Flow Logs** – 28+ fields including source/destination IPs, ports, protocols, and encryption status
+- **Network Firewall logs** – flow logs for all inspected connections, plus alert logs when threat intelligence rules fire
+- **Route 53 Resolver logs** – all DNS queries, responses, and firewall actions; also sent to S3
+
+## Diagram
+
+![Network Diagram](images/architecture/network/network.drawio.png)
+
+## Source code
+
+<https://github.com/ministryofjustice/modernisation-platform-environments/tree/main/terraform/environments/data-platform/network>
