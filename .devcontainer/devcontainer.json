@@ -14,6 +14,7 @@
         "GitHub.copilot-chat",
         "GitHub.vscode-github-actions",
         "GitHub.vscode-pull-request-github",
+        "hediet.vscode-drawio",
         "streetsidesoftware.code-spell-checker"
       ],
       "settings": {
