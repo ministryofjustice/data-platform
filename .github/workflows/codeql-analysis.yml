@@ -18,4 +18,4 @@ jobs:
       actions: read
       contents: read
       security-events: write
-    uses: ministryofjustice/data-platform-github-actions/.github/workflows/codeql-analysis.yml@19e378e0eccc844e49fb62d616c8ab99ace7fa6f # v2.3.0
+    uses: ministryofjustice/data-platform-github-actions/.github/workflows/codeql-analysis.yml@b07b9612eebe68b8f5fce1b959b4f8555a6f67ea # v2.4.0
