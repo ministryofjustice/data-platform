@@ -10,7 +10,7 @@
       "resolved": "ghcr.io/devcontainers/features/github-cli@sha256:d22f50b70ed75339b4eed1ba9ecde3a1791f90e88d37936517e3bace0bbad671",
       "integrity": "sha256:d22f50b70ed75339b4eed1ba9ecde3a1791f90e88d37936517e3bace0bbad671"
     },
-    "ghcr.io/ministryofjustice/devcontainer-feature/astral:1": {
+    "ghcr.io/ministryofjustice/devcontainer-feature/astral:": {
       "version": "1.0.0",
       "resolved": "ghcr.io/ministryofjustice/devcontainer-feature/astral@sha256:a6df118c6475e79fe15e63b815a5df591a24b0d25517ea941114cb6bee1af9a8",
       "integrity": "sha256:a6df118c6475e79fe15e63b815a5df591a24b0d25517ea941114cb6bee1af9a8"
