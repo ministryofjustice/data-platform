@@ -4,7 +4,7 @@
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:": {},
     "ghcr.io/devcontainers/features/github-cli:": {},
-    "ghcr.io/ministryofjustice/devcontainer-feature/astral:1": {}
+    "ghcr.io/ministryofjustice/devcontainer-feature/astral:": {}
   },
   "customizations": {
     "vscode": {
