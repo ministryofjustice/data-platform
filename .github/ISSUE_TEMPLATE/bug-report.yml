@@ -1,23 +1,33 @@
-name: Bug Report
+name: 🐞 Bug Report
 description: File a bug report
-title: "[BUG]: "
+title: "🐞 Bug:"
 type: Bug
-labels: ["bug"]
+labels: ["Bug"]
 
 body:
   - type: textarea
     id: description
     attributes:
-      description: A clear and concise description of what the bug is.
-      label: Describe the bug.
+      description: What is happening? Include a clear description of the behaviour that is incorrect or unexpected.
+      label: Bug Description
       value:
+    validations:
+      required: true
+  - type: dropdown
+    id: source
+    attributes:
+      label: Source
+      description: Where the bug was identified
+      options:
+        - External (reported by user, partner team, etc.)
+        - Internal (found by AP/DPS team, monitoring, or automated tests)
     validations:
       required: true
   - type: textarea
     id: reproduce
     attributes:
-      description: Steps to reproduce the behaviour.
-      label: To Reproduce
+      description: Step-by-step instructions to reliably recreate the issue.
+      label: Steps to Reproduce
       placeholder: 1. Go to '...'
 
         2. Click on '....'
@@ -26,20 +36,36 @@ body:
 
         4. See error...
     validations:
-      required: false
+      required: true
   - type: textarea
     id: expected-behaviour
     attributes:
-      description: A clear and concise description of what you expected to happen.
+      description: What should happen if the system behaved correctly.
       label: Expected Behaviour
+      value:
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      description: Any additional notes such as logs, screenshots, environment details, links, or related PRs.
+      label: Additional Context
       value:
     validations:
       required: false
   - type: textarea
-    id: context
+    id: environment
     attributes:
-      description: Add any other context about the problem here, this could include screenshots for example.
-      label: Additional context
+      description: Where the bug occurred (e.g., dev, test, prod, cluster name, account, etc.).
+      label: Environment
+      value:
+    validations:
+      required: false
+  - type: textarea
+    id: severity
+    attributes:
+      description: User impact or urgency level details.
+      label: Severity/Impact
       value:
     validations:
       required: false

@@ -8,90 +8,97 @@ body:
   - type: markdown
     attributes:
       value: |
-        Please fill out the fields below.
+        Please fill out the fields below to create a new Story.
   - type: textarea
     id: user-story
     attributes:
       label: User Story
+      description: Clear user story format
       placeholder: "As a… *[who is the user?]*
 
-        I need/want/expect to… *[what does the user want to do?]*
+        I want… *[what does the user want to do?]*
 
         So that… *[why does the user want to do this?]*"
       value: "As a…
 
-        I need/want/expect to…
+        I want…
 
         So that…"
     validations:
       required: true
   - type: textarea
-    id: value-purpose
+    id: acceptance-criteria
     attributes:
-      description: Describe the value and purpose of the ticket.
-      label: Value / Purpose
-      value:
+      label: Acceptance Criteria
+      description: Testable, clear conditions of success
+      placeholder: |
+        - [ ]
+        - [ ]
+        - [ ]
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description/Context
+      description: Brief explanation to support understanding. What's the need? Why now?
+      placeholder: Provide context for this story...
+    validations:
+      required: true
+  - type: textarea
+    id: functional-requirements
+    attributes:
+      label: Functional Requirements
+      description: Only if essential. High-level capability needed for this story.
+      placeholder: |
+        -
+    validations:
+      required: false
+  - type: textarea
+    id: non-functional-requirements
+    attributes:
+      label: Non-Functional Requirements
+      description: Performance/security/usability expectations
+      placeholder: |
+        -
+    validations:
+      required: false
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Links to other stories, spikes, teams
+      placeholder: |
+        -
     validations:
       required: false
   - type: input
     id: useful-contacts
     attributes:
-      description: Please add any useful contacts, these may include; Stakeholders, SMEs or 3rd Parties.
+      description: SMEs, reviewers, stakeholders (if useful)
       placeholder: Insert useful contacts here
       label: Useful Contacts
       value:
     validations:
       required: false
-  - type: input
-    id: user-types
-    attributes:
-      description: Please add the types of users impacted
-      placeholder: e.g. Platform Engineering
-      label: User Types
-      value:
-    validations:
-      required: false
   - type: textarea
-    id: hypothesis
+    id: technical-notes
     attributes:
-      label: Hypothesis
-      placeholder: "If we... [do a thing]
-
-        Then... [this will happen]"
-      value: "If we... [do a thing]
-
-        Then... [this will happen]"
-  - type: textarea
-    id: proposal
-    attributes:
-      description: A proposal that is something testable, don't worry whether it works or not, it's a place for ideas.
-      label: Proposal
-      value:
-    validations:
-      required: false
-  - type: textarea
-    id: additional-information
-    attributes:
-      description: Please add any useful links or additional information that would be beneficial to anyone working on this Issue.
-      label: Additional Information
+      description: Useful ONLY when needed
+      label: Technical Notes / Additional Information
       value:
     validations:
       required: false
   - type: textarea
     id: dod
     attributes:
-      description: Please clearly and concisely detail the DoD. (example optional checklist below)
+      description: Small checklist for completion of this story
       label: Definition of Done
       value: |
-        Example
         - [ ] Documentation has been written / updated
-
         - [ ] README has been updated
-
         - [ ] User docs have been updated
-
         - [ ] Another team member has reviewed
-
         - [ ] Tests are green
     validations:
       required: false
