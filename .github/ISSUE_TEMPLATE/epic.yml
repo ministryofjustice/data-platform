@@ -92,3 +92,32 @@ body:
         -
     validations:
       required: false
+  - type: textarea
+    id: references
+    attributes:
+      label: Links & References
+      description: |
+        - Slack threads
+        - Architecture diagrams
+        - Process maps
+        - Design docs
+        - Related GitHub Issues
+      placeholder: |
+        -
+    validations:
+      required: false
+  - type: textarea
+    id: success_criteria
+    attributes:
+      label: Epic-Level Success Criteria
+      description: |
+        This Epic is considered complete when:
+        - [Criteria 1]
+        - [Criteria 2]
+        - [Criteria 3]
+
+        (Use for larger initiatives; skip for routine epics like maintenance ones.)
+      placeholder: |
+        -
+    validations:
+      required: false
