@@ -1,56 +1,69 @@
 name: Spike
 description: Create a Spike
-title: "[SPIKE]: "
-type: Spike
+title: ""
 labels: ["spike"]
 
 body:
   - type: markdown
     attributes:
-      value: Please fill out the fields below.
+      value: |
+        Please fill out the fields below to create a new Spike.
+        A short, descriptive title explaining what is being explored or investigated. Avoid solution language where possible.
   - type: textarea
     id: context
     attributes:
       label: Context
+      description: |
+        Why this spike exists. Describe the problem, uncertainty, or decision that needs more understanding. Include any relevant background or triggers.
       placeholder: >
         Describe the background context for the problem (why are we doing this spike?)
       value:
     validations:
       required: true
   - type: textarea
-    id: proposal
+    id: hypothesis
     attributes:
-      description: >
-        A proposal that is something testable, don't worry whether it works or not, it's a place for ideas.
-      label: Proposal
+      label: Hypothesis/Approach
+      description: |
+        What you think might work, or the options you intend to explore. This can include assumptions, ideas, or experiments. This is not a commitment or final design.
+      placeholder: >
+        Describe your hypothesis or the approach(es) you plan to explore...
       value:
     validations:
-      required: false
+      required: true
   - type: input
     id: spike-requirements
     attributes:
-      description: >
-        Role required, and how many work days of effort estimated (loose time box)
-      placeholder: Developer, 2 days
-      label: Spike requirements
+      label: Spike Requirements
+      description: |
+        Who is needed (role, not name) and the loose timebox (e.g. "1–2 days"). Keeps the spike focused and time‑bound.
+      placeholder: Developer, 1–2 days
       value:
     validations:
-      required: false
+      required: true
   - type: textarea
     id: dod
     attributes:
-      description: >
-        Please clearly and concisely detail the DoD. (example optional checklist below)
       label: Definition of Done
-      value: |
-        Example
-        - [ ] Solution has been designed / detailed
-        - [ ] New issue details the follow-up tasks
-        - [ ] PoC completed
-        - [ ] PoC findings captured / documented
+      description: |
+        What "enough learning" looks like. Describe the outputs or clarity expected (e.g. findings documented, recommendation made, follow‑up stories identified).
+      placeholder: |
+        Example:
+        - [ ] Findings documented
+        - [ ] Recommendation made
+        - [ ] Follow-up stories identified
+        - [ ] PoC completed (if applicable)
+      value:
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: Links/References
+      description: |
+        Any supporting material that helps with the spike: docs, diagrams, Slack threads, prior tickets, prototypes, or research.
+      placeholder: |
+        -
+      value:
     validations:
       required: false
-  - type: markdown
-    attributes:
-      value: >
-        [How to write good user stories](https://www.gov.uk/service-manual/agile-delivery/writing-user-stories)

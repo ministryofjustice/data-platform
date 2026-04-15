@@ -1,23 +1,122 @@
 name: Epic
 description: Create an Epic
-title: "[EPIC]: "
-type: Epic
+title: ""
 labels: ["epic"]
 
 body:
   - type: markdown
     attributes:
       value: |
-        Please fill out the fields below.
+        Please fill out the fields below to create a new Epic.
   - type: textarea
-    id: describe-epic
+    id: summary
     attributes:
-      label: Brief summary of what this Epic is
+      label: Summary
+      description: |
+        2-3 sentences covering:
+        - What this Epic is about
+        - Why it matters
+        - Who is impacted
+        - Any relevant background context or comms
       placeholder: "This Epic..."
+    validations:
+      required: true
   - type: textarea
-    id: other-info
+    id: scope
     attributes:
-      description: Any other useful information
-      label: Other information
+      label: Scope
+      description: |
+        **In Scope:**
+        High-level statements describing what this Epic will cover.
+
+        **Out of Scope:**
+        Anything explicitly not included to avoid assumption/scope creep.
+      placeholder: |
+        **In Scope:**
+        -
+
+        **Out of Scope:**
+        -
+    validations:
+      required: true
+  - type: textarea
+    id: goals
+    attributes:
+      label: Goals/Desired Outcomes
+      description: |
+        What we expect to achieve once this Epic is complete.
+        Examples:
+        - User or team value
+        - Platform capability delivered
+        - Risks reduced
+        - State change achieved
+
+        (Do not list tasks here.)
+      placeholder: |
+        -
+    validations:
+      required: true
+  - type: textarea
+    id: requirements
+    attributes:
+      label: High Level Requirements
+      description: |
+        Only include if essential.
+        - These should describe capabilities or expectations at a macro level.
+        - Detailed requirements belong in stories.
+      placeholder: |
+        -
+    validations:
+      required: false
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies & Constraints
+      description: |
+        - Teams, systems, or sequencing considerations
+        - Known constraints (technical, resource, policy)
+      placeholder: |
+        -
+    validations:
+      required: false
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks / Open Questions
+      description: |
+        - Known risks
+        - Unknowns requiring discovery
+        - Questions we still need to answer
+      placeholder: |
+        -
+    validations:
+      required: false
+  - type: textarea
+    id: references
+    attributes:
+      label: Links & References
+      description: |
+        - Slack threads
+        - Architecture diagrams
+        - Process maps
+        - Design docs
+        - Related GitHub Issues
+      placeholder: |
+        -
+    validations:
+      required: false
+  - type: textarea
+    id: success_criteria
+    attributes:
+      label: Epic-Level Success Criteria
+      description: |
+        This Epic is considered complete when:
+        - [Criteria 1]
+        - [Criteria 2]
+        - [Criteria 3]
+
+        (Use for larger initiatives; skip for routine epics like maintenance ones.)
+      placeholder: |
+        -
     validations:
       required: false

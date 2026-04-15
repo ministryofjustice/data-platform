@@ -1,7 +1,6 @@
 name: Feature Request
 description: Create a Feature Request
-title: "[FEATURE REQUEST]: "
-type: Feature Request
+title: ""
 labels: ["feature-request"]
 
 body:
