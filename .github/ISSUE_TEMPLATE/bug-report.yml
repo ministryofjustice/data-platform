@@ -1,6 +1,6 @@
 name: Bug Report
-description: File a bug report
-title: "[Bug]:"
+description: Create a bug report
+title: ""
 labels: ["bug"]
 
 body:
@@ -19,7 +19,7 @@ body:
       description: Where the bug was identified
       options:
         - External (reported by user, partner team, etc.)
-        - Internal (found by AP/DPS team, monitoring, or automated tests)
+        - Internal (found by a member of a Justice Data Platform team, monitoring, or automated tests)
     validations:
       required: true
   - type: textarea

@@ -1,6 +1,6 @@
 name: Story
 description: Create a Story
-title: "[Story]:"
+title: ""
 labels: ["story"]
 
 body:
