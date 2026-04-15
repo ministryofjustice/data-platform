@@ -30,7 +30,7 @@ body:
         - [ ] Task 3
         - [ ] Task 4
   - type: textarea
-    id: figama-prototype-link
+    id: figma-prototype-link
     attributes:
       description: Please add a link to the Figma prototype if available.
       label: Figma Prototype Link
