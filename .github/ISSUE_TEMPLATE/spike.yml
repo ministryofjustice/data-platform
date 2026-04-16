@@ -1,6 +1,6 @@
 name: Spike
 description: Create a Spike
-title: ""
+title: "Title:"
 labels: ["spike"]
 
 body:
