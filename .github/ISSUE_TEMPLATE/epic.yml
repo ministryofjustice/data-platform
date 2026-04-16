@@ -1,6 +1,6 @@
 name: Epic
 description: Create an Epic
-title: "Title:"
+title: "Epic:"
 labels: ["epic"]
 
 body:

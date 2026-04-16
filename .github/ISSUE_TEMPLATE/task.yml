@@ -1,6 +1,6 @@
 name: Task
 description: Create a Task
-title: "Title:"
+title: "Task:"
 labels: ["task"]
 
 body:
