@@ -2,9 +2,9 @@
   "name": "data-platform",
   "image": "ghcr.io/ministryofjustice/devcontainer-base:latest",
   "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker": {},
-    "ghcr.io/devcontainers/features/github-cli": {},
-    "ghcr.io/ministryofjustice/devcontainer-feature/astral": {}
+    "ghcr.io/devcontainers/features/docker-in-docker:": {},
+    "ghcr.io/devcontainers/features/github-cli:": {},
+    "ghcr.io/ministryofjustice/devcontainer-feature/astral:": {}
   },
   "customizations": {
     "vscode": {
@@ -14,6 +14,7 @@
         "GitHub.copilot-chat",
         "GitHub.vscode-github-actions",
         "GitHub.vscode-pull-request-github",
+        "hediet.vscode-drawio",
         "streetsidesoftware.code-spell-checker"
       ],
       "settings": {
