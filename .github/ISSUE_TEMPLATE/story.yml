@@ -2,6 +2,7 @@ name: Story
 description: Create a Story
 title: "Story:"
 labels: ["story"]
+type: "Story"
 
 body:
   - type: markdown

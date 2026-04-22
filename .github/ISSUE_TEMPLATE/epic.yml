@@ -2,6 +2,7 @@ name: Epic
 description: Create an Epic
 title: "Epic:"
 labels: ["epic"]
+type: "Epic"
 
 body:
   - type: markdown
