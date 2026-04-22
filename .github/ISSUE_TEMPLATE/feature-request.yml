@@ -2,6 +2,7 @@ name: Feature Request
 description: Create a Feature Request
 title: "Feature:"
 labels: ["feature-request"]
+type: "Feature Request"
 
 body:
   - type: textarea

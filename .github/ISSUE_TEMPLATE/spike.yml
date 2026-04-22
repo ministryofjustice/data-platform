@@ -2,6 +2,7 @@ name: Spike
 description: Create a Spike
 title: "Spike:"
 labels: ["spike"]
+type: "Spike"
 
 body:
   - type: markdown

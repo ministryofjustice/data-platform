@@ -2,6 +2,7 @@ name: Frontend Design Implementation
 description: Create a new Frontend Design Implementation
 title: "FDI:"
 labels: ["frontend-design-implementation"]
+type: "Frontend Design Implementation"
 
 body:
   - type: markdown
