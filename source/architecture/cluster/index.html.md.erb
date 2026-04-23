@@ -3,3 +3,165 @@ title: Cluster
 ---
 
 # <%= current_page.data.title %>
+
+The cluster runs Amazon EKS as the platform control plane for Data Platform workloads. It uses private subnets, managed security controls, workload identity, and policy enforcement to provide a secure and standardised Kubernetes runtime across all environments.
+
+All cluster changes are managed through infrastructure as code with pinned module versions and centrally defined configuration.
+
+## Environments
+
+Each environment has a dedicated cluster. Environment-specific settings are managed in `configuration/cluster.yml`.
+
+## Cluster design
+
+The platform provisions EKS using `terraform-aws-eks`, with:
+
+- Private subnets for nodes and control plane placement
+- API authentication mode configured for EKS access entries
+- Cluster secrets encryption enabled
+- CloudWatch control plane logs enabled (`api`, `audit`, `authenticator`, `controllerManager`, `scheduler`)
+- Access entries for infrastructure and operations roles
+
+As currently configured, the EKS endpoint allows both private and public access, with access controlled through IAM and network controls.
+
+## Trust boundaries
+
+The architecture follows clear trust boundaries:
+
+- **AWS account and VPC boundary** – isolates each environment in dedicated account and network resources.
+- **Control plane boundary** – EKS control plane is managed by AWS, with access controlled by EKS access entries and IAM principals.
+- **Node boundary** – worker nodes run in private subnets with explicit security group ingress and encrypted storage.
+- **Namespace and workload boundary** – platform services are isolated into dedicated namespaces and use scoped service identities.
+- **External integration boundary** – ingress, DNS, and certificate flows are controlled through dedicated controllers and Route 53 scoped permissions.
+
+## Compute and node provisioning
+
+### System node group
+
+As currently configured, a managed node group provides baseline system capacity:
+
+- Minimum size: `3`
+- Desired size: `3`
+- Maximum size: `10`
+- Instance type: `m8g.large`
+- OS: Bottlerocket ARM64
+- IMDSv2 required
+- Automatic node repair enabled
+
+System nodes are tainted and labelled so platform components are scheduled predictably.
+
+### Karpenter
+
+Karpenter is deployed for dynamic workload scaling, with:
+
+- Dedicated IAM and node roles
+- Dedicated SQS interruption queue with KMS encryption
+- Separate Helm chart for cluster-specific Karpenter configuration
+- Node class tags aligned to platform conventions
+
+## Networking inside the cluster
+
+Cilium is deployed as the cluster CNI and service networking layer.
+
+The platform also deploys and manages:
+
+- Gateway API CRDs
+- AWS Load Balancer Controller and its CRDs
+- Shared services gateway configuration
+- External DNS for Route 53 integration
+
+Ingress and service exposure are controlled through cluster configuration and environment-specific Route 53 zones.
+
+## Storage
+
+The default storage class is `gp3` with encryption enabled and `WaitForFirstConsumer` binding. The legacy `gp2` default annotation is explicitly removed.
+
+EBS and EFS CSI drivers are deployed as managed EKS add-ons with dedicated workload identities.
+
+## Identity and access
+
+The cluster uses pod-level identities and service-account IAM roles to apply least-privilege access.
+
+Identity patterns include:
+
+- EKS Pod Identity for selected services, including CloudWatch observability and AWS Load Balancer Controller
+- IAM roles for service accounts for components such as:
+	- Cluster Autoscaler
+	- Prometheus
+	- Fluent Bit
+	- Cert Manager
+	- External DNS
+	- External Secrets
+	- EBS and EFS CSI drivers
+	- AWS network flow monitor agent
+
+## Platform services and add-ons
+
+The cluster deploys core platform services through Helm, including:
+
+- Cilium
+- CoreDNS
+- Kyverno
+- Cluster Autoscaler
+- Karpenter
+- AWS Load Balancer Controller
+- AWS CloudWatch Observability
+- Prometheus stack
+- Fluent Bit
+- Cert Manager and issuer configuration
+- External DNS
+- External Secrets and secret stores
+- KEDA
+
+Versioning for EKS add-ons, CRDs, and Helm charts is managed centrally per environment.
+
+## Security
+
+Security controls include:
+
+- Dedicated node security group with explicit intra-node and control-plane-to-node rules
+- NodePort access scoped to expected firewall subnet CIDR ranges
+- KMS encryption for:
+	- EKS and application log groups
+	- EBS volumes
+	- Prometheus workspace and logs
+	- Karpenter SQS queue
+	- Shared Secrets Manager usage
+- Kyverno policy enforcement for privileged capability controls, with explicit allowlists where justified
+- Service-linked IAM roles for Auto Scaling and EC2 Spot
+
+## Threats and mitigations
+
+This section summarises key threat areas and current mitigations.
+
+| Threat area                        | Mitigation in current design |
+| ---------------------------------- | ---------------------------- |
+| Excessive pod permissions          | IAM roles for service accounts and EKS Pod Identity |
+| Lateral movement between workloads | Namespace separation, controller-specific service identities, and policy controls |
+| Unencrypted data at rest           | Customer-managed KMS keys for logs, storage, queues, and monitoring services |
+| Uncontrolled privileged workloads  | Kyverno policies with explicit capability allowlists and justifications |
+| Ingress misconfiguration           | Managed ingress controllers, Gateway API resources, and Route 53 scoped permissions |
+
+## Observability and monitoring
+
+Observability is built into the cluster baseline:
+
+- CloudWatch log groups for cluster, application, and container insights logs
+- `365` day retention with KMS encryption for all defined log groups
+- Prometheus workspace with encrypted storage and CloudWatch logging
+- AWS network flow monitor associated with the EKS cluster resource
+- Fluent Bit and CloudWatch observability agents deployed in-cluster
+
+## DNS and certificates
+
+Route 53 zones are configured per environment and used by External DNS and certificate automation.
+
+Cert Manager is deployed with DNS integration for managed certificate issuance in platform domains.
+
+## Diagram
+
+Add a cluster architecture diagram in this section once available.
+
+## Source code
+
+<https://github.com/ministryofjustice/modernisation-platform-environments/tree/main/terraform/environments/data-platform/cluster>
