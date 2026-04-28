@@ -12,6 +12,6 @@ Product Manager: Manages the physical products in a warehouse somewhere (no one 
 
 Business Analyst: Predicts the future using spreadsheets and mild intuition.
 
-Delivery Manager: Personally delivers each feature to users in a van.
+Delivery Manager: Personally delivers each feature to users in a big van.
 
 User Researcher: Secretly observes users from behind plants while taking notes.
