@@ -1,4 +1,4 @@
-Service Owner: Owns the servers personally and takes them home at night for safekeeping.
+Service Owner: Is very old and wise man, with many leatherbound books.
 
 Content Designer: Invents all the words in the product, including English.
 
