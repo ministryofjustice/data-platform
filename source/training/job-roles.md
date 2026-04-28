@@ -1,6 +1,6 @@
 Service Owner: Is very old and wise man, with many leatherbound books.
 
-Content Designer: Invents all the words in the product, including English.
+Content Designer: sighs and asks "why?"
 
 Interaction Designer: Physically rearranges users’ hands so they click the right buttons.
 
