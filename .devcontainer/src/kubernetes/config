@@ -1,0 +1,119 @@
+---
+apiVersion: v1
+kind: Config
+preferences: {}
+
+####################################################################################################
+#
+# Changes to this file will be overwritten when rebuilding the devcontainer.
+#
+####################################################################################################
+
+# Data Platform
+# current-context: arn:aws:eks:eu-west-2:013433889002:cluster/data-platform-development
+# current-context: arn:aws:eks:eu-west-2:259787491607:cluster/data-platform-test
+# current-context: arn:aws:eks:eu-west-2:386657846332:cluster/data-platform-preproduction
+# current-context: arn:aws:eks:eu-west-2:209019631331:cluster/data-platform-production
+
+clusters:
+  - name: arn:aws:eks:eu-west-2:013433889002:cluster/data-platform-development
+    cluster:
+      certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJQ1FybmlXS21Qc293RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TmpBeU1EVXlNakUxTWpKYUZ3MHpOakF5TURNeU1qSXdNakphTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUURRWFZoK3dNM1NLWW9UNWExMmFjVzg2NHhiTE40YlVXTG9HUG8rNUE0WEJiaEVONG5Ud2U0bmVRNHAKWUhCWktVRUhNbWlvRU11Sks4OWtNQSs0bzl4Q2FVS3hVaUc0a1ZMSVFNM2EvN0VPc244K0pZUXdCcjZmazhRbApPbUsrV2FDWmpFYVM3RGRKNDhnd29Fa211dU9CZHdNcXg4RHVOVFIyNVVKa1ZaSVZldndOdzY2emlrblZMY09JCnJzdklSSFNJT1JBU01KbFg2WmM2d3RySzFDNklZanRiRnBmeU9hMC9JczRpWDVOeUF3YzIwOXlCYmhJVytzdFIKb1E0QlZHRkJrZWkzOEJWUlpHRTNBa2o0WlNuMzdGdVdPdUxEY2dxS3RmL0psUGsrbEtCTGpUSW5OM2Z2VFY2UQpVcFd1REZnNkpFeUZYYnBydXViemlBV0tPQXliQWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJTNGc2ZFZDQ0UzMnRXMTVCdDIreW5oTFRwR0FEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQWVpT2pWWVozOApxQW1naVNaWTljRXlhK3llRVp0V2cvSGVYVDloZS9WWThPb2YybXBDb0prWEQyMVQzSFRrZlM4NlEzQk5VUnFCCmV1MEh4ZFR5S2VtSS9tWGk4dlBWUWZpRzc4bU5HZ1NianNldjNuZ1U3KzBXVXdWZGlWeE1XdkdudjZORVYva3UKTHpsMjNnTFcrUnJlRW1kTUFaTy9iRm5aQWc2TFNvdmkrSEJRL0RWdENZUlFuV3N3aFZoQjhERi9XWUpidnF3UQpNZHJCNUxyZjFQS05rNXd0TTcwbys0VmZmZWk1YVpON2cySWN3Q0hEazQxRDhFNkEzdE96Vktsb0hsK2lQVTRaCm1UdXZpaWtuZnZEZ21rZ1FnVTVVb2RMSmhRWlBSYXFWc2lldU5LazlBZmFQSzkzTWZqTjA3bitKNzZPRi9ZS3EKS1NGdnNja2xOZk5OCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+      server: https://6DEB8DAAB19F7A5C9762F063B663954A.gr7.eu-west-2.eks.amazonaws.com
+
+  - name: arn:aws:eks:eu-west-2:259787491607:cluster/data-platform-test
+    cluster:
+      certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJWi9KcE8wWjUrQ293RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TmpBeU1EWXhOalU1TWpWYUZ3MHpOakF5TURReE56QTBNalZhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUNjS0hpZHgrMFdSeUcxZlJ5WWoxcDBMV1lwa1AvdmJqSGlrTVV5eWdqT0VwWlFKQllLMzNISVFOR0cKa1VzOTRxamhGTWZYbSt5bzNEMmN3RXUzNU1VL1Y4cFRtTTdMcSt0bW5tNkJhS0NnWHd1c3BGWXUzcmFZM29UcApDNGJGN09qQWpRNlhJNjYzSE1SZ3hnRkQxaXpYRzBibitFdzVJVFR3NEl3cjV6R2lBNnBxYlVXc25Ea2pRa1RrCklkSUlSM1ErenZKZk0vbFlQdDZPR1c5d1RDd1RyaFpyQVhMR1lwVFE3ZTdaYU12dHpYOHVpd2h1ZVVKZmFDYVEKUkdRa3RSRVN3ano4cFlCem9FME1tOUZ2ZHFTZ0JjK1F3cmRxaXl1c0ZVQ2FTRmZBOEFkcDZIcndlZ3A2U25CagpqendEcWpIcEZJMjZ4YjBlcVRtVVNQWlZ1NVhiQWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUR2N3Yjg2OUhBNk94Umo1RlpFQk03SUZvUCtUQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQXhtR2VYOEVwRgpRVFl6clFnY25ndnQ5NmZoeUoxT3RTUDNUWTNCQ201NEI1S2o0U1B2UWcxTzdnWXVpeEZYaXd3MGV1NE42a2VsCm5kbXc0SVNpc3FoVlJzbWE4Z3VyMU1IZFl0NnNGRGFhek9DaGVzcXdBd3ZFSGJtTG12RnNGbVM2aENKaVJveGEKWDJySTJURS91YnNPTGU5L2xhbHBjQXVlZkFZaFFXT0JzS0F5YkR4aTAvZGJQMFNIOU9WZU9JTWZNTlovN28yeQpvOElQMk53Q2g3TkJWODN5K1dQQXo1SGhONThvVitkM3BjdHU3ZGRCUVZnS0hKckNWUXVlbWkyRFFuUHBMUEFLClF4Q0s5M1VGVy9PVkVRa3AvbmMwNkZyeUx3a3lEaEZrRnFLd3dCS0NaY1Z6UzlUalFhenE5T3ZHK0xwdklhY0gKNE9mbENxRzRJQkZwCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+      server: https://B1BF345F6CDFC88661B066C06E07F793.gr7.eu-west-2.eks.amazonaws.com
+
+  - name: arn:aws:eks:eu-west-2:386657846332:cluster/data-platform-preproduction
+    cluster:
+      certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJTTZ6RS9oc2crN0F3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TmpBeU1Ua3lNVE13TVRSYUZ3MHpOakF5TVRjeU1UTTFNVFJhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUURGSjlaOUhnOERneHJ4OVVIeGtjV0dQU2F0TVFIUU9XTU5TWWgwWGEzUXJma01NaVBNUU05RDdsVGoKT2RVN01Ua2Q3SUU2aXZ2anZjSGlOWTIxQ0l4NitsQkFLRkt0THh2cXZpMTB3eitwYXZEanczd2s0dVJZZFJBeAozVldWUjV6bU92aS9ycldzVUZPNUtsNXlMeitGdWRYTEwxMDQ1RGYrNkwyN3ZMaDZXbmFoY1hKNkNDN3c2S1Z2CjNSK09pZTh5M3lYY05WVjlkSi9GckJ0Ri9HVDZOSlpjbWxZNENhWmRUWUJoOWFzYnNpT3ZWU0ZRM1NYUVRhbDcKU0FDUkJQRHN3by9EN0s5T1ZDbGp1Vk9neVg4OWVjTTBseWtYU29hcFFmaUY2ZVNHWHczeitvbFlvb0ViaUZiVwpjTmVvK1NXZ1d5bVdWdUlDMllSYVVYdStwNlJOQWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUazVVS1A0OGJmeDBlMEQ2VmlhVWJlZit4TjNEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRRERHWDF1dGRiTgpNSXp3d2F2ZVlwU2tNTFQ1bnpuWVBobWlwRmxTUXFMODlmd0ZNVDBjSGsreFA2OHNYV0pjTkJ1Z1RMaDMxcTZaCldvZ3dBWVpxTU1CeVplSk9XUFdtem12ZU1ZVFNaVlV3aFNZWEdhaFVrOUlZMGJnTEthZmxKQkVrUStLZHlKczkKNzRsWDhlTzJGVEdGck1vd2JaTmJpYUx2dkpQRktYZXIrVFdzT090bEJVWGllaDNHdndqdUU1dG4wVzRNQ3RGbgpxbTlJQldSWFRselJkY3RsVFpVNG5qSDJOL2VZZVUzQkd6TDNnWXZwbE1KUGFnT3ZJdWM1QTFvSlhyMmJmQURzCjlGc21uMnVRL2VweEEwdTdGN0QxcHNDRGNOUDlscndsbllMdnY2d3BLVklWZjk3ZFdTRm5mSjZydjdicDVSWUIKRlcwVkFReTE2REFjCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+      server: https://ACD0D0E3FA146E79CFB0A834438B8E20.gr7.eu-west-2.eks.amazonaws.com
+
+  - name: arn:aws:eks:eu-west-2:209019631331:cluster/data-platform-production
+    cluster:
+      certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJQXluWG5GdWNxbU13RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TmpBeU1Ua3lNakE0TlROYUZ3MHpOakF5TVRjeU1qRXpOVE5hTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUN2S0d2Yng3ZHZjTjM0REp1K1p2QnhERkloa0h0elFXQUJmaGgzcWFjWTJ6SXBnK0RtdGhGSHZiODkKdDlxeVl4RUMyTEIrVnVWbHNQRjBxWWNmNjIwRTlJZnpQY3F0bkZpMWhYTnE0TG9FMGRoREZCbENETUpxVVI2VApCVGVOUlRmcmpmKzVId0dCTG1rMFArSjNZanY0TmpmN0tveFJ3aEF1U2JGWkdDRjhBZVNlTXhkQTB3cENmUUFBCjdLRkZQOWdDcWN4aGdIb2pReVR0NVNiaUZTZUd6d2hUMW1HbDhYdXpGNXJEU3phZ2Y1cGk4TzhjUndmbGJVM1oKV3FPQ3RtdS9PZEIwU29lN04vZG11ZHM5Vk9HMDdHZnFwTFdkaVplS01xTFp5ZzRBU0hDM1VRMmNReGJJeGJ5bAptMUVuMCtxUng0cUNOaTNheitaOVRoTnArRjZiQWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJSbWwvNlo3VWlDKzhQbkNJdlNVNyszdmkxVGp6QVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQXVLbXVqcW5WQQpMNXRhS21tR1E2c1dTQzlZV1NYeHliZ3AvcWV1T0RRQ0orKzBOQXUxUUQvakllemdOT3JkS1RlRGhVUW9sVXQzCnh6QXR2ckt5eU5wUGhsM0NOTUdvSDFhMWdOQ2k5Wk9lSzAzTUVUQVdjdENSR2JKSHZBRU8vREE2QmJRQUdwVGIKU2ozY2FsT3FFUUFlYzlCQ2xhS3NCZk4yWUFpRmpGTU03QkVkUXY3a1FOTGtuRSsxWWpsWCs4U3c1S2JOTW9FWApvL1J1aHlHWWlBUW1ZVlZZT2p3Y2IxRUtkeEZQTnZVdWg4ZVVWdmNPK2dHcWFjZGpRS0U2QmNTTDVObkdmYjNECmdDejI0cjZ6Ujh5Z0pMcUdsbmVxekp2SWVJM3ZSOER6MFNoZjhiNmhqM0FUY08yR3VjK2lWQTM0amhXYXdEUzYKaGhla0ROVGdTdHlGCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+      server: https://FC55ADCAEC4333E590B10936490923E0.gr7.eu-west-2.eks.amazonaws.com
+
+users:
+  - name: arn:aws:eks:eu-west-2:013433889002:cluster/data-platform-development
+    user:
+      exec:
+        apiVersion: client.authentication.k8s.io/v1beta1
+        command: /usr/local/bin/aws-sso-eks-auth
+        env:
+          - name: AWS_SSO_PROFILE
+            value: "data-platform-development:platform-engineer-admin"
+          - name: AWS_REGION
+            value: "eu-west-2"
+          - name: AWS_EKS_CLUSTER_NAME
+            value: "data-platform-development"
+        interactiveMode: IfAvailable
+        provideClusterInfo: false
+
+  - name: arn:aws:eks:eu-west-2:259787491607:cluster/data-platform-test
+    user:
+      exec:
+        apiVersion: client.authentication.k8s.io/v1beta1
+        command: /usr/local/bin/aws-sso-eks-auth
+        env:
+          - name: AWS_SSO_PROFILE
+            value: "data-platform-test:platform-engineer-admin"
+          - name: AWS_REGION
+            value: "eu-west-2"
+          - name: AWS_EKS_CLUSTER_NAME
+            value: "data-platform-test"
+        interactiveMode: IfAvailable
+        provideClusterInfo: false
+
+  - name: arn:aws:eks:eu-west-2:386657846332:cluster/data-platform-preproduction
+    user:
+      exec:
+        apiVersion: client.authentication.k8s.io/v1beta1
+        command: /usr/local/bin/aws-sso-eks-auth
+        env:
+          - name: AWS_SSO_PROFILE
+            value: "data-platform-preproduction:platform-engineer-admin"
+          - name: AWS_REGION
+            value: "eu-west-2"
+          - name: AWS_EKS_CLUSTER_NAME
+            value: "data-platform-preproduction"
+        interactiveMode: IfAvailable
+        provideClusterInfo: false
+
+  - name: arn:aws:eks:eu-west-2:209019631331:cluster/data-platform-production
+    user:
+      exec:
+        apiVersion: client.authentication.k8s.io/v1beta1
+        command: /usr/local/bin/aws-sso-eks-auth
+        env:
+          - name: AWS_SSO_PROFILE
+            value: "data-platform-production:platform-engineer-admin"
+          - name: AWS_REGION
+            value: "eu-west-2"
+          - name: AWS_EKS_CLUSTER_NAME
+            value: "data-platform-production"
+        interactiveMode: IfAvailable
+        provideClusterInfo: false
+
+contexts:
+  - name: arn:aws:eks:eu-west-2:013433889002:cluster/data-platform-development
+    context:
+      cluster: arn:aws:eks:eu-west-2:013433889002:cluster/data-platform-development
+      user: arn:aws:eks:eu-west-2:013433889002:cluster/data-platform-development
+
+  - name: arn:aws:eks:eu-west-2:259787491607:cluster/data-platform-test
+    context:
+      cluster: arn:aws:eks:eu-west-2:259787491607:cluster/data-platform-test
+      user: arn:aws:eks:eu-west-2:259787491607:cluster/data-platform-test
+
+  - name: arn:aws:eks:eu-west-2:386657846332:cluster/data-platform-preproduction
+    context:
+      cluster: arn:aws:eks:eu-west-2:386657846332:cluster/data-platform-preproduction
+      user: arn:aws:eks:eu-west-2:386657846332:cluster/data-platform-preproduction
+
+  - name: arn:aws:eks:eu-west-2:209019631331:cluster/data-platform-production
+    context:
+      cluster: arn:aws:eks:eu-west-2:209019631331:cluster/data-platform-production
+      user: arn:aws:eks:eu-west-2:209019631331:cluster/data-platform-production
