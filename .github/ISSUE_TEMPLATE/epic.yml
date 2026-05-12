@@ -116,7 +116,7 @@ body:
         - [Criteria 2]
         - [Criteria 3]
 
-        (Use for larger initiatives; skip for 
+        (Use for larger initiatives; skip for
         routine epics like maintenance ones.)
       placeholder: |
         -
