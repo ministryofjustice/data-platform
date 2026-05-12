@@ -1,18 +1,20 @@
 ---
 host: https://manual.data-platform.service.justice.gov.uk
 show_govuk_logo: false
-service_name: Data Platform Manual
+service_name: Data Platform Services
 service_link: /
 enable_search: true
+multipage_nav: true
 collapsible_nav: true
-max_toc_heading_level: 3
+max_toc_heading_level: 2
 prevent_indexing: true
 show_contribution_banner: true
 github_repo: ministryofjustice/data-platform
 github_branch: main
-full_service_name: Data Platform Manual
+full_service_name: Data Platform Services
 show_expiry: true
 show_review_banner: true
 header_links:
+  SharePoint: https://justiceuk.sharepoint.com/sites/MoJDataPlatform/ 
   User Guide: https://user-guide.data-platform.service.justice.gov.uk
 ga4_tracking_id: G-ELK7K8XE1M
