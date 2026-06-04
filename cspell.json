@@ -5,21 +5,27 @@
   "ignorePaths": [".devcontainer/src/kubernetes/config"],
   "words": [
     "cooldown",
+    "elasticache",
+    "entra",
+    "figma",
     "govuk",
+    "graviton",
     "hairpinned",
     "hediet",
+    "karpenter",
+    "kubeconfig",
+    "litellm",
     "lycheeverse",
     "ministryofjustice",
     "multipage",
     "nxdomain",
     "openssf",
-    "timebox",
-    "venv",
+    "tasklist",
     "textlint",
     "tfstate",
-    "zizmor",
-    "tasklist",
-    "figma",
-    "kubeconfig"
+    "timebox",
+    "valkey",
+    "venv",
+    "zizmor"
   ]
 }
