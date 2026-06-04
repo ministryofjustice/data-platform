@@ -25,3 +25,4 @@ indent_style = tab
 [.devcontainer/devcontainer-lock.json]
 end_of_line = unset
 insert_final_newline = unset
+
