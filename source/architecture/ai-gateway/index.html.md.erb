@@ -1,0 +1,232 @@
+---
+title: AI Gateway
+---
+
+# <%= current_page.data.title %>
+
+> This document describes the intended architecture and operational model for the AI Gateway component. Configuration values such as instance sizes, replica counts, engine versions, scaling limits, retention periods, and other implementation details may change over time. The [Terraform and Helm configuration in `modernisation-platform-environments`](https://github.com/ministryofjustice/modernisation-platform-environments/tree/main/terraform/environments/data-platform/ai-gateway) is the source of truth.
+
+The `ai-gateway` Terraform component builds the AI Gateway platform within the Data Platform. In `modernisation-platform-environments`, this includes:
+
+- Creation of the `ai-gateway` component (replacing `llm-gateway`)
+- Updates to the `cluster` component to support networking requirements
+
+The Terraform approach used throughout the Data Platform has been adopted here. Where possible, community-maintained `terraform-aws-modules` are used to provide consistency with existing Data Platform infrastructure.
+
+---
+
+## Architecture overview
+
+The AI Gateway provides a centrally managed LiteLLM deployment running on the Data Platform EKS cluster.
+
+The platform consists of:
+
+- LiteLLM API deployment for model inference traffic
+- LiteLLM Admin deployment for platform administration
+- Aurora PostgreSQL for persistent application state
+- ElastiCache (Valkey) for cross-replica coordination
+- AWS Application Load Balancer (ALB) using Kubernetes Gateway API
+- AWS WAF for ingress protection
+- Microsoft Entra ID for administrator authentication
+- AWS Secrets Manager and External Secrets Operator for secret distribution
+
+---
+
+## Aurora PostgreSQL
+
+Aurora PostgreSQL serves as the primary database for LiteLLM.
+
+### Purpose
+
+Aurora stores:
+
+- LiteLLM configuration
+- Virtual key management
+- User and team metadata
+- Audit and operational data
+
+### Security
+
+- Encryption at rest using a dedicated KMS key
+- Database credentials generated and managed through Terraform
+- Deployment into private EKS data subnets
+- Network access restricted to workloads within the platform VPC
+
+### Resilience
+
+Environment-specific backup, deletion protection and recovery settings are applied according to platform requirements.
+
+### Observability
+
+CloudWatch log exports are enabled to support operational troubleshooting and monitoring.
+
+### Credentials
+
+Connection details are stored in AWS Secrets Manager and synchronised into Kubernetes using External Secrets Operator.
+### IAM database authentication
+
+IAM database authentication is currently out of scope as there are limited benefits compared with the existing approach.
+
+---
+
+## ElastiCache (Valkey)
+
+LiteLLM uses ElastiCache (Valkey) as a shared coordination layer between application replicas.
+
+### Purpose
+
+Valkey is used for:
+
+- Cross-replica router coordination
+- Shared runtime state
+- Internal LiteLLM coordination requirements
+
+Response caching is intentionally disabled.
+
+### Security
+
+- Encryption at rest
+- TLS encryption in transit
+- Authentication via Secrets Manager managed credentials
+- Deployment into private EKS data subnets
+- Access restricted to workloads within the platform VPC
+
+### Secrets
+
+Connection information is published to AWS Secrets Manager and synchronised into Kubernetes using External Secrets Operator.
+---
+
+## LiteLLM deployments
+
+LiteLLM is deployed as two independent Helm releases within the same namespace.
+
+### API deployment
+
+Responsible for:
+
+- Model inference requests
+- Customer application traffic
+- Database migrations
+
+### Admin deployment
+
+Responsible for:
+
+- Platform administration
+- User and key management
+- Operational configuration
+
+The Admin deployment shares the same database as the API deployment but does not perform schema migrations.
+
+### Scaling
+
+The API deployment supports horizontal scaling through Kubernetes Horizontal Pod Autoscaling (HPA).
+
+The Admin deployment is intentionally kept as a low-volume administrative workload.
+
+---
+
+## Networking
+
+The AI Gateway uses the Kubernetes Gateway API with the `aws-alb` GatewayClass to provision an internet-facing AWS Application Load Balancer.
+
+### Traffic flow
+
+```text
+Client
+  ↓
+Route 53
+  ↓
+Application Load Balancer (HTTPS)
+  ↓
+AWS WAF
+  ↓
+Kubernetes Services
+  ↓
+LiteLLM Pods
+```
+
+### DNS and TLS
+
+- Dedicated Route 53 hosted zone
+- Wildcard ACM certificate
+- TLS termination at the ALB
+- Modern TLS security policies enforced
+
+### Gateway API
+
+Ingress is managed through Kubernetes Gateway API resources:
+
+- Gateway
+- HTTPRoute
+- GatewayClass
+
+This provides a Kubernetes-native approach to ALB management.
+
+### Routing
+
+Separate routes are maintained for:
+
+- Public API traffic
+- Administrative traffic
+
+Administrative traffic is isolated onto its own hostname.
+
+### WAF protection
+
+AWS WAF protects all ingress traffic.
+
+Controls include:
+
+- Platform allowlists
+- Administrative allowlists
+- AWS managed protection rules
+- Explicit blocking of non-public operational endpoints
+
+### Backend services
+
+Aurora PostgreSQL and ElastiCache are deployed within private network boundaries and are only accessible from authorised workloads.
+
+---
+
+## Karpenter scheduling
+
+LiteLLM workloads are scheduled onto dedicated Karpenter-managed node pools.
+
+### Benefits
+
+- Automatic infrastructure scaling
+- Automatic node consolidation
+- Efficient utilisation of AWS Graviton processors
+- Reduced operational overhead compared with fixed node groups
+
+---
+
+## Microsoft Entra ID single sign-on (SSO)
+
+The AI Gateway integrates with Microsoft Entra ID for administrator authentication.
+
+### Benefits
+
+- Centralised identity management
+- Existing organisational access controls
+- Reduced credential management overhead
+- Consistent administrative experience
+
+---
+
+## Secrets management
+
+Secrets are managed using:
+
+- AWS Secrets Manager
+- External Secrets Operator
+
+This approach provides:
+
+- Centralised secret storage
+- Automated Kubernetes secret synchronisation
+- Reduced manual secret handling
+- Consistent secret lifecycle management
+
+---
