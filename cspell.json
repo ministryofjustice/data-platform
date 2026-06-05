@@ -20,12 +20,12 @@
     "ministryofjustice",
     "nxdomain",
     "openssf",
+    "signingkey",
     "tasklist",
     "textlint",
     "tfstate",
     "timebox",
     "toolkits",
-    "signingkey",
     "valkey",
     "venv",
     "zizmor"
