@@ -87,6 +87,29 @@ You can manage SSH credentials locally on macOS or via 1Password:
 
 Once you've configured SSH, you can authenticate with GitHub and sign your commits, ensuring your contributions are verified.
 
+#### SSH troubleshooting
+
+If you encounter issues with SSH authentication and commit signing, please ensure the following options are present:
+
+`~/.zshrc`:
+
+```bash
+export SSH_AUTH_SOCK=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
+```
+
+`~/.gitconfig`:
+
+```ini
+[user]
+  name = <Your name>
+  email = <Your email>
+  signingkey = <Your public SSH key>
+[gpg]
+  format = ssh
+[commit]
+  gpgsign = true
+```
+
 ### GitHub CLI setup
 
 To authenticate the GitHub CLI with your GitHub account, run the following command:
@@ -146,7 +169,7 @@ Provide a clear and concise description of the changes in the pull request, alon
 
 Each repository may have its own contributing guidelines, so make sure to review those too.
 
-## AI assisted coding
+## AI-assisted coding
 
 The Ministry of Justice has enabled GitHub Copilot Enterprise. You can request access using [this issue template](https://github.com/ministryofjustice/octo-access/issues/new?template=github-copilot-access-request.yml).
 
