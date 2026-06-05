@@ -1,9 +1,8 @@
-name: data-platform
+---
 version: 1.0.0
-description: APM project for data-platform
-author: Data Platform Engineering
+name: data-platform
 targets:
   - copilot
 dependencies:
   apm:
-    - ministryofjustice/data-platform-ai-toolkit/toolkits/universal#0.0.1
+    - ministryofjustice/data-platform-ai-toolkit/toolkits/universal#main
