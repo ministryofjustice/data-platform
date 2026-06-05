@@ -5,6 +5,9 @@ set -euo pipefail
 # Install pre-commit hooks
 uvx pre-commit install
 
+# Install apm dependencies
+apm install --frozen
+
 # Install kubeconfig and AWS SSO EKS auth helper
 install --mode=0600 .devcontainer/src/kubernetes/config /home/vscode/.kube/config
 
