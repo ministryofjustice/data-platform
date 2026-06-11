@@ -89,7 +89,7 @@ During your onboarding, you'll be added to the appropriate teams via [`ministryo
 
 > We recommend using 1Password to manage SSH keys.
 
-You can manage SSH credentials locally on macOS or via 1Password:
+You can set up SSH credentials locally on macOS or via 1Password:
 
 - macOS
   - [Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent?platform=mac)
@@ -100,7 +100,32 @@ You can manage SSH credentials locally on macOS or via 1Password:
   - [Request access](https://cloud-optimisation-and-accountability.justice.gov.uk/documentation/operations-engineering-legacy/operations-engineering-user-guide/password-management/1password.html#request-access) via Operations Engineering
   - Follow 1Password's "[Getting started](https://developer.1password.com/docs/ssh/get-started)" documentation to complete the setup
 
-Once you've configured SSH, you can authenticate with GitHub and sign your commits, ensuring your contributions are verified.
+Once you've set up SSH, you'll also need to configure the following settings on your host machine.
+
+#### Required SSH settings for dev containers
+
+To use SSH authentication and commit signing in a dev container, you must set the following options.
+
+If you're using 1Password, add the following to `~/.zshrc`:
+
+```bash
+export SSH_AUTH_SOCK=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
+```
+
+`~/.gitconfig`:
+
+```ini
+[user]
+  name = <Your name>
+  email = <Your email>
+  signingkey = <Your public SSH key e.g. ssh-ed25519 AAAA...>
+[gpg]
+  format = ssh
+[commit]
+  gpgsign = true
+```
+
+After this is configured, you can authenticate with GitHub and sign commits from inside the dev container.
 
 ### GitHub CLI setup
 
@@ -116,13 +141,13 @@ Follow the prompts to complete authentication.
 
 ### Cloning repositories
 
-You can clone repositories using the GitHub CLI or Git directly. Using the GitHub CLI:
+You can clone repositories using the GitHub CLI:
 
 ```bash
 gh repo clone ministryofjustice/data-platform
 ```
 
-or using Git:
+Or using Git directly:
 
 ```bash
 git clone git@github.com:ministryofjustice/data-platform.git
@@ -134,7 +159,7 @@ For example:
 
 ![Reopen in Container Prompt](images/developing/reopen-in-container.gif)
 
-### Open in Dev Container
+### Open in dev container
 
 Alternatively, you can open a repository directly in a development container using the "Open in Dev Container" button found in each repository's readme.
 
@@ -161,7 +186,7 @@ Provide a clear and concise description of the changes in the pull request, alon
 
 Each repository may have its own contributing guidelines, so make sure to review those too.
 
-## AI assisted coding
+## AI-assisted coding
 
 The Ministry of Justice has enabled GitHub Copilot Enterprise. You can request access using [this issue template](https://github.com/ministryofjustice/octo-access/issues/new?template=github-copilot-access-request.yml).
 
