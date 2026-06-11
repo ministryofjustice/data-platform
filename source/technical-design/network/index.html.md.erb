@@ -1,5 +1,8 @@
 ---
 title: Network
+weight: 2
+last_reviewed_on: 2026-05-08
+review_in: 12 months
 ---
 
 # <%= current_page.data.title %>
@@ -9,7 +12,6 @@ The network uses a defence-in-depth approach with deny-by-default policies. All 
 ## VPC design
 
 Each environment has a dedicated VPC with CIDR allocations from previously unallocated Analytical Platform Compute ranges:
-
 | Environment   | CIDR Block        | Notes                             |
 | ------------- | ----------------- | --------------------------------- |
 | Development   | `10.199.128.0/19` | Non-routable on corporate network |
