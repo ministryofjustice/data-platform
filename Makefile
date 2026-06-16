@@ -7,17 +7,19 @@ TECH_DOCS_GITHUB_PAGES_PUBLISHER_IMAGE_SHA ?= sha256:8b00235edfa4d1248e3cdd08c02
 
 package:
 	docker run --rm \
-	    --name tech-docs-github-pages-publisher \
-	    --volume $(PWD)/config:/tech-docs-github-pages-publisher/config \
+		--name tech-docs-github-pages-publisher \
+		--volume $(PWD)/config:/tech-docs-github-pages-publisher/config \
 		--volume $(PWD)/source:/tech-docs-github-pages-publisher/source \
+		--volume $(PWD)/config.rb:/tech-docs-github-pages-publisher/config.rb \
 		$(TECH_DOCS_GITHUB_PAGES_PUBLISHER_IMAGE)@$(TECH_DOCS_GITHUB_PAGES_PUBLISHER_IMAGE_SHA) \
 		/usr/local/bin/package
 
 preview:
 	docker run -it --rm \
-	    --name tech-docs-github-pages-publisher-preview \
-	    --volume $(PWD)/config:/tech-docs-github-pages-publisher/config \
+		--name tech-docs-github-pages-publisher-preview \
+		--volume $(PWD)/config:/tech-docs-github-pages-publisher/config \
 		--volume $(PWD)/source:/tech-docs-github-pages-publisher/source \
+		--volume $(PWD)/config.rb:/tech-docs-github-pages-publisher/config.rb \
 		--publish 4567:4567 \
 		$(TECH_DOCS_GITHUB_PAGES_PUBLISHER_IMAGE)@$(TECH_DOCS_GITHUB_PAGES_PUBLISHER_IMAGE_SHA) \
 		/usr/local/bin/preview
