@@ -1,0 +1,319 @@
+---
+title: Analytical Platform
+weight: 1
+last_reviewed_on: 2026-06-20
+review_in: 12 months
+---
+
+# <%= current_page.data.title %>
+
+## Quick start (for whoever spotted the issue)
+
+This document assumes the user has a PagerDuty account and is part of the Analytical Platform team. To use the Slack features, the user must authorise the PagerDuty application in Slack.
+
+1. Assume **Incident Lead (IL)** unless someone else is already acting.
+1. Start a single Slack thread in **#analytical-platform** with a clear title (e.g. `Airflow Autoscaling Incident 🧵`) and keep all communications in that thread.
+1. Declare the incident on the **PagerDuty Status Page** (see checklist below) and set a **Next update** time.
+1. Classify the priority (**P1–P4**) using the table below.
+1. Assign a **Comms Lead (CL)** and identify **Subject Matter Responders (SMRs)**.
+1. Create and link the incident report using the Incident Report template.
+
+---
+
+## Scope & Context
+
+**Service**
+
+Analytical Platform (ingestion, storage, compute, networking, identity, etc.)
+
+**Status visibility**
+
+- External updates via PagerDuty Status Page
+- Internal visibility via Slack
+
+**Source of truth**
+
+- Single Slack incident thread
+- Incident Report
+
+---
+
+## Incident Priority (per GDS Way)
+
+| Priority | Classification | Example | Target Response Time | Update Frequency |
+|----------|----------------|---------|----------------------|------------------|
+| **P1** | Critical | Complete outage or ongoing unauthorised access | 20 minutes (office & out-of-hours) | Every 1 hour |
+| **P2** | Major | Substantial degradation of service | 60 minutes (office & out-of-hours) | Every 2 hours |
+| **P3** | Significant | Intermittent/degraded service due to platform issue | 2 hours (office hours only) | Once after 2 business days |
+| **P4** | Minor | Component failure not immediately impacting a service; unsuccessful DoS attempt | 1 business day (office hours only) | Once after 5 business days |
+
+> **Note**
+>
+> Analytical Platform currently does not have any SLAs or an out-of-hours support requirement. The response times and update frequencies above relate to standard working days.
+>
+> Use judgement to escalate or de-escalate as new information emerges.
+
+---
+
+## Roles & Responsibilities
+
+### Incident Lead (IL)
+
+- Directs triage and technical actions
+- Ensures timelines, decisions and evidence are captured
+
+### Comms Lead (CL)
+
+- Manages internal and external communications
+- Maintains communication cadence based on incident priority
+- Owns PagerDuty Status Page updates
+
+### Subject Matter Responders (SMRs)
+
+- Investigate and remediate issues
+- Document commands, configuration changes and findings
+
+### Escalation Contacts
+
+- PM and DM (for P1/P2 incidents and major customer impact)
+- Cyber Security for suspected security or data incidents
+
+---
+
+## Key Channels & Tools
+
+| Tool | Purpose |
+|------|---------|
+| **Slack** | `#analytical-platform` (main incident thread), `#analytical-platform-engineering` |
+| **PagerDuty Status Page** | External status updates, subscriber notifications |
+| **GitHub Project** | Support issues and follow-up actions |
+| **Third parties** | AWS Support and other vendors as required |
+
+---
+
+## Incident investigation lifecycle
+
+### Step 1: Confirm it's an incident
+
+Validate against the incident definition:
+
+> An unplanned event impacting users or increasing risk to production.
+
+If **not** an incident:
+
+- Route to normal support (create an issue or ticket)
+- If security-related, follow Cyber Security reporting procedures
+
+---
+
+### Step 2: Declare and set visibility
+
+#### PagerDuty Status Page
+
+- Select impacted service(s)
+  - AP Ingestion
+  - AP Storage
+  - AP Compute
+  - AP Networking
+  - AP Identity
+- Choose impact:
+  - Major
+  - Minor
+  - All Good
+- Set **Time till Next Update**
+- Tick **Send update notifications**
+- Publish
+
+This will notify subscribers and automatically post into Slack support channels.
+
+#### Slack
+
+- Post an initial summary in the incident thread (see template below)
+- Pin the Incident Report link
+
+---
+
+### Step 3: Establish roles and assemble team
+
+- Confirm IL and CL in the thread header
+- Identify SMRs and owners for affected components
+- For P1/P2 incidents:
+  - Notify PM and DM immediately
+  - Agree communication cadence
+
+---
+
+### Step 4: Classify & Plan
+
+- Set priority (P1–P4) with rationale
+- Record priority in the Incident Report
+- Define:
+  - First investigative steps
+  - Success criteria
+- Decide whether to:
+  - Roll back
+  - Feature flag
+  - Change configuration
+  - Isolate affected components
+
+---
+
+### Step 5: Investigate (evidence-driven)
+
+Gather evidence:
+
+- Logs
+- Metrics
+- Traces
+- Dashboards
+- Recent deployments
+- Dependency health
+
+Work iteratively:
+
+- Form hypotheses
+- Test hypotheses
+- Record:
+  - Every action
+  - Commands executed
+  - Results
+
+If a third-party issue is suspected:
+
+- Raise vendor support tickets
+- Include:
+  - Correlation IDs
+  - Timestamps
+
+#### AWS Support
+
+- Log a support case in the affected AWS account
+- Follow:
+  - *Creating a support case*
+- Escalate:
+  - On the AWS case
+  - Or via `#ext-aws`
+
+---
+
+### Step 6: Contain (Security/Data Incidents)
+
+- Short‑term: isolate affected systems, rotate credentials, disable compromised accounts/keys; minimise user impact.
+- Forensics: preserve evidence; document all commands.
+- Long‑term: reimage or restore from known‑good backups; harden affected systems.
+
+
+---
+
+### Step 7: Use mitigations or workarounds
+
+- Implement safe workarounds (e.g., scale capacity, failover, feature toggle, rate limiting).
+- Communicate user‑visible impacts and timelines via Status Page and Slack.
+
+---
+
+### Step 8: Remove root cause and related artefacts
+
+- Identify all affected hosts/services; remove malware/artefacts; patch/reimage as needed.
+- Verify backups, code, images, and systems are protected against recurrence.
+
+---
+
+### Step 9: Recover
+
+- Decide when to restore to production; verify environment is not compromised in the same way.
+- Define post‑restore monitoring window.
+- Reduce incident priority when appropriate and update comms accordingly.
+
+---
+
+### Step 10: Communicate
+
+- Maintain updates per priority table; include impact, actions taken, next update time.
+- Internal: Slack thread updates; External: Status Page notifications to subscribers.
+- Manage escalations (e.g., to programme leadership, Cyber Security, vendors).
+
+---
+
+### Step 11: End the incident
+
+- Confirm users are no longer facing issues (even if a temporary fix is in place).
+- Update Status Page to All Good with resolution summary and any follow-up work.
+- Announce closure in Slack thread; set final status in Incident Report
+
+---
+
+### Step 12: Learn and follow up
+
+- Create/complete Incident Report (timeline, decisions, evidence, impact, root cause, lessons).
+- Hold a blameless post‑mortem; identify actions to prevent recurrence or improve detection.
+- Publish/update runbooks; raise follow‑up tickets with owners & due dates; update the AP incident log.
+
+---
+
+## Communications Plan
+
+| Priority | Initial Response | Ongoing Updates |
+|-----------|-----------------|-----------------|
+| **P1** | Within 20 minutes | Hourly + end-of-day summary |
+| **P2** | Within 60 minutes | Every 2 hours + end-of-day summary |
+| **P3** | Within 2 hours | One update after 2 business days if ongoing |
+| **P4** | Within 1 business day | One update after 5 business days if ongoing |
+
+### Channels
+
+**Internal**
+
+- Slack (`#analytical-platform`)
+
+**External**
+
+- PagerDuty Status Page
+- Email / Teams (if required)
+
+### Escalations
+
+- Notify PM/DM for P1 and P2 incidents
+- Involve Cyber Security for suspected security or data incidents
+- Engage vendors where appropriate
+
+---
+
+## Slack Message Template
+
+```text
+<Priority> <Short Title>
+
+Start: <YYYY-MM-DD HH:MM UTC/BST>
+
+Impact:
+<What users see / who is affected>
+
+Suspected cause:
+<Unknown / current hypothesis>
+
+Services / Components impacted:
+<List>
+
+Actions so far:
+- ...
+- ...
+
+Next update by:
+<Time>
+
+Owner(s):
+<IL / CL / SMRs>
+```
+
+---
+
+## Closure Checklist
+
+- [ ] Status Page updated to **All Good** with resolution summary
+- [ ] Incident Report complete (timeline, decisions and evidence)
+- [ ] Lessons learned documented and shared
+- [ ] Post-mortem completed
+- [ ] Runbooks updated
+- [ ] Follow-up tickets created with owners and due dates
+- [ ] AP incident log updated
