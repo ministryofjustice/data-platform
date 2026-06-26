@@ -1,0 +1,208 @@
+---
+title: Terraform
+weight: 3
+last_reviewed_on: 2026-06-20
+review_in: 12 months
+---
+
+# <%= current_page.data.title %>
+
+The purpose of this document is to define our standards for writing terraform in Analytical Platform repositories.
+
+As a contributor to the Analytical Platform you will find places where these standards don't apply. This is a consequence of many contributors committing to our code over many years. The below sets out our standards going forward and helps introduce them to any new joiners to the team.
+
+## Naming
+
+Naming things is famously hard! We have a few basic rules we adhere to when naming things.
+
+### File names
+
+Named files for resources should be plural, for example: 'iam-roles.tf' or 'iam-policies.tf'.
+
+Example:
+
+✅ `s3-buckets.tf`
+
+❌ `s3.tf` OR `buckets.tf` OR `bucket.tf`
+
+We do not use `main.tf`.
+
+### Resource and module names
+
+Module or resource names should be written in snake_case.
+
+Example:
+
+✅ `module "example_s3"`
+
+❌ `module "example-s3"`
+
+❌ `module "ExampleS3"`
+
+## Repository structure
+
+Create similar resources in the same `.tf` file. This means all S3 buckets in a component should be created in `s3-buckets.tf` for example.
+
+If a resource is brand new, create a new file and adopt a sensible name as per this document.
+
+### Required Terraform files
+
+These files form the foundation for terraform to run (in each of its respective locations)
+
+`variables.tf`
+
+```terraform
+variable "account_ids" {
+  type        = map(string)
+  description = "Map of account names to account IDs"
+}
+
+variable "tags" {
+  type        = map(string)
+  description = "Map of tags to apply to resources"
+}
+```
+
+`data.tf`
+
+```terraform
+data "aws_caller_identity" "session" {
+  provider = aws.session
+}
+
+data "aws_iam_session_context" "session" {
+  provider = aws.session
+
+  arn = data.aws_caller_identity.session.arn
+}
+```
+
+`terraform.tfvars`
+
+```terraform
+account_ids = {
+  ${AWS_ACCOUNT_NAME}                       = "${AWS_ACCOUNT_ID}"
+  analytical-platform-management-production = "042130406152"
+}
+
+tags = {
+  business-unit          = "Platforms"
+  application            = "Data Platform"
+  component              = "${COMPONENT}"
+  environment            = "${ENVIRONMENT}"
+  is-production          = "${IS_PRODUCTION}"
+  owner                  = "data-platform:data-platform-tech@digital.justice.gov.uk"
+  infrastructure-support = "data-platform:data-platform-tech@digital.justice.gov.uk"
+  source-code            = "github.com/ministryofjustice/analytical-platform/terraform/aws/${AWS_ACCOUNT_NAME}/${COMPONENT}"
+}
+```
+
+`terraform.tf`
+
+```terraform
+terraform {
+  backend "s3" {
+    acl            = "private"
+    bucket         = "global-tf-state-aqsvzyd5u9"
+    encrypt        = true
+    key            = "aws/${AWS_ACCOUNT_NAME}/${COMPONENT}/terraform.tfstate"
+    region         = "eu-west-2"
+    dynamodb_table = "global-tf-state-aqsvzyd5u9-locks"
+  }
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "${LATEST_VERSION}" # e.g. 5.9.0 can be found at https://registry.terraform.io/providers/hashicorp/aws/latest
+    }
+  }
+
+  required_version = "~> 1.5"
+}
+
+provider "aws" {
+  alias = "session"
+}
+
+provider "aws" {
+  region = "eu-west-2"
+
+  assume_role {
+    role_arn = "arn:aws:iam::${var.account_ids["${AWS_ACCOUNT_NAME}"]}:role/GlobalGitHubActionAdmin"
+  }
+
+  default_tags {
+    tags = var.tags
+  }
+}
+
+provider "aws" {
+  alias  = "analytical-platform-management-production"
+  region = "eu-west-2"
+
+  assume_role {
+    role_arn = can(regex("AdministratorAccess", data.aws_iam_session_context.session.issuer_arn)) ? null : "arn:aws:iam::${var.account_ids["analytical-platform-management-production"]}:role/GlobalGitHubActionAdmin"
+  }
+
+  default_tags {
+    tags = var.tags
+  }
+}
+```
+
+`locals.tf`
+
+```terraform
+locals {
+  name = "example"
+}
+```
+
+The above does not apply in Modernisation Platform Environments repository, we abide by the standards of that repository for foundational files.
+
+## Tagging
+
+The `default_tags` in `terraform.tf` ensures that every AWS resource created with this provider automatically gets the tags you’ve defined in `terraform.tfvars`.
+
+## Defining policies
+
+Our pattern for defining policies is as follows:
+
+```terraform
+data "aws_iam_policy_document" "example" {
+  ...
+}
+
+module "example_iam_policy" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-policy"
+  version = "6.1.2"
+
+  name_prefix = "name-of-policy"
+
+  policy = data.aws_iam_policy_document.example.json
+}
+```
+
+### Managing multiple policy documents
+
+Repeat the pattern when there are multiple policy documents in a single file. For example, you would define them as follows:
+
+```terraform
+data "aws_iam_policy_document" "another_example" {
+  ...
+}
+
+module "example_iam_policy" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-policy"
+  version = "6.1.2"
+
+  name_prefix = "name-of-another-policy"
+
+  policy = data.aws_iam_policy_document.another_example.json
+}
+```
+
+See an [example of multiple policies in a single file](https://github.com/ministryofjustice/analytical-platform/blob/main/terraform/aws/analytical-platform-data-production/ingestion-egress/iam-policies.tf).
+
+
+<%= partial "partials/_links.erb" %>
