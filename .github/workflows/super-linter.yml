@@ -20,7 +20,7 @@ jobs:
       super-linter-variables: |
         {
           "VALIDATE_CSS": false,
-          "VALIDATE_JSCPD": false
+          "VALIDATE_JSCPD": false,
           "VALIDATE_JSON_PRETTIER": false,
           "VALIDATE_EDITORCONFIG": false
         }
