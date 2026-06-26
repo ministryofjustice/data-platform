@@ -31,5 +31,15 @@
     "valkey",
     "venv",
     "zizmor"
+  ],
+  "overrides": [
+    {
+      "filename": ["**/*.{md,mdx}", "**/*.html.md.erb"],
+      "ignoreRegExpList": [
+        "```[\\s\\S]*?```",
+        "`[^`\\n]+`"
+      ]
+    }
   ]
 }
+
