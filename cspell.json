@@ -2,9 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
   "version": "0.2",
   "language": "en-GB",
-  "ignorePaths": [
-    ".devcontainer/src/kubernetes/config"
-  ],
+  "ignorePaths": [".devcontainer/src/kubernetes/config"],
   "words": [
     "cooldown",
     "elasticache",
@@ -36,14 +34,8 @@
   ],
   "overrides": [
     {
-      "filename": [
-        "**/*.{md,mdx}",
-        "**/*.html.md.erb"
-      ],
-      "ignoreRegExpList": [
-        "```[\\s\\S]*?```",
-        "`[^`\\n]+`"
-      ]
+      "filename": ["**/*.{md,mdx}", "**/*.html.md.erb"],
+      "ignoreRegExpList": ["```[\\s\\S]*?```", "`[^`\\n]+`"]
     }
   ]
 }
