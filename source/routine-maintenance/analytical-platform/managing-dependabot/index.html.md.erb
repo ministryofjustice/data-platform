@@ -113,5 +113,5 @@ Major version bumps (SemVer `X..`) need extra scrutiny. Before merging, carefull
 
 Failures usually fall within the following areas:
 
-1. Superlinter runs multiple linters. Open up the log and you can see which linter has failed and what the issue is; there may be multiple of each. Try to fix as appropriate and if not possible you may have to skip the individual issue. Occasionally issues arise from code not involved in the PR. In this case the PR can be merged without fixing the issues - if in doubt consult the team.
+1. Super Linter runs multiple checks. Open up the log and you can see which linter has failed and what the issue is; there may be multiple of each. Try to fix as appropriate and if not possible you may have to skip the individual issue. Occasionally issues arise from code not involved in the PR. In this case the PR can be merged without fixing the issues - if in doubt consult the team.
 2. Container test. This will often fail as it is unable to build the container as some component software is out of date. Check the branch out locally and patch the Dockerfile as needed following the instructions in the repository README.
