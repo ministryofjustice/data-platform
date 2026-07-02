@@ -1,0 +1,117 @@
+---
+title: Managing Dependabot
+weight: 1
+last_reviewed_on: 2026-06-20
+review_in: 12 months
+---
+
+# <%= current_page.data.title %>
+
+Dependabot is scheduled to run daily on each of the Analytical Platform repositories. It checks for version updates and automatically raises pull requests (PRs) to keep our dependencies up to date.
+
+Some of these PRs can be merged automatically. However, in scenarios where the PR includes Terraform modules, GitHub Actions, or other dependencies that may require human oversight, manual review and approval are required. These PRs will typically have the `dependencies` label along with either `terraform` or `github_action`.
+
+## Identifying and Reviewing Dependabot Pull Requests
+
+To identify the open Dependabot PRs across Analytical Platform repositories, you can run the following script:
+
+```sh
+list-open-dependabot-prs.sh
+```
+
+This script checks for open Dependabot PRs across repositories (excluding archived ones) and outputs a list.
+
+Example Output:
+
+```text
+🤖 Open Dependabots
+
+analytical-platform:
+PR#7608 : :dependabot: terraform(deps): Bump terraform-aws-modules/vpc/aws from 5.19.0 to 5.21.0 in /terraform/aws/analytical-platform-development/powerbi-test
+PR#7605 : :dependabot: terraform(deps): Bump terraform-aws-modules/vpc/aws from 5.19.0 to 5.21.0 in /terraform/aws/analytical-platform-data-production/powerbi-gateway
+PR#85 : Bump lycheeverse/lychee-action from 2.4.0 to 2.4.1
+PR#82 : Bump ghcr.io/devcontainers/features/docker-in-docker from 2.12.0 to 2.12.2
+```
+
+## Reviewing Dependabot pull requests
+
+When reviewing Dependabot PRs, consider the following:
+
+### 1. What is Changing
+
+The PR title will indicate the dependency being updated (e.g. `actions/dependency-review-action`) and the version bump.
+
+### 2. Version Change
+
+The version bump is also in the PR title (e.g. from `4.5.0` to `4.6.0`).
+
+Semantic Versioning:
+
+- PATCH (`0.0.X`): Backwards-compatible bug fixes
+- MINOR (`0.X.0`): Backwards-compatible new functionality (may occasionally introduce breaking changes)
+- MAJOR (`X.0.0`): Breaking API changes
+
+Patch updates are typically safe. Minor updates may introduce issues—always check release notes. Major updates must be carefully reviewed for breaking changes, see below for further instructions.
+
+### 3. Release Notes
+
+Check the linked release notes, especially for references to **BREAKING CHANGES**. Ensure you understand and resolve any issues before approving.
+
+### 4. Compatibility Score
+
+Dependabot provides a compatibility score.
+
+- A high score indicates low likelihood of issues.
+- An unknown score doesn’t necessarily mean high risk, just insufficient data.
+
+Use this score alongside release notes and your review.
+
+### 5. Files Changed
+
+Review the diff to understand what is being updated and confirm it is limited to dependency changes.
+
+### 6. Checks
+
+Ensure all automated workflow checks have passed. Resolve any issues before approval. See section below **Resolving failed Checks**.
+
+## Dependabot Pull Requests With Changes To GitHub Workflows
+
+Updates that only bump code in our workflows (e.g. Checkov) are generally low-risk compared to changes that alter runtime behaviour—such as Terraform providers/modules or language runtimes (e.g. Python). A workflow update affects linting rules and reporting, not the infrastructure plan or application code executed in environments.
+
+If the checks are green and the diff is limited to GitHub workflow version (or its GitHub Action), these PRs can typically be approved and merged without too much scrutiny. For example a Checkov Patch `X.X.0` with all checks green, a high compatibility score and no warnings in the release notes can be merged with confidence.
+
+## Major version upgrade guidance
+
+Major version bumps (SemVer `X..`) need extra scrutiny. Before merging, carefully check:
+
+### 1. Context of the update
+
+- Security Fix: Is there a CVE or advisory driving the upgrade?
+- Feature/Compatibility: Are new features or fixes clearly justified in release notes?
+
+### 2. Breaking changes
+
+- Review the dependency’s CHANGELOG, Release Notes, or Migration Guide.
+- Look for:
+  - Removed/renamed APIs we use
+  - Configuration defaults that have changed
+  - Toolchain requirements (e.g. new Python version)
+  - OS/architecture changes (e.g. Ubuntu/Docker base images)
+
+### 3. Impact on our environment
+
+- Consider how changes may affect Analytical Platform repositories and infrastructure - this will be evident if there are resources being added/changed/deleted in the Terraform plan.
+- Check downstream dependencies if they rely on this library/module.
+
+### 4. Rollback plan
+
+- Identify a rollback path before merging.
+- Is a previous tagged release or container image available to roll back to?
+- Ensure reverting is straightforward in case of unexpected failures.
+
+## Resolving failed checks
+
+Failures usually fall within the following areas:
+
+1. Superlinter runs multiple linters. Open up the log and you can see which linter has failed and what the issue is; there may be multiple of each. Try to fix as appropriate and if not possible you may have to skip the individual issue. Occasionally issues arise from code not involved in the PR. In this case the PR can be merged without fixing the issues - if in doubt consult the team.
+2. Container test. This will often fail as it is unable to build the container as some component software is out of date. Check the branch out locally and patch the Dockerfile as needed following the instructions in the repository README.
