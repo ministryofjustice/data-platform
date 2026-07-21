@@ -1,0 +1,195 @@
+---
+title: Cluster
+weight: 3
+last_reviewed_on: 2026-07-21
+review_in: 12 months
+---
+
+# <%= current_page.data.title %>
+
+> This document describes the intended architecture and operational model for the Data Platform Kubernetes cluster. Configuration values such as versions, instance types, scaling limits, and retention periods change over time. The [Terraform and Helm configuration in `modernisation-platform-environments`](https://github.com/ministryofjustice/modernisation-platform-environments/tree/main/terraform/environments/data-platform/cluster) is the source of truth.
+
+The cluster runs Amazon EKS as the platform control plane for Data Platform workloads. It uses private subnets, managed security controls, workload identity, and policy enforcement to provide a secure and standardised Kubernetes runtime across all environments.
+
+All cluster changes go through infrastructure as code, with pinned module versions and centrally defined configuration.
+
+## Environments
+
+Each environment has a dedicated cluster. Environment-specific settings are managed in `configuration/cluster.yml`, which pins the Kubernetes version, node image, add-on versions, CRD versions, Helm chart versions, and Route 53 zones for that environment.
+
+| Environment   | Kubernetes version |
+| ------------- | ------------------ |
+| Development   | `1.36`             |
+| Test          | `1.36`             |
+| Preproduction | `1.36`             |
+| Production    | `1.36`             |
+
+## Cluster design
+
+The platform provisions EKS using the `terraform-aws-eks` module, with:
+
+- Private subnets for both nodes and control plane placement
+- API authentication mode, so access is granted through EKS access entries
+- Cluster secrets encryption enabled with a customer-managed KMS key
+- CloudWatch control plane logs enabled (`api`, `audit`, `authenticator`, `controllerManager`, `scheduler`)
+- Access entries for infrastructure and operations roles, including the member infrastructure role, the GitHub Actions plan and apply roles, and the platform engineer administrator SSO role
+
+The API server endpoint allows both private and public access. Public access is restricted to an allowlist of CIDR ranges, and authorisation is enforced through IAM and EKS access entries.
+
+## Trust boundaries
+
+The architecture follows clear trust boundaries:
+
+- **AWS account and VPC boundary** – isolates each environment in dedicated account and network resources.
+- **Control plane boundary** – the EKS control plane is managed by AWS, with access controlled by EKS access entries and IAM principals.
+- **Node boundary** – worker nodes run in private subnets with explicit security group ingress and encrypted storage.
+- **Namespace and workload boundary** – platform services are isolated into dedicated namespaces and use scoped service identities.
+- **External integration boundary** – ingress, DNS, and certificate flows are controlled through dedicated controllers and Route 53 scoped permissions.
+
+## Compute and node provisioning
+
+### System node group
+
+A managed node group provides baseline system capacity:
+
+- Minimum size: `3`
+- Desired size: `3`
+- Maximum size: `10`
+- Instance type: `m8g.large` (Graviton)
+- Operating system: Bottlerocket ARM64
+- IMDSv2 required
+- Automatic node repair enabled
+- Encrypted `gp3` root volume using a customer-managed KMS key
+
+System nodes are tainted and labelled so platform components are scheduled predictably.
+
+### Karpenter
+
+Karpenter is deployed for dynamic workload scaling, with:
+
+- Dedicated IAM and node roles
+- A dedicated SQS interruption queue with KMS encryption
+- A separate Helm chart for cluster-specific Karpenter configuration
+- Node class tags aligned to platform conventions
+
+## Networking inside the cluster
+
+Cilium is deployed as the cluster CNI and service networking layer.
+
+The platform also deploys and manages:
+
+- CoreDNS for in-cluster DNS
+- Gateway API CRDs
+- AWS Load Balancer Controller and its CRDs
+- A shared services gateway
+- External DNS for Route 53 integration
+- Metrics Server for resource metrics
+
+Ingress and service exposure are controlled through cluster configuration and environment-specific Route 53 zones.
+
+## Storage
+
+The default storage class is `gp3`, with encryption enabled and `WaitForFirstConsumer` binding. The legacy `gp2` default annotation is explicitly removed.
+
+The EBS and EFS CSI drivers are deployed as managed EKS add-ons with dedicated workload identities.
+
+## Identity and access
+
+The cluster uses pod-level identities and service-account IAM roles to apply least-privilege access.
+
+Identity patterns include:
+
+- EKS Pod Identity for selected services, including AWS CloudWatch Observability and AWS Load Balancer Controller
+- IAM roles for service accounts for components such as:
+  - Cluster Autoscaler
+  - Prometheus
+  - Fluent Bit
+  - Cert Manager
+  - External DNS
+  - External Secrets
+  - EBS and EFS CSI drivers
+  - AWS network flow monitor agent
+
+## Platform services and add-ons
+
+Core capabilities are delivered through managed EKS add-ons:
+
+- EKS Pod Identity Agent
+- EBS and EFS CSI drivers
+- Amazon GuardDuty agent
+- EKS node monitoring agent
+- AWS network flow monitoring agent
+
+Additional platform services are deployed through Helm, including:
+
+- Cilium
+- CoreDNS
+- Kyverno and its policies
+- Cluster Autoscaler
+- Karpenter
+- AWS Load Balancer Controller
+- AWS CloudWatch Observability
+- kube-prometheus-stack
+- Fluent Bit
+- Cert Manager and issuer configuration
+- External DNS
+- External Secrets and secret stores
+- KEDA
+- Metrics Server
+- Shared services gateway
+
+Versions for EKS add-ons, CRDs, and Helm charts are managed centrally per environment in `configuration/cluster.yml`.
+
+## Security
+
+Security controls include:
+
+- A dedicated node security group with explicit intra-node and control-plane-to-node rules
+- NodePort access scoped to the expected firewall subnet CIDR ranges
+- EKS secrets encryption with a customer-managed KMS key
+- KMS encryption for:
+  - EKS and application log groups
+  - EBS volumes
+  - The Amazon Managed Service for Prometheus workspace and its logs
+  - The Karpenter SQS queue
+  - Shared Secrets Manager usage
+- Kyverno policy enforcement for privileged capability controls, with explicit allowlists where justified
+- Service-linked IAM roles for Auto Scaling and EC2 Spot
+
+## Threats and mitigations
+
+This section summarises key threat areas and the mitigations in the current design.
+
+| Threat area                        | Mitigation in current design                                                       |
+| ---------------------------------- | ---------------------------------------------------------------------------------- |
+| Excessive pod permissions          | IAM roles for service accounts and EKS Pod Identity                                |
+| Lateral movement between workloads | Namespace separation, controller-specific service identities, and policy controls  |
+| Unencrypted data at rest           | Customer-managed KMS keys for logs, storage, queues, and monitoring services       |
+| Uncontrolled privileged workloads  | Kyverno policies with explicit capability allowlists and justifications            |
+| Ingress misconfiguration           | Managed ingress controllers, Gateway API resources, and Route 53 scoped permissions |
+
+## Observability and monitoring
+
+Observability is built into the cluster baseline:
+
+- CloudWatch log groups for cluster, application, and container insights logs
+- `365` day retention with KMS encryption for all defined log groups
+- A kube-prometheus-stack deployment that writes to an Amazon Managed Service for Prometheus workspace with encrypted storage
+- AWS network flow monitor associated with the EKS cluster resource
+- Fluent Bit and CloudWatch Observability agents deployed in-cluster
+
+Grafana provides the visualisation and alerting layer over this telemetry. It's deployed through Helm and managed as code from the separate [monitoring configuration](https://github.com/ministryofjustice/modernisation-platform-environments/tree/main/terraform/environments/data-platform/monitoring), reading from the Amazon Managed Service for Prometheus workspace and per-account CloudWatch data sources. Dashboards are organised into Platform, Kubernetes, Networking, and Databases folders, and alert rules are generated from a shared golden signals definition with Slack routing. Access is authenticated through Microsoft Entra ID, and the stack runs in the development and production environments.
+
+## DNS and certificates
+
+Route 53 zones are configured per environment and used by External DNS and certificate automation.
+
+Cert Manager is deployed with DNS integration for managed certificate issuance in platform domains.
+
+## Diagram
+
+Add a cluster architecture diagram in this section once available.
+
+## Source code
+
+<https://github.com/ministryofjustice/modernisation-platform-environments/tree/main/terraform/environments/data-platform/cluster>
