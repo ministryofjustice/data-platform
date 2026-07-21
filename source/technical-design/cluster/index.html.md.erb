@@ -17,13 +17,13 @@ All cluster changes are managed through infrastructure as code, using pinned mod
 
 Each environment has a dedicated cluster. Environment-specific settings are managed in the cluster's [`configuration/cluster.yml`](https://github.com/ministryofjustice/modernisation-platform-environments/blob/main/terraform/environments/data-platform/cluster/configuration/cluster.yml) in `modernisation-platform-environments`, which pins the Kubernetes version, node image, add-on versions, CRD versions, Helm chart versions, and Route 53 zones for that environment.
 
-Refer to `configuration/cluster.yml` for the current Kubernetes version per environment.
+The platform runs `development`, `test`, `preproduction`, and `production` environments.
 
 ## Cluster design
 
 The platform provisions EKS using the `terraform-aws-eks` module, with:
 
-- Private subnets for both nodes and control plane placement
+- Private subnets for worker nodes and for the EKS control plane network interfaces (the control plane itself is AWS-managed)
 - API authentication mode, so access is granted through EKS access entries
 - Cluster secrets encryption enabled with a customer-managed KMS key
 - CloudWatch control plane logs enabled (`api`, `audit`, `authenticator`, `controllerManager`, `scheduler`)
@@ -54,7 +54,7 @@ A managed node group provides baseline system capacity:
 - Operating system: Bottlerocket ARM64
 - IMDSv2 required
 - Automatic node repair enabled
-- Encrypted `gp3` root volume using a customer-managed KMS key
+- Encrypted `gp3` data volume using a customer-managed KMS key
 
 System nodes are tainted and labelled so platform components are scheduled predictably.
 
@@ -168,7 +168,7 @@ This section summarises key threat areas and the mitigations in the current desi
 Observability is built into the cluster baseline:
 
 - CloudWatch log groups for cluster, application, and container insights logs
-- `365` day retention with KMS encryption for all defined log groups
+- 365-day retention with KMS encryption for all defined log groups
 - A kube-prometheus-stack deployment that writes to an Amazon Managed Service for Prometheus workspace with encrypted storage
 - AWS network flow monitor associated with the EKS cluster resource
 - Fluent Bit and CloudWatch Observability agents deployed in-cluster
