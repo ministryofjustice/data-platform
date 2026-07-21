@@ -29,7 +29,7 @@ The platform provisions EKS using the `terraform-aws-eks` module, with:
 - CloudWatch control plane logs enabled (`api`, `audit`, `authenticator`, `controllerManager`, `scheduler`)
 - Access entries for infrastructure and operations roles, including the member infrastructure role, the GitHub Actions plan and apply roles, and the platform engineer administrator SSO role
 
-The API server endpoint allows both private and public access. Public access is restricted to an allowlist of CIDR ranges, and authorisation is enforced through IAM and EKS access entries.
+The API server endpoint allows both private and public access. Public access is restricted to an [allowlist of CIDR ranges](https://github.com/ministryofjustice/modernisation-platform-environments/blob/main/terraform/environments/data-platform/cluster/environment-configuration.tf), and authorisation is enforced through IAM and EKS access entries.
 
 ## Trust boundaries
 
