@@ -17,12 +17,7 @@ All cluster changes go through infrastructure as code, with pinned module versio
 
 Each environment has a dedicated cluster. Environment-specific settings are managed in the cluster's [`configuration/cluster.yml`](https://github.com/ministryofjustice/modernisation-platform-environments/blob/main/terraform/environments/data-platform/cluster/configuration/cluster.yml) in `modernisation-platform-environments`, which pins the Kubernetes version, node image, add-on versions, CRD versions, Helm chart versions, and Route 53 zones for that environment.
 
-| Environment   | Kubernetes version |
-| ------------- | ------------------ |
-| Development   | `1.36`             |
-| Test          | `1.36`             |
-| Preproduction | `1.36`             |
-| Production    | `1.36`             |
+Refer to `configuration/cluster.yml` for the current Kubernetes version per environment.
 
 ## Cluster design
 
