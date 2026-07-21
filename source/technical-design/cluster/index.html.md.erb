@@ -15,7 +15,7 @@ All cluster changes go through infrastructure as code, with pinned module versio
 
 ## Environments
 
-Each environment has a dedicated cluster. Environment-specific settings are managed in `configuration/cluster.yml`, which pins the Kubernetes version, node image, add-on versions, CRD versions, Helm chart versions, and Route 53 zones for that environment.
+Each environment has a dedicated cluster. Environment-specific settings are managed in the cluster's [`configuration/cluster.yml`](https://github.com/ministryofjustice/modernisation-platform-environments/blob/main/terraform/environments/data-platform/cluster/configuration/cluster.yml) in `modernisation-platform-environments`, which pins the Kubernetes version, node image, add-on versions, CRD versions, Helm chart versions, and Route 53 zones for that environment.
 
 | Environment   | Kubernetes version |
 | ------------- | ------------------ |
@@ -40,7 +40,7 @@ The API server endpoint allows both private and public access. Public access is 
 
 The architecture follows clear trust boundaries:
 
-- **AWS account and VPC boundary** – isolates each environment in dedicated account and network resources.
+- **AWS account and VPC boundary** – isolates each environment in a dedicated AWS account with separate network resources.
 - **Control plane boundary** – the EKS control plane is managed by AWS, with access controlled by EKS access entries and IAM principals.
 - **Node boundary** – worker nodes run in private subnets with explicit security group ingress and encrypted storage.
 - **Namespace and workload boundary** – platform services are isolated into dedicated namespaces and use scoped service identities.
@@ -138,7 +138,7 @@ Additional platform services are deployed through Helm, including:
 - Metrics Server
 - Shared services gateway
 
-Versions for EKS add-ons, CRDs, and Helm charts are managed centrally per environment in `configuration/cluster.yml`.
+Versions for EKS add-ons, CRDs, and Helm charts are managed centrally per environment in the same [`configuration/cluster.yml`](https://github.com/ministryofjustice/modernisation-platform-environments/blob/main/terraform/environments/data-platform/cluster/configuration/cluster.yml) file.
 
 ## Security
 
