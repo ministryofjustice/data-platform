@@ -15,12 +15,14 @@
     "hediet",
     "karpenter",
     "kubeconfig",
+    "linter",
     "litellm",
     "lycheeverse",
     "ministryofjustice",
     "multipage",
     "nxdomain",
     "openssf",
+    "reimage",
     "signingkey",
     "tasklist",
     "textlint",
@@ -30,5 +32,11 @@
     "valkey",
     "venv",
     "zizmor"
+  ],
+  "overrides": [
+    {
+      "filename": ["**/*.{md,mdx}", "**/*.html.md.erb"],
+      "ignoreRegExpList": ["```[\\s\\S]*?```", "`[^`\\n]+`"]
+    }
   ]
 }
