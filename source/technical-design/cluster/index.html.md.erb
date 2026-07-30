@@ -173,13 +173,21 @@ Observability is built into the cluster baseline:
 - AWS network flow monitor associated with the EKS cluster resource
 - Fluent Bit and CloudWatch Observability agents deployed in-cluster
 
-Grafana provides the visualisation and alerting layer over this telemetry. It's deployed through Helm and managed as code from the separate [monitoring configuration](https://github.com/ministryofjustice/modernisation-platform-environments/tree/main/terraform/environments/data-platform/monitoring), reading from the Amazon Managed Service for Prometheus workspace and per-account CloudWatch data sources. Dashboards are organised into Platform, Kubernetes, Networking, and Databases folders, and alert rules are generated from a shared golden signals definition with Slack routing. Access is authenticated through Microsoft Entra ID, and the stack runs in the development and production environments.
+Grafana provides the visualisation and alerting layer over this telemetry. Unlike the platform services described above, Grafana does not run on the Data Platform EKS cluster — it's deployed onto the MOJ Cloud Platform cluster. The Grafana Helm release is deployed and managed as code from the [monitoring configuration](https://github.com/ministryofjustice/modernisation-platform-environments/tree/main/terraform/environments/data-platform/monitoring) in `modernisation-platform-environments`, while the Cloud Platform namespaces that host it are defined separately in `cloud-platform-environments` for [development](https://github.com/ministryofjustice/cloud-platform-environments/tree/main/namespaces/live.cloud-platform.service.justice.gov.uk/data-platform-monitoring-development) and [production](https://github.com/ministryofjustice/cloud-platform-environments/tree/main/namespaces/live.cloud-platform.service.justice.gov.uk/data-platform-monitoring-production).
+
+Grafana reads from the Amazon Managed Service for Prometheus workspace and per-account CloudWatch data sources. Dashboards are organised into Platform, Kubernetes, Networking, and Databases folders, and alert rules are generated from a shared golden signals definition. Access is authenticated through Microsoft Entra ID, and the stack runs in the development and production environments.
+
+Grafana alerts are sent to PagerDuty rather than posted to Slack directly. The [PagerDuty Event Orchestration](https://github.com/ministryofjustice/data-platform-access/blob/main/modules/pagerduty/README.md) ("Data Platform Alerting") routes each alert by environment and severity to the relevant on-call service, and PagerDuty then posts incident notifications to the appropriate Slack channel — `#data-platform-high-priority-alerts` for production critical alerts, `#data-platform-preproduction-alerts` for preproduction alerts, and `#data-platform-low-priority-alerts` for production warnings and unmatched alerts.
 
 ## DNS and certificates
 
 Route 53 zones are configured per environment and used by External DNS and certificate automation.
 
 Cert Manager is deployed with DNS integration for managed certificate issuance in platform domains.
+
+## Diagram
+
+![Cluster Diagram](images/architecture/cluster/cluster.drawio.png)
 
 ## Source code
 
