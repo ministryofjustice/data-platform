@@ -11,22 +11,28 @@
 #   LABELS           Comma separated list of labels
 #   ASSIGNEES        Comma separated list of assignees, may be empty
 #   PINNED           Whether to pin the new issue
-#   CLOSE_PREVIOUS   Whether to close and unpin the previous issue with the same label
+#   CLOSE_PREVIOUS   Whether to close and unpin the previous issue with the same labels
 
 set -euo pipefail
 
 PROJECT_NUMBER="${PROJECT_NUMBER:-167}"
 PROJECT_OWNER="${PROJECT_OWNER:-ministryofjustice}"
 
+label_arguments=()
+IFS=',' read -ra split_labels <<<"${LABELS}"
+for label in "${split_labels[@]}"; do
+  label_arguments+=(--label "${label}")
+done
+
 if [[ ${CLOSE_PREVIOUS:-false} == "true" ]]; then
-  previous_issue_number=$(gh issue list --label "${LABELS}" --json number --jq '.[0].number // empty')
+  previous_issue_number=$(gh issue list "${label_arguments[@]}" --json number --jq '.[0].number // empty')
   if [[ -n ${previous_issue_number} ]]; then
     gh issue close "${previous_issue_number}"
     gh issue unpin "${previous_issue_number}"
   fi
 fi
 
-issue_arguments=(--title "${TITLE}" --label "${LABELS}" --body "${BODY}")
+issue_arguments=(--title "${TITLE}" "${label_arguments[@]}" --body "${BODY}")
 if [[ -n ${ASSIGNEES:-} ]]; then
   issue_arguments+=(--assignee "${ASSIGNEES}")
 fi

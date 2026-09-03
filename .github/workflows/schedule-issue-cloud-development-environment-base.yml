@@ -29,7 +29,7 @@ jobs:
           GH_REPO: ${{ github.repository }}
           TITLE: 📥 Maintenance - Analytical Platform Cloud Development Environment Base
           ASSIGNEES: ""
-          LABELS: maintenance
+          LABELS: maintenance,platform-engineering,squad-one
           BODY: |
             > [!CAUTION]
             > This image underpins many containerised services in the Analytical Platform.
