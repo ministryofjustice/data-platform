@@ -19,7 +19,7 @@ PROJECT_NUMBER="${PROJECT_NUMBER:-167}"
 PROJECT_OWNER="${PROJECT_OWNER:-ministryofjustice}"
 
 if [[ ${CLOSE_PREVIOUS:-false} == "true" ]]; then
-  previous_issue_number=$(gh issue list --label "${LABELS}" --json number --jq '.[0].number')
+  previous_issue_number=$(gh issue list --label "${LABELS}" --json number --jq '.[0].number // empty')
   if [[ -n ${previous_issue_number} ]]; then
     gh issue close "${previous_issue_number}"
     gh issue unpin "${previous_issue_number}"
