@@ -41,6 +41,10 @@ jobs:
             So that… security / best practice etc
 
             ### Definition of Done
+
+            > [!TIP]
+            > This repository has a [`/maintenance` prompt](https://github.com/ministryofjustice/analytical-platform-airflow-python-base/blob/main/.github/prompts/maintenance.prompt.md). Run it in Copilot Chat from a checkout of [analytical-platform-airflow-python-base](https://github.com/ministryofjustice/analytical-platform-airflow-python-base) to carry out the update and raise the pull request.
+
             - [ ] Merge any open dependabot Pull Requests in the repository (noted below).
             - [ ] In the [repository](https://github.com/ministryofjustice/analytical-platform-airflow-python-base), confirm that the [software](https://github.com/ministryofjustice/analytical-platform-airflow-python-base?tab=readme-ov-file#managing-software-versions) and [tests](https://github.com/ministryofjustice/analytical-platform-airflow-python-base/blob/main/test/container-structure-test.yml) are up-to-date.
             - [ ] Create a new [release](https://github.com/ministryofjustice/analytical-platform-airflow-python-base/releases).

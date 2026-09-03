@@ -41,6 +41,10 @@ jobs:
             So that… security / best practice etc
 
             ### Definition of Done
+
+            > [!TIP]
+            > This repository has a [`/maintenance` prompt](https://github.com/ministryofjustice/analytical-platform-actions-runner/blob/main/.github/prompts/maintenance.prompt.md). Run it in Copilot Chat from a checkout of [analytical-platform-actions-runner](https://github.com/ministryofjustice/analytical-platform-actions-runner) to carry out the update and raise the pull request.
+
             - [ ] Merge any open dependabot Pull Requests in the [Actions Runner repository](https://github.com/ministryofjustice/analytical-platform-actions-runner/pulls/app%2Fdependabot).
             - [ ] Update [Chart.yml](https://github.com/ministryofjustice/analytical-platform-actions-runner/blob/main/chart/Chart.yaml) and [values.yml](https://github.com/ministryofjustice/analytical-platform-actions-runner/blob/main/chart/values.yaml).
             - [ ] Carry out patching as per the [README](https://github.com/ministryofjustice/analytical-platform-actions-runner/blob/main/README.md).

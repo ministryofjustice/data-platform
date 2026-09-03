@@ -41,6 +41,10 @@ jobs:
             So that… security / best practice etc
 
             ### Definition of Done
+
+            > [!TIP]
+            > This repository has a [`/maintenance` prompt](https://github.com/ministryofjustice/analytical-platform-visual-studio-code/blob/main/.github/prompts/maintenance.prompt.md). Run it in Copilot Chat from a checkout of [analytical-platform-visual-studio-code](https://github.com/ministryofjustice/analytical-platform-visual-studio-code) to carry out the update and raise the pull request.
+
             Since this image relies on the Analytical Platform Cloud Base Development Image ensure that the maintenance issue is completed for that prior to doing this ticket.
             - [ ] Merge any open dependabot Pull Requests in the Visual Studio Code [repository](https://github.com/ministryofjustice/analytical-platform-visual-studio-code).
             - [ ] Update the Visual Studio Code [version](https://github.com/ministryofjustice/analytical-platform-visual-studio-code?tab=readme-ov-file#visual-studio-code) if required.

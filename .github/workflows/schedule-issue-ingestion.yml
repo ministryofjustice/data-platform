@@ -41,6 +41,14 @@ jobs:
             So that… security / best practice etc
 
             ### Definition of Done
+
+            > [!TIP]
+            > Each ingestion repository has a `/maintenance` prompt. Run it in Copilot Chat from a checkout of the repository to carry out the update and raise the pull request:
+            >
+            > - [analytical-platform-ingestion-transfer](https://github.com/ministryofjustice/analytical-platform-ingestion-transfer/blob/main/.github/prompts/maintenance.prompt.md)
+            > - [analytical-platform-ingestion-scan](https://github.com/ministryofjustice/analytical-platform-ingestion-scan/blob/main/.github/prompts/maintenance.prompt.md)
+            > - [analytical-platform-ingestion-notify](https://github.com/ministryofjustice/analytical-platform-ingestion-notify/blob/main/.github/prompts/maintenance.prompt.md)
+
             - [ ] Merge any open dependabot Pull Requests in the Ingestion repositories (noted below).
             - [ ] In the ingestion-scan repository, confirm that the [dnf packages](https://github.com/ministryofjustice/analytical-platform-ingestion-scan?tab=readme-ov-file#dnf-packages) and [tests](https://github.com/ministryofjustice/analytical-platform-ingestion-scan/blob/main/test/container-structure-test.yml) are up-to-date.
             - [ ] Create new release of [ingestion-transfer](https://github.com/ministryofjustice/analytical-platform-ingestion-transfer/releases).
