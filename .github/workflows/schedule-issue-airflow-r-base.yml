@@ -12,6 +12,7 @@ jobs:
     name: Create Maintenance Issue
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       issues: write
     steps:
       - name: Checkout
