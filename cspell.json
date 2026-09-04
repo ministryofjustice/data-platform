@@ -18,6 +18,7 @@
     "guardduty",
     "hairpinned",
     "hediet",
+    "jupyterlab",
     "karpenter",
     "keda",
     "kubeconfig",
@@ -38,6 +39,7 @@
     "toolkits",
     "valkey",
     "venv",
+    "webapps",
     "zizmor"
   ],
   "overrides": [
