@@ -1,11 +1,26 @@
 ---
 title: Supporting our services
 weight: 6
-last_reviewed_on: 2026-06-20
+last_reviewed_on: 2026-09-04
 review_in: 12 months
 ---
 
 # <%= current_page.data.title %>
 
-## Managing shared inboxes
+## Analytical Platform support rota
 
+[Rota through SSO](https://moj-digital-tools.pagerduty.com/schedules#POE95CC)
+
+To add someone to the rota raise a PR to add them to the list of PagerDuty users in `users.tf` first and then raise a separate PR to update the `schedules.tf`. (Terraform may try to update the schedule first, so the new user must exist already).
+
+### Responsibilities
+
+- Approving and merging dependabot pull requests across Analytical Platform repositories.
+- Approving airflow pull requests submitted in the #ask-analytical-platform channel.
+- Addressing support requests that come in via support page. These will also be raised in the #analytical-platform-notifications channel.
+- Monitoring emails in the team shared mailbox analytical-platform.
+
+### Rules of thumb 👍
+
+- Approving PRs for Airflow: as long as the validation scripts pass it's generally OK to approve, branch does not need to be up to date.
+- PRs granting access may require approval from a relevant team/G7, for example, Data Engineering; approval may be added in the PR comments.
