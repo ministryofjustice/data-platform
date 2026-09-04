@@ -84,6 +84,10 @@ jobs:
             --verbose --no-progress './**/*.md' './**/*.html' './**/*.erb'
             --exclude 'https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/ministryofjustice/data-platform'
             --exclude '^https://github\.com/ministryofjustice/[^/]+/(issues|pull)/[0-9]+/?$'
+            --exclude '^https://mojdt\.slack\.com/.*$'
++           --exclude '^https://moj\.enterprise\.slack\.com/.*$'
++           --exclude '^https://manage\.auth0\.com/.*$'
++           --exclude '^https://github\.com/moj-analytical-services/.*$'
             --accept 403,200,429
 
   publish:
