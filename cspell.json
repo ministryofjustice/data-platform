@@ -5,6 +5,7 @@
   "ignorePaths": [".devcontainer/src/kubernetes/config"],
   "words": [
     "bottlerocket",
+    "cica",
     "cilium",
     "cooldown",
     "coredns",
@@ -31,6 +32,7 @@
     "nxdomain",
     "openssf",
     "reimage",
+    "rstudio",
     "signingkey",
     "tasklist",
     "textlint",
