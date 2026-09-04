@@ -5,6 +5,7 @@
   "ignorePaths": [".devcontainer/src/kubernetes/config"],
   "words": [
     "bottlerocket",
+    "cica",
     "cilium",
     "cooldown",
     "coredns",
@@ -18,9 +19,11 @@
     "guardduty",
     "hairpinned",
     "hediet",
+    "jupyterlab",
     "karpenter",
     "keda",
     "kubeconfig",
+    "linter",
     "kyverno",
     "litellm",
     "lycheeverse",
@@ -28,7 +31,11 @@
     "multipage",
     "nxdomain",
     "openssf",
+    "reimage",
+    "rstudio",
     "signingkey",
+    "quicksight",
+    "quicksuite",
     "tasklist",
     "textlint",
     "tfstate",
@@ -36,6 +43,13 @@
     "toolkits",
     "valkey",
     "venv",
+    "webapps",
     "zizmor"
+  ],
+  "overrides": [
+    {
+      "filename": ["**/*.{md,mdx}", "**/*.html.md.erb"],
+      "ignoreRegExpList": ["```[\\s\\S]*?```", "`[^`\\n]+`"]
+    }
   ]
 }

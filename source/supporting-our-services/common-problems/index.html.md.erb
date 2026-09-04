@@ -1,0 +1,264 @@
+---
+title: Common problems and solutions
+weight: 2
+last_reviewed_on: 2026-09-04
+review_in: 12 months
+---
+
+# <%= current_page.data.title %>
+
+## Analytical Platform
+
+### Contents
+
+- [Unable to save RStudio Preferences](#unable-to-save-rstudio-preferences)
+- [Unable to sign on to Analytical Platform Control Panel](#unable-to-sign-on-to-analytical-platform-control-panel)
+- [Higher Memory or GPU Version of Tooling](#higher-memory-or-gpu-version-of-tooling)
+- [Add a reader to the legacy Quicksight](#add-a-reader-to-the-legacy-quicksight)
+- [Add an author to the legacy Quicksight](#add-an-author-to-the-legacy-quicksight)
+- [The 'moj-analytical-services' organisation has enabled or enforced SAML SSO](#the-moj-analytical-services-organisation-has-enabled-or-enforced-saml-sso)
+- [Tooling fails to deploy](#tooling-fails-to-deploy)
+- [Kernel not connecting in Jupyterlab](#kernel-not-connecting-in-jupyterlab)
+- [Granting access to QuickSuite Resources](#granting-access-to-quicksuite-resources)
+- [UV sync and clear cache to enable .trivyignore file to be applied](#uv-sync-and-clear-cache-to-enable-trivyignore-file-to-be-applied)
+- [CaDeT deployed tables visible in Athena but not in QuickSight](#cadet-deployed-tables-visible-in-athena-but-not-in-quicksight)
+- [Creating a new Webapp via Control Panel](#creating-a-new-webapp-via-control-panel)
+- [VSCode failing to start](#vscode-failing-to-start)
+- [Export Users CSV from Control Panel](#export-users-csv-from-control-panel)
+
+### Unable to save RStudio Preferences
+
+[Example issue](https://github.com/ministryofjustice/data-platform-support/issues/1427)
+
+Some users encounter an issue where they cannot save their preferences in RStudio as the preferences file is not owned by their user. This bug seems to have been introduced in RStudio 4.5.1 release, and has been fixed in RStudio 4.5.1-1.
+Ask users to try upgrading to 4.5.1-1 in the first instance.
+
+If this does not work, you can resolve manually using the steps below:
+
+- Access EFS in the prod cluster - kubectl exec -i -t -n default efs-app -c app "--" sh
+- Navigate to the user's Rstudio config folder - cd /data/<user>/rstudio/.config/rstudio
+- Change the ownership of the preferences file to the user - chown 1000:1000 rstudio-prefs.json
+- Ask the user to try and save their preferences.
+
+### Unable to sign on to Analytical Platform Control Panel
+
+Users may not be able to log into the control panel for a variety of reasons. Some common reasons for this may be:
+
+- They may be using the email box rather than using the GitHub button when prompted to login. The email box is for CICA users only - [Example issue](https://github.com/ministryofjustice/data-platform-support/issues/1451)
+    - Ask the user to try using the Continue with GitHub button.
+
+- They may not be part of the moj-analytical-services GitHub org - [Example issue](https://github.com/ministryofjustice/data-platform-support/issues/1446)
+    - Check the above analytical services link and search for the user.
+    - If they aren't part of the org, accessing it is self-serve if the user has a justice email.
+
+- A very rare instance may involve errors in sentry that look like [this error example](https://ministryofjustice.sentry.io/issues/6499497310/?environment=prod&project=5606313&query=is%3Aunresolved&referrer=issue-stream) or [this error example](https://ministryofjustice.sentry.io/issues/6499497310/?environment=prod&project=5606313&query=is%3Aunresolved&referrer=issue-stream)
+    - This appears to be the result of a new user trying to access control panel in the middle of an AWS outage
+    - Check the status of their provision user chart - helm ls --all --namespace <user-username>. The likelihood will be it has failed
+    - Before clearing check in EFS to see if a directory with their username exists by running the following commands:
+
+        ```sh
+        kubectl exec -i -t -n default efs-app -c app "--" sh
+        cd /data
+        ls -la
+        ```
+        Look for their user in the list (might be a better way of finding their folder).
+        If the folder exists, delete it.
+
+    - Clear their provision user chart - helm uninstall provision-user-<username> --namespace user-<username>
+    - Ask the user to log back into control panel
+
+- If neither of these are the issue, investigate using both [Sentry](https://ministryofjustice.sentry.io/issues/?environment=prod&project=5606313&statsPeriod=30d) and [Auth0](https://manage.auth0.com/dashboard/eu/alpha-analytics-moj/).
+- Either of these may output useful logging when a user is failing to log in.
+
+### Higher Memory or GPU Version of Tooling
+
+[Example issue](https://github.com/ministryofjustice/data-platform-support/issues/1444)
+Users may request a high memory or GPU version of whatever tool they primarily use.
+
+To resolve:
+
+- Go to the [Tool Releases](https://controlpanel.services.analytical-platform.service.justice.gov.uk/releases/) page on the control panel.
+- If you cannot access this, you will need Superuser permissions. Ask someone to grant you this.
+- Use the filters to look for restricted releases of a given tool.
+- Click the Manage Release button of the tool you wish to grant access to.
+- High memory versions are typically labelled 2vCPU, 24GB RAM or something similar.
+- GPU versions are labelled with GPU
+- Add the user's github username to the 'Target Users' box and click the Update Tool Release button.
+- The user list for a restricted tool is comma separated.
+
+### Add a reader to the legacy Quicksight
+
+[Example issue](https://github.com/ministryofjustice/data-platform-support/issues/1442)
+We may receive requests to add users to an older version of QuickSight.
+
+To resolve:
+
+- Go to the AWS console for the analytical-platform-data-production account.
+- Go to QuickSight.
+- Click on the person icon in the top right of the UI and select Manage QuickSight.
+- Click the invite users button.
+- Type the email address of the user to add in the box and hit enter.
+- Select Reader under Role and then click the invite button.
+- This will send an invite email.
+
+Note:  QuickSight treats email addresses (used as usernames) as case-sensitive
+If the user was invited as `Fred.Blogs@email.address.com` but attempted to sign in as `fred.blogs@email.address.com`,
+they will have issues.
+
+### Add an author to the legacy Quicksight
+
+We generally do not want to onboard new users to the legacy Quicksight, in particular new authors. Exceptions are made for teams that are already using it, and need to onboard new team members.
+The process is different to adding readers (as detailed above):
+
+1. Log in to Control Panel as a superuser
+2. Click "List all users", find the user and load their profile. If they do not exist, they need to follow user guidance to [get set up in Control Panel](https://user-guidance.analytical-platform.service.justice.gov.uk/get-started.html#4-access-the-analytical-platform).
+3. Under "QuickSight access" check "Legacy QuickSight access enabled (running in the data-production account)" and save
+4. Ask the user to log in to QuickSight, via the AWS console, following these steps:
+    1. Log in to Control Panel
+    2. Go to Your Tools
+    3. Click the "access AWS services such as S3 and Athena via the AWS Console" link to open the AWS console
+    4. Search for Quicksight
+    5. On initial login, the user will have been created as an author
+
+IMPORTANT: if the user also requires Athena access (for example, if they need to create a Datasource from Athena), this needs to granted from within Quicksight:
+
+1. Access the data-production AWS account as an admin
+2. Access Quicksight from the AWS console
+3. Within Quicksight, use the dropdown in the top right corner of the page to access the "Manage account" page.
+4. On the left hand side, scroll down to Permissions, and click "IAM policy Assignments"
+5. Find the "AthenaQSAccess" assignment, scroll to the right to find the "Action" column, and click the edit icon
+6. Use the "Assign users and groups" step to add a user. Searching by the users email address (as stored in the Control Panel) works best.
+
+Note: I could not launch "IAM policy Assignments" without been asked to sign in again until I enabled AWS multi session feature.
+
+### The moj-analytical-services organisation has enabled or enforced SAML SSO
+
+[Example issue](https://github.com/ministryofjustice/data-platform-support/issues/1420)
+Users may raise this when trying and failing to clone repositories to their tooling. This typically signals that a user hasn't created an SSH key within their tooling.
+
+To resolve:
+
+- Direct them to the user guidance Quickstart guide for [Jupyter](https://user-guidance.analytical-platform.service.justice.gov.uk/get-started.html#5-set-up-jupyterlab), [RStudio](https://user-guidance.analytical-platform.service.justice.gov.uk/get-started.html#6-set-up-rstudio) or [VSCode](https://user-guidance.analytical-platform.service.justice.gov.uk/get-started.html#7-set-up-vscode).
+
+### Tooling fails to deploy
+
+Users' tooling may fail to deploy via control panel. This can happen for several reasons.
+
+- It could relate to helm failing to deploy the tool. This may be surfaced in Sentry as a ToolDeploymentError with the description HelmError('Error: UPGRADE FAILED: another operation (install/upgrade/rollback) is in progress\n') - [Example issue](https://github.com/ministryofjustice/data-platform-support/issues/1373)
+    - To fix this, you will need to clear the offending helm deploy.
+    - In the prod cluster run helm ls --all --namespace <user-username>. This will get a list of all helm deploys for a user. The status will be something other than deployed for the failed deploy. Get the chart name from here.
+    - Run `helm uninstall <chart-name> --namespace <user-username>`. This will remove the chart and the tool deployment.
+    - Ask the user to reinstall their tool.
+
+- The user may have changed their GitHub username - [Example issue](https://github.com/ministryofjustice/data-platform-support/issues/1417)
+    - When launching the tool, it will use their old GitHub username as part of the URL. Check the username at the start of URL and see if it matches against the username that has submitted the support request.
+    - If they don't match, the user will have to start fresh. This will involve deleting their old user from control panel and the user logging in to create a new user.
+    - To delete a user:
+        - Go to the [users page in the control panel admin](https://controlpanel.services.analytical-platform.service.justice.gov.uk/users/).
+        - Find the old user and click Manage User.
+        - Click the Delete User button.
+        - Click OK on the alert box that pops up.
+
+### Kernel not connecting in Jupyterlab
+
+[Example issue](https://github.com/ministryofjustice/data-platform-support/issues/1440)
+This issue is typically caused when a user upgrades their Jupyterlab tool which has a newer version of Python.
+
+- Ask the user to refresh their venv and [refer to the user guide page on JupyterLab](https://user-guidance.analytical-platform.service.justice.gov.uk/tools/jupyterlab/).
+
+### Granting access to QuickSuite Resources
+
+[Example issue](https://mojdt.slack.com/archives/C4PF7QAJZ/p1767967315270389)
+A user may ask to be granted to certain QuickSuite resources. This could be because they've taken ownership of a project but not been transferred ownership.
+
+- Go to QuickSuite in the compute production account using a profile that can manage assets.
+- Go to Manage QuickSuite in the top right corner of the UI.
+- Go to Manage assets
+- Here you can search for assets (Dashboards, analyses, data sets and data sources) via name and click the 3 dots to share with a user via their Justice email
+- If the user doesn't have the name for the asset they want access to, you may be able to infer it via API calls to QuickSight
+    - [describe dashboard](https://docs.aws.amazon.com/quicksight/latest/APIReference/API_DescribeDashboard.html) will allow you to see a list of dataset arns
+    - [describe data set](https://docs.aws.amazon.com/quicksight/latest/APIReference/API_DescribeDataSet.html) will allow you to see the data source arn linked to it (but is unreliable for the data source name)
+    - [describe data source](https://docs.aws.amazon.com/quicksight/latest/APIReference/API_DescribeDataSource.html) will give you the data source name
+        - As per the example issue, you will need to make a call to describe data set to get the ID of the data source, then call describe data source to get the name of the source to share it with an individual. You can get the ID of the data set from the manage assets page in QuickSuite if the user has the name of the data set.
+        - `aws quicksight describe-data-set --aws-account-id <acc_id> --data-set-id <set_id>`
+        - `aws quicksight describe-data-source --aws-account-id <acc_id> --data-source-id <source_id>`
+
+### UV sync and clear cache to enable .trivyignore file to be applied
+
+[Support query link](https://mojdt.slack.com/archives/C4PF7QAJZ/p1768907607347569) and [solution link](https://mojdt.slack.com/archives/C4PF7QAJZ/p1768909568126659?thread_ts=1768907607.347569&cid=C4PF7QAJZ)
+
+This issue occurs when an analytical-platform-airflow-base-python user added a CVE to their trivyignore file, but it was not picked up by subsequent runs of the scan-container workflow (which uses the [shared-scan-container workflow](https://github.com/ministryofjustice/analytical-platform-airflow-github-actions/blob/main/.github/workflows/shared-scan-container.yml)). They were also using uv and had a uv.lock file.
+
+### CaDeT deployed tables visible in Athena but not in QuickSight
+
+These two workflows must complete successfully for the user to view new CaDeT tables in QuickSight:
+
+[post-deploy-register-table-apc (event-type: metadata-to-apc)](https://github.com/moj-analytical-services/create-a-derived-table/actions/workflows/post-deploy-register-table-apc.yaml), in create-a-derived-table, which uses the metadata from CaDeT Deploys to announce the existence of Databases and Tables to analytical-platform-compute-production AWS account. This is triggered in the final step of a deploy workflow job.
+
+[Terraform Plan and Apply (data-engineering-database-access)](https://github.com/moj-analytical-services/data-engineering-database-access/actions/workflows/terraform-deploy.yaml), which constantly gets state locked, which applies the individual user permissions required to access data. Follow these instructions to remove the state lock:
+
+1. Clone `https://github.com/moj-analytical-services/data-engineering-database-access`
+2. Boot dev container.
+3. `cd terraform/analytical-platform-compute-production/01-permissions-configuration`
+4. `aws-sso login`
+5. `aws-sso exec --profile analytical-platform-management-production:AdministratorAccess`
+6. `terraform init`
+7. `terraform plan` << This will fail and give you the lock ID
+8. `terraform force-unlock -force ${LOCK_ID}`
+
+
+### Creating a new Webapp via Control Panel
+
+[Example issue](https://github.com/ministryofjustice/data-platform-support/issues/1537)
+
+A user may request for a new Webapp to be created. We need to register it in Control Panel to allow access to data.
+
+- Go to the [webapps page in Control Panel](https://controlpanel.services.analytical-platform.service.justice.gov.uk/webapps/).
+- Click the Register an app button (If you can't see this, you will need to be added as a superuser. Contact a dev)
+- In the form, you will need to refer to the support template and add to the appropriate fields
+    - Paste the github link under "Where is your app located?" into "GitHub repository URL"
+    - Paste the cloud platform namespace under "What is your cloud platform namespace?" into "Cloud platform namespace" without any environment suffix (e.g data-platform-app-opg-ci-dashboard without the -dev or -prod)
+    - If they have specified a bucket under "Which data warehouse (s3 bucket) does your app need access to", select the "connect an existing webapp data source" radio button and select the appropriate bucket using the dropdown.
+    - Leave the "Access via Cloud Platform" box unticked.
+    - Click the register app button
+- Once the app has been created, click on the app name to go to the management page.
+    - Scroll down to the App Admins section and add their user as an admin
+    - Revoke your own admin status
+- Notify the user that the app has been created in control panel and provide them with [guidance on managing the application](https://user-guidance.analytical-platform.service.justice.gov.uk/apps/static-app.html#manage-the-application)
+
+### VSCode failing to start
+
+[Example issue](https://github.com/ministryofjustice/data-platform-support/issues/1624)
+
+A user's VSCode may fail to start with an error like - Error serving request: An error was encountered downloading the server, please retry: No such file or directory (os error 2)
+
+- Access EFS in the prod cluster - `kubectl exec -i -t -n default efs-app -c app "--" sh`
+- Navigate to their VSCode folder - `cd /data/<user>/vscode/`
+- Inside here, delete the .vscode and .vscode-server folders (the "." is important!)
+    - `rm -rf .vscode`
+    - `rm -rf .vscode-server`
+- Delete the user's VSCode deployment - `kubectl -n <namespace> delete deployment <deployment-name>`
+- Go to control panel admin page
+    - Go to tool deployments
+    - Find the user's active vscode deployment and untick the active flag
+- Ask the user to refresh the tools page and redeploy their VSCode
+
+### Export Users CSV from Control Panel
+
+[Example issue](https://github.com/ministryofjustice/data-platform-support/issues/1702)
+
+From time to time, teams get in touch asking for a mapping of AP users GitHub names to their Justice email address. The issue above is an example of the request. We have previously agreed this team can have this information, this is how to provide it:
+
+1. [Access the Control Panel Admin](https://controlpanel.services.analytical-platform.service.justice.gov.uk/admin/) using the link or via the main navigation in Control Panel. You need to be a superuser to be access the admin. If you are not one, ask another superuser to make you one.
+2. Select "Users" from the [list of links under the API heading](https://controlpanel.services.analytical-platform.service.justice.gov.uk/admin/api/user/).
+3. Use the checkbox to select all users (or a subset if required).
+
+    Note: when selecting all users, you must select the top checkbox, then also the "Select all xxxx users" link.
+
+4. Under the "Actions" dropdown, select "Export selected users as CSV" then click "Go". This will trigger a download in your browser.
+5. Open the downloaded file on your machine, and remove any columns that are not needed. In the past, I have included only "username", "alpha_role_arn", "justice_email" and "date_joined".
+
+    Note: Be sure to include the "justice_email" column, not the "email" column, as the "email" column can contain personal email addresses.
+
+6. Export the modified file to a CSV, and then send it to them direct via slack - do not upload the CSV to the GitHub support ticket.
+7. Close any related GitHub issue.
