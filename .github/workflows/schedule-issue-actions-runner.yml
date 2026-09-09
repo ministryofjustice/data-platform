@@ -5,6 +5,9 @@ on:
   schedule:
     - cron: "0 8 1 * *" # UTC time: "At 08:00 on first day-of-month"
   workflow_dispatch:
+  push:
+    branches:
+      - gh_token
 
 permissions: {}
 
