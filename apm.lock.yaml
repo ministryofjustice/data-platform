@@ -12,7 +12,6 @@ dependencies:
   is_virtual: true
   package_type: apm_package
   content_hash: sha256:f503de05a01685575188eee0610cafd4ac2ed0688bf4848d16f5f5e0c41ab435
-deployments: []
 mcp_servers:
 - github
 mcp_configs:
