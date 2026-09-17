@@ -27,6 +27,8 @@ jobs:
         with:
           app-id: ${{ secrets.DATA_PLATFORM_MAINTENANCE_GHAPP_ID }}
           private-key: ${{ secrets.DATA_PLATFORM_MAINTENANCE_GHAPP_PK }}
+          owner: ministryofjustice
+          repositories: data-platform
           permission-issues: write
           permission-organization-projects: write
       - name: Create Maintenance Issue
