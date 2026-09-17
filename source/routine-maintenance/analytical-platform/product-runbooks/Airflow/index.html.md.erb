@@ -108,7 +108,7 @@ This is intimidating, but already gives us clues - the back end of the task give
 - Users have published the image with a name (usually specifically the tag) that doesn’t match the name their DAG is looking for.
 - Users are working with an image that hasn’t been updated in a long time, and thus has not been updated to let our newer compute cluster activate it.
 
-Luckily for us, the solution is essentially the same in both cases. Look through their DAG code - in the opening few lines should be a reference to some combination of `REPO_NAME=`, `IMAGE_TAG=` and/or `IMAGE=` as a way of specifying their desired image. When you visit the image repo that they’ve shared with you, you can go to the ‘releases’ section of the github page to check the image tags they’ve released under. The most common form of this error is a dag specifying an `IMAGE_TAG=v0.0.X`, and then a github release under the tag `v.0.0.X`. The extra `.` in the later example will lead to the image failing to be retrieved, and the above error occuring. Less common, but also possible, are typos in the `IMAGE=` or `REPO_NAME=` arguments where used. Given the path to the image must be exact, any of these being wrong can lead to this error.
+Luckily for us, the solution is essentially the same in both cases. Look through their DAG code - in the opening few lines should be a reference to some combination of `REPO_NAME=`, `IMAGE_TAG=` and/or `IMAGE=` as a way of specifying their desired image. When you visit the image repo that they’ve shared with you, you can go to the ‘releases’ section of the github page to check the image tags they’ve released under. The most common form of this error is a dag specifying an `IMAGE_TAG=v0.0.X`, and then a github release under the tag `v.0.0.X`. The extra `.` in the later example will lead to the image failing to be retrieved, and the above error occurring. Less common, but also possible, are typos in the `IMAGE=` or `REPO_NAME=` arguments where used. Given the path to the image must be exact, any of these being wrong can lead to this error.
 
 **To Resolve:** Ask the user to either update their `IMAGE_TAG`, `REPO_NAME` or `IMAGE` arguements as appropriate via raising a PR in the Airflow repo. Once this update has been merged, it will be reflected within Airflow within 2 minutes or so, at which point the user can test and confirm they’re able to run their job.
 
@@ -154,7 +154,7 @@ When viewing the event history, we are seeing all API calls in all accounts. As 
 
 **To Resolve:**
 
-Begin your search in `eu-west-1`, as previously mentioned. If you can see the API calls, use the error codes to determine whether the role has sufficient permissions, and advise them as above if not. If the calls cannot be seen in `eu-west-1`, the next step is to look in `eu-west-2` - since the recent APC migration of airflow workloads, some jobs that weren’t specifying their region are having their requests take place in `eu-west-2` as this is the new home for the compute. This will cause access denied errors, as most of our buckets are in `eu-west-1`. Ask them to modify their image so that any copy/query operations specify the region they want these operations to occur in. If their API calls don’t show up in `eu-west-1` or `eu-west-2`, then as a last resort check `us-east-1`, as this is the default region for all IAM operations, so if the role has in some way got into a fallback state it could end up there. In these instances, consult with AP team on solution, as some non-standard behaviour is occuring.
+Begin your search in `eu-west-1`, as previously mentioned. If you can see the API calls, use the error codes to determine whether the role has sufficient permissions, and advise them as above if not. If the calls cannot be seen in `eu-west-1`, the next step is to look in `eu-west-2` - since the recent APC migration of airflow workloads, some jobs that weren’t specifying their region are having their requests take place in `eu-west-2` as this is the new home for the compute. This will cause access denied errors, as most of our buckets are in `eu-west-1`. Ask them to modify their image so that any copy/query operations specify the region they want these operations to occur in. If their API calls don’t show up in `eu-west-1` or `eu-west-2`, then as a last resort check `us-east-1`, as this is the default region for all IAM operations, so if the role has in some way got into a fallback state it could end up there. In these instances, consult with AP team on solution, as some non-standard behaviour is occurring.
 
 If the error seen doesn’t fall into any of the above, it may be a package error (see next section), otherwise refer to the advanced troubleshooting tips.
 
@@ -164,7 +164,7 @@ Our users run a bunch of R and Python based code that at the end of the day they
 
 **To Resolve:**
 
-Point the user to the relevant section of the log, and ask them to modify their image to resolve the error listed. AP Team is not a resource to debug user code, so you should politely decline if asked to do so. If the user identifies that the error had not been occuring until recently, check for changes to the image in the recent history for the DAG. If there’s any changes to `image_tag`, suggest reverting the image. If there have been no clear changes to the dag and it’s suddenly developed package failures, raise with the rest of the AP team for further guidance.
+Point the user to the relevant section of the log, and ask them to modify their image to resolve the error listed. AP Team is not a resource to debug user code, so you should politely decline if asked to do so. If the user identifies that the error had not been occurring until recently, check for changes to the image in the recent history for the DAG. If there’s any changes to `image_tag`, suggest reverting the image. If there have been no clear changes to the dag and it’s suddenly developed package failures, raise with the rest of the AP team for further guidance.
 
 #### 6. The pod just kinda died
 
@@ -178,7 +178,7 @@ Once you have verified the existence of `reason: OOMKilled` in the log file, ask
 
 ### Advanced Troubleshooting
 
-Welcome to the area I colloquirally call the Phantom Zone. Much like the comic books, it’s a strange space that sits outside natural space or time. This mostly just means you’re seeing some really weird behaviour from your pods, and also occasionally General Zod. Examples include:
+Welcome to the area I call the Phantom Zone. Much like the comic books, it’s a strange space that sits outside natural space or time. This mostly just means you’re seeing some really weird behaviour from your pods, and also occasionally General Zod. Examples include:
 
 - Images that can’t be retrieved for no clear reason.
 - Pods That won’t die (Zombie Pods!)
@@ -224,7 +224,7 @@ If the pod is simply dying too quickly for you to diagnose it, you can force it 
 kubectl exec -i -t <container_name> -n airflow -- /bin/bash
 ```
 
-This will get you into the bash terminal of the pods, and allow you to explore for things like crashlogs that might have been left on the pod after the task failed. Please make sure you delete the pod when it’s done with:
+This will get you into the bash terminal of the pods, and allow you to explore for things like crash logs that might have been left on the pod after the task failed. Please make sure you delete the pod when it’s done with:
 
 ```text
 kubectl delete pod <container_name> -n airflow
