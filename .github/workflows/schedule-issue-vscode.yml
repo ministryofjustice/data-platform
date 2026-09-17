@@ -30,7 +30,7 @@ jobs:
           owner: ministryofjustice
           repositories: data-platform
           permission-issues: write
-          permission-repository-projects: write
+          permission-organization-projects: write
       - name: Create Maintenance Issue
         id: create_maintenance_issue
         run: |
