@@ -20,12 +20,22 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2.2.2
+        with:
+          app-id: ${{ secrets.DATA_PLATFORM_MAINTENANCE_GHAPP_ID }}
+          private-key: ${{ secrets.DATA_PLATFORM_MAINTENANCE_GHAPP_PK }}
+          owner: ministryofjustice
+          repositories: data-platform
+          permission-issues: write
+          permission-organization-projects: write
       - name: Create Maintenance Issue
         id: create_maintenance_issue
         run: |
           bash scripts/github/issue-creation/create-maintenance-issue.sh
         env:
-          GH_TOKEN: ${{ secrets.MOJ_PROJECT_DATA_PLATFORM_WRITE }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
           GH_REPO: ${{ github.repository }}
           TITLE: 📥 Maintenance - Airflow Python Base Image
           ASSIGNEES: ""
