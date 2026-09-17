@@ -236,7 +236,7 @@ This is also the solution to zombie pods, which are pods that occasionally get s
 
 Sometimes a KubernetesPodOperator task will become decoupled from its MWAA worker. Airflow is no longer tracking the task, but it can continue to completion. This can present as a task that gets marked as `Failed` in the airflow UI, with logs abruptly stopping at some point, but the goes on to complete.
 
-The pod logs and diagnostics can be found within the Observability Platform `analytical-platform/compute/mwaa/workloads` dashboard. Setting the `environment` variable to `analytical-platform-compute-test` will show task pods from Aiflow-Dev, and `analytical-platform-compute-production` will show task pods from Airflow-Prod. The pod ID can typically be found near the top of the Airflow task logs (from the airflow UI) after the task definition, as part of a log entry that starts like:
+The pod logs and diagnostics can be found within the Observability Platform `analytical-platform/compute/mwaa/workloads` dashboard. Setting the `environment` variable to `analytical-platform-compute-test` will show task pods from Airflow-Dev, and `analytical-platform-compute-production` will show task pods from Airflow-Prod. The pod ID can typically be found near the top of the Airflow task logs (from the airflow UI) after the task definition, as part of a log entry that starts like:
 
 ```text
 [2024-01-01, 00:00:01 UTC] {{kubernetes_pod.py:380}} INFO - Found matching pod
