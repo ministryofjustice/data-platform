@@ -128,11 +128,11 @@ Broadly, however, these share a common quality - they’re all permissions-based
 
 ##### 1. Access Denied - Failed to assume role entirely
 
-When a pod spins up, it is given an AWS role, either via `kube2iam`, or `IRSA`. In either case, this role it is given is what empowers it to do anything within the AWS estate. For the role named in the Airflow DAG, you can check the last time it was accessed via the AWS console by searching for the role by name under `Roles` in `IAM`, then looking on the `Access Advisor` tab to see when each permission set was last excersised. If the role was last accessed a week ago, and the pod ran today, then there’s a good chance the pod failed to get the role. These will always manifest in `AccessDenied` and similar errors, as the pods will be blocked from ALL AWS actions without access to a role.
+When a pod spins up, it is given an AWS role, either via `kube2iam`, or `IRSA`. In either case, this role it is given is what empowers it to do anything within the AWS estate. For the role named in the Airflow DAG, you can check the last time it was accessed via the AWS console by searching for the role by name under `Roles` in `IAM`, then looking on the `Access Advisor` tab to see when each permission set was last exercised. If the role was last accessed a week ago, and the pod ran today, then there’s a good chance the pod failed to get the role. These will always manifest in `AccessDenied` and similar errors, as the pods will be blocked from ALL AWS actions without access to a role.
 
 **To Resolve:**
 
-Check the `role_name` or `service_account_name` in the DAG definiton matches with what the actual role being created for them is. Assuming it matches, then verify that their role exists in AWS and is not malformed (compare IAM role/access policy to known working examples). Beyond this, check it does not fall into any of the later categories, and then please refer to later in the guidance on advanced troubleshooting tips if you’re still having issues.
+Check the `role_name` or `service_account_name` in the DAG definition matches with what the actual role being created for them is. Assuming it matches, then verify that their role exists in AWS and is not malformed (compare IAM role/access policy to known working examples). Beyond this, check it does not fall into any of the later categories, and then please refer to later in the guidance on advanced troubleshooting tips if you’re still having issues.
 
 ##### 2. Access Denied - No identity Based Role
 
