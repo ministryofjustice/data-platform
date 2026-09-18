@@ -1,8 +1,8 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/octo-sts/app/refs/heads/main/pkg/octosts/octosts.TrustPolicy.json
 issuer: https://token.actions.githubusercontent.com
-subject_pattern: repo:ministryofjustice/data-platform:(ref:refs/heads/main|pull_request)
+subject: repo:ministryofjustice/data-platform:ref:refs/heads/main
 claim_pattern:
-  job_workflow_ref: ministryofjustice/data-platform/\.github/workflows/schedule-issue-(ingestion|vscode|actions-runner|airflow-python-base|airflow-r-base|cloud-development-environment-base|modernisation-platform-environments)\.yml@.*
+  job_workflow_ref: ministryofjustice/data-platform/\.github/workflows/schedule-issue-(ingestion|vscode|actions-runner|airflow-python-base|airflow-r-base|cloud-development-environment-base|modernisation-platform-environments)\.yml@refs/heads/main
 
 permissions:
   issues: write
