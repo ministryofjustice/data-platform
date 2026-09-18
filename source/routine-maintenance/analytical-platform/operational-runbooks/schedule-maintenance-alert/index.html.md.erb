@@ -1,0 +1,24 @@
+---
+title: Schedule maintenance alert
+weight: 1
+last_reviewed_on: 2026-09-17
+review_in: 12 months
+---
+
+# <%= current_page.data.title %>
+
+You can [schedule a maintenance window in PagerDuty](https://moj-digital-tools.pagerduty.com/external-status-dashboard/P1E3FLK/maintenance?tab=ongoing) by clicking on the + Post Maintenance button.
+
+Ensure the Post Type is set to Maintenance and choose Scheduled on the Post Status dropdown.
+
+Update the title and description boxes with a suitable definition of the work being carried out and what services will be impacted during the maintenance window.
+
+Select the date and time range for the maintenance window in the Scheduled Maintenance Time section. The amount of notice will depend on the extent of the changes being made within the maintenance window. We commonly give two days of notice for our users ahead of the maintenance window, although a longer notice period might be given for more significant updates.
+
+Select the affected service from the Impacted Business Services list. Once you have checked everything is as expected, you can submit the details by clicking the Post button. When this is done, a message will be sent to the #ask-analytical-platform Slack channel, and a status will appear in control panel.
+
+When the maintenance window arrives and work is about to start, [go to PagerDuty and create a New Update](https://moj-digital-tools.pagerduty.com/external-status-dashboard/P1E3FLK/maintenance?tab=ongoing) by clicking the ellipsis button on the right of the appropriate entry. The Post Status should be set to "In progress" and a brief description added.
+
+Once the maintenance task is completed, you should post a new update to the status again, setting it to Completed.
+
+> Note: secret rotations should be scheduled to minimize impact on users. For example, rotating self-hosted runner GitHub FG-PATs which are primarily used in CaDeT workflows should not be done on the hour, to avoid clashing with hourly scheduled workflows.

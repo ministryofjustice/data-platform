@@ -4,6 +4,7 @@
   "language": "en-GB",
   "ignorePaths": [".devcontainer/src/kubernetes/config"],
   "words": [
+    "botocore",
     "bottlerocket",
     "cica",
     "cilium",
@@ -30,6 +31,7 @@
     "lycheeverse",
     "ministryofjustice",
     "multipage",
+    "mwaa",
     "nxdomain",
     "octo",
     "openssf",

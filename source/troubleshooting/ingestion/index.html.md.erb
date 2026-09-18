@@ -1,0 +1,250 @@
+---
+title: Ingestion
+weight: 3
+last_reviewed_on: 2026-09-18
+review_in: 12 months
+---
+
+# <%= current_page.data.title %>
+
+Troubleshooting in Ingestion can take several forms. This page includes some steps that can help, each situation is different however and can require investigation beyond what is outlined below.
+
+> **It is recommended that you always confirm with any user that reports an issue with Ingestion the following details:**
+>
+> - name of file sent
+> - time file is sent
+> - the environment if this is not clear - you can usually establish this from the ticket and looking at the users in the configuration
+>
+> This will:
+>
+> - aid troubleshooting
+> - ensure that a file has been uploaded
+>
+> **AVOID troubleshooting without a confirmation either from the user or that it is immediately apparent in the logs that a file has been uploaded.**
+
+## Finding Lambda logs
+
+Each Lambda function has logs in CloudWatch. The primary functions to look at when troubleshooting are, in order, are `transfer`, `scan` and `definition-upload`.
+
+To access logs, open the function, select the **Monitor** tab, then choose **View CloudWatch Logs**.
+
+> **Note**
+>
+> CloudWatch Logs group multiple transfers/scans etc into one log stream. One log stream ≠ one event / file upload / file scan. Multiple transfers / scans can be included in one CloudWatch log.
+
+## Understanding transfer logs
+
+Transfer logs outline activity in a simple timestamped manner. Note the filename and destination is included.
+
+```shell
+2025-10-14T14:14:48.096Z
+START RequestId: a15be7b6-8ce0-4bc9-a541-19c9235e6478 Version: $LATEST
+
+2025-10-14T14:14:48.097Z
+Supplier: analytical-platform
+
+2025-10-14T14:14:48.097Z
+Object: file.txt
+
+2025-10-14T14:14:48.440Z
+Successfully copied analytical-platform/file.txt to mojap-land-dev/analytical-platform/file.txt
+
+2025-10-14T14:14:48.640Z
+Successfully deleted analytical-platform/file.txt from mojap-ingestion-development-processed
+
+2025-10-14T14:14:48.640Z
+handler.py completed successfully!
+
+2025-10-14T14:14:48.642Z
+END RequestId: a15be7b6-8ce0-4bc9-a541-19c9235e6478
+
+2025-10-14T14:14:48.643Z
+REPORT RequestId: a15be7b6-8ce0-4bc9-a541-19c9235e6478 Duration: 546.56 ms Billed Duration: 2915 ms
+```
+
+If you cannot see expected logs for a file in question check the `scan` lambda logs. The scan is triggered when the file first lands in the S3 bucket.
+
+## Understanding scan logs
+
+Scan logs take the following format:
+
+```shell
+2025-10-14T14:14:16.840Z
+START RequestId: 0742e282-d3e8-4dfc-bd27-5c28567697a2 Version: $LATEST
+
+2025-10-14T14:14:16.840Z
+Received event: {'Records': [{'eventVersion': '2.1', 'eventSource': 'aws:s3', 'awsRegion': 'eu-west-2', 'eventTime': '2025-10-14T14:14:13.215Z', 'eventName': 'ObjectCreated:Put', 'userIdentity': {'principalId': 'AWS:AROA2UC3A7CTUFU2UJALL:analytical-platform.0207b082585b5b48892b@s520fdf5060bc40b39'}, 'requestParameters': {'sourceIPAddress': '10.0.88.176'}, 'responseElements': {'x-amz-request-id': 'GBESBMS09N27T16B', 'x-amz-id-2': 'V/BKDiU66dfsQl+LYETy/FSRnZKPPoR3Iwm0/gfG5sSUrOFVUjKDEFFzF9QfJTX85oXTxgr77Luvodvr3mz+Ed3bI4gGYH7pFj5webmN8yg='}, 's3': {'s3SchemaVersion': '1.0', 'configurationId': 'ingestion_scan', 'bucket': {'name': 'mojap-ingestion-development-landing', 'ownerIdentity': {'principalId': 'A2Q33ER93AJQVQ'}, 'arn': 'arn:aws:s3:::mojap-ingestion-development-landing'}, 'object': {'key': 'analytical-platform/file.txt', 'size': 0, 'eTag': 'c065cc8208e66be1ed07ab3a66f83b4a', 'sequencer': '0068EE5AB52CB36BCF'}}}]}
+
+2025-10-14T14:14:18.432Z
+Successfully downloaded ClamAV definitions from S3.
+
+2025-10-14T14:14:20.104Z
+Successfully extracted ClamAV definitions.
+
+2025-10-14T14:14:43.796Z
+/tmp/clamav/scan/file.txt: Empty file
+
+2025-10-14T14:14:43.796Z
+----------- SCAN SUMMARY -----------
+
+2025-10-14T14:14:43.796Z
+Known viruses: 8708677
+
+2025-10-14T14:14:43.796Z
+Engine version: 1.4.3
+
+2025-10-14T14:14:43.796Z
+Scanned directories: 0
+
+2025-10-14T14:14:43.796Z
+Scanned files: 0
+
+2025-10-14T14:14:43.796Z
+Infected files: 0
+
+2025-10-14T14:14:43.796Z
+Data scanned: 0.00 MB
+
+2025-10-14T14:14:43.796Z
+Data read: 0.00 MB (ratio 0.00:1)
+
+2025-10-14T14:14:43.796Z
+Time: 23.550 sec (0 m 23 s)
+
+2025-10-14T14:14:43.796Z
+Start Date: 2025:10:14 14:14:20
+
+2025-10-14T14:14:43.796Z
+End Date: 2025:10:14 14:14:43
+
+2025-10-14T14:14:43.796Z
+Scan result: Clean
+
+2025-10-14T14:14:44.117Z
+File moved to processed and tagged
+
+2025-10-14T14:14:44.119Z
+END RequestId: 0742e282-d3e8-4dfc-bd27-5c28567697a2
+
+2025-10-14T14:14:44.119Z
+REPORT RequestId: 0742e282-d3e8-4dfc-bd27-5c28567697a2 Duration: 27278.50 ms Billed Duration: 29112
+```
+
+Important information included here is the time, filename and the outcome of a scan (under **Scan result**).
+
+Scan results are either **Clean** or **Infected**.
+
+If a file is **Clean** it moves to the `processed` bucket prior to the `transfer` lambda transferring it to the destination bucket.
+
+> **Note**
+>
+> If **Known viruses** is **0** check the `definition-upload` function logs.
+
+## Checking Transfer Family server logs
+
+In the unlikely event that you need to look at transfer server logs these are `/aws/transfer-structured-logs` in CloudWatch.
+These can be used to verify connection times and user activity on the server.
+
+## Reproducing Transfer Family user issues
+
+**Purpose:** reproduce a user’s issue by temporarily logging in as that user using your own SSH key and your IP, while inheriting the same IAM role and permissions.
+
+You may achieve similar results by using our team user `analytical-platform`. See **Using the `analytical-platform` User**.
+
+### Steps
+
+1. Add your SSH public key to the user in question.
+
+   - In the user resource in the AWS console, **Transfer Family** > **Servers** > `{server-name}` > **User** – add your SSH public key so the same username accepts your key.
+
+2. Allow your IP address on the Transfer Family server’s security group.
+
+   - Find the security group associated with the server:
+
+     **EC2** > **Security Groups**
+
+     - **Name:** `analytical-platform-ingestion-<environment>-transfer-server`
+     - **Description:** `Security Group for Transfer Server`
+
+   - Edit inbound rules for the Security Group and add an inbound rule for your current public IP address on the appropriate security group, adding it in IPv4 CIDR block `/32` notation to indicate a single address.
+
+3. Connect exactly as the user.
+
+   - Use the same endpoint and username the user does.
+   - Connect with SFTP using your private key that matches the public key added in step 2.
+
+   #### Production
+
+   ```shell
+   sftp -P 2222 \
+     ${USERNAME}@sftp.ingestion.analytical-platform.service.justice.gov.uk
+   ```
+
+   #### Development
+
+   ```shell
+   sftp -P 2222 \
+     ${USERNAME}@sftp.development.ingestion.analytical-platform.service.justice.gov.uk
+   ```
+
+   - Verify login.
+   - Run basic commands (for example `pwd`, `ls`, `put`). Note that once the Lambda kicks in, any transferred files are deleted.
+
+   ```shell
+   sftp> pwd
+   Remote working directory: /mojap-ingestion-development-landing/maat-xhibit-dev
+
+   sftp> ls
+
+   sftp> put /analytical/work/test_sftp.txt
+   Uploading /analytical/work/test_sftp.txt to \
+   /mojap-ingestion-development-landing/maat-xhibit-dev/test_sftp.txt
+
+   test_sftp.txt
+   100% 0 0.0KB/s 00:00
+
+   sftp> ls
+   test_sftp.txt
+
+   sftp> ls
+   ```
+
+   - Run `put` to upload a file and confirm that it arrives in the destination.
+
+   This can be done in the console:
+
+   - Navigate to the Lambda called `transfer`.
+   - Select the **Monitor** tab, then **View CloudWatch Logs**, and find the latest log stream.
+   - In the log stream, look for an entry similar to:
+
+     ```text
+     Successfully copied maat-xhibit-dev/test_sftp.txt \
+     to mojap-land-dev/laa/dev/maatxhibit/test_sftp.txt
+     ```
+
+     or check the destination bucket in `analytical-platform-data-platform`, in this case:
+
+     ```text
+     mojap-land-dev/laa/dev/maatxhibit/
+     ```
+
+4. Reproduce the reported behaviour.
+
+   - Perform the same operations (upload, list, download) using the same filenames and paths the user reported.
+   - Capture outputs and errors to validate hypotheses (for example filename handling or permissions).
+
+5. (If required) Iterate fixes while impersonating.
+
+   - Adjust only what’s necessary (for example S3/IAM permissions or filename conventions) and re-test under the impersonated session until behaviour matches expectations.
+
+6. Cleanup (**mandatory**).
+
+   - Remove your SSH key from the user configuration.
+   - Remove your IP from the security group.
+   - Reconcile any temporary manual edits back into code (or revert them) so the environment returns to its prior state.
+
+### Notes
+
+- This method deliberately does **not** create a new Transfer Family user.
+- All access is temporary and auditable via code changes and security group updates.
+- Because you connect with the same username and IAM role, you reproduce the user’s effective permissions and pathing precisely.
