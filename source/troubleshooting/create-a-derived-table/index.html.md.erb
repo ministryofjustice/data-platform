@@ -1,0 +1,44 @@
+---
+title: Create a Derived Table (CaDeT)
+weight: 2
+last_reviewed_on: 2026-09-18
+review_in: 12 months
+---
+
+# <%= current_page.data.title %>
+
+## Troubleshooting CaDeT runner failures
+
+If you see an error like below follow the troubleshooting steps outlined in this document. This error can occur when either a user or AWS terminates the spot compute that `karpenter` has assigned from AWS. The default position is that spot compute is consumed, this primarily is a cost saving decision. Spot compute should only be used for non-critical workloads that can be safely interrupted.
+
+```text
+The self-hosted runner lost communication with the server. Verify the machine is running and has a healthy network connection. Anything in your workflow that terminates the runner process, starves it for CPU/Memory, or blocks its network access can cause this error.
+```
+
+1. Examine the workflow in question to see if it's on spot or non-spot compute.
+
+   a. **Spot:**
+
+      i.
+
+      ```text
+      jobs:
+        deploy:
+          name: Deploy dbt project
+          runs-on: [self-hosted, analytical-platform]
+      ```
+
+   b. **Non-spot:**
+
+      i.
+
+      ```text
+      jobs:
+        deploy:
+          name: Deploy dbt project
+          runs-on: [self-hosted, analytical-platform-non-spot]
+      ```
+
+2. If it's on spot compute follow these [steps to establish which spot instance was terminated](https://github.com/ministryofjustice/data-platform-support/issues/864).
+
+3. Once you have this information examine the Dashboard in `analytical-platform-compute-production` here and establish the reason for the termination.
