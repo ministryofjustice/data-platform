@@ -31,7 +31,7 @@ jobs:
         run: |
           bash scripts/github/issue-creation/create-maintenance-issue.sh
         env:
-          GH_TOKEN: ${{ steps.c.outputs.token }}
+          GH_TOKEN: ${{ steps.octo_sts.outputs.token }}
           GH_REPO: ${{ github.repository }}
           TITLE: 📥 Maintenance - Visual Studio Code
           ASSIGNEES: ""
