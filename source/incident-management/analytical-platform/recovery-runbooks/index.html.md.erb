@@ -7,6 +7,41 @@ review_in: 12 months
 
 # <%= current_page.data.title %>
 
+## Rotating secrets following a security incident
+
+Example scenario:
+
+A security incident requires we rotate all secrets.
+
+## Notifying users
+
+Locate the incident process in Loop and follow directions there for appropriate channels for notifying users that there may be interruption(s) to the service.
+
+## List of locations where secrets are stored
+
+1. **AWS Secrets Manager(s)** – multiple accounts. A list of accounts can be found in the MP environments repos. Don't assume they're all defined in code.
+   1. Management production
+   2. Common production
+   3. Production
+   4. Data production (includes Airflow secrets)
+   5. Environmental secrets (analytical-platform-compute environments)
+2. **GitHub repository secrets** – list of repos here
+3. **Entra app registrations** – guidance here
+4. **Notify API keys**
+5. **Auth0 client secrets**
+6. **Slack webhooks**
+7. **MS Teams webhooks**
+
+> **Important**
+>
+> You should also refer to the team folder in **1Password** to identify and update shared secrets.
+
+## Related runbooks
+
+- Rotate fine grained PAT
+- Rotate Slack workflow webhook URL
+- Rotating tokens
+
 ## Recovering platform tooling after EKS cluster loss
 
 Example scenario:
