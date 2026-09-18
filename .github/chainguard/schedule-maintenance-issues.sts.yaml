@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/octo-sts/app/refs/heads/main/pkg/octosts/octosts.TrustPolicy.json
+issuer: https://token.actions.githubusercontent.com
+subject_pattern: repo:ministryofjustice/data-platform:(ref:refs/heads/main|pull_request)
+
+permissions:
+  issues: write
+  organization_projects: write
