@@ -4,7 +4,6 @@ name: 📥 Maintenance - Create Visual Studio Code Issue
 on:
   schedule:
     - cron: "0 8 1 * *" # UTC time: "At 08:00 on first day-of-month"
-  workflow_dispatch: {} # TODO: remove after testing octo-sts migration
 
 permissions: {}
 
@@ -32,7 +31,7 @@ jobs:
         run: |
           bash scripts/github/issue-creation/create-maintenance-issue.sh
         env:
-          GH_TOKEN: ${{ steps.octo_sts.outputs.token }}
+          GH_TOKEN: ${{ steps.c.outputs.token }}
           GH_REPO: ${{ github.repository }}
           TITLE: 📥 Maintenance - Visual Studio Code
           ASSIGNEES: ""

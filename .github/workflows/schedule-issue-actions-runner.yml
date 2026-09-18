@@ -13,29 +13,25 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      issues: write
+      id-token: write
     steps:
       - name: Checkout
         id: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Generate GitHub App token
-        id: app-token
-        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2.2.2
+      - name: Obtain Octo STS Token
+        id: octo_sts
+        uses: octo-sts/action@f603d3be9d8dd9871a265776e625a27b00effe05 # v1.1.1
         with:
-          app-id: ${{ secrets.DATA_PLATFORM_MAINTENANCE_GHAPP_ID }}
-          private-key: ${{ secrets.DATA_PLATFORM_MAINTENANCE_GHAPP_PK }}
-          owner: ministryofjustice
-          repositories: data-platform
-          permission-issues: write
-          permission-organization-projects: write
+          scope: ministryofjustice/data-platform
+          identity: schedule-maintenance-issues
       - name: Create Maintenance Issue
         id: create_maintenance_issue
         run: |
           bash scripts/github/issue-creation/create-maintenance-issue.sh
         env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_TOKEN: ${{ steps.octo_sts.outputs.token }}
           GH_REPO: ${{ github.repository }}
           TITLE: 📥 Maintenance - Actions Runner
           ASSIGNEES: ""
