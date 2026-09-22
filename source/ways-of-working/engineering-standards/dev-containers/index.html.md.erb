@@ -1,0 +1,54 @@
+---
+title: Development containers
+weight: 3
+last_reviewed_on: 2026-09-22
+review_in: 12 months
+---
+
+# <%= current_page.data.title %>
+
+The Analytical Platform team's default position is to define a [development container](https://containers.dev/) (also known as dev container) in each repository.
+
+> This guide presumes you are using VSCode.
+
+## Launching a Development Container
+
+1. Ensure Docker is running.
+2. Install [Dev Containers - Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) on VSCode.
+3. Clone a repository - in this example we will use [GitHub - ministryofjustice/analytical-platform](https://github.com/ministryofjustice/analytical-platform).
+4. Open the repository on VSCode.
+5. Open the **Command Palette** (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS).
+   1. Select run the **"Dev Containers: Open Folder in Container..."**.
+   2. If you have already built a dev container in this repository run the **"Dev Containers: Rebuild and Reopen in Container..."**.
+6. The container should build, output from this process will appear in the terminal.
+7. Upon completion you will be presented with a terminal.
+
+## Predefined EKS Cluster Contexts
+
+The development container in the [analytical-platform](https://github.com/ministryofjustice/analytical-platform) repository has the Analytical Platform EKS clusters predefined in the `~/.kube/config` file.
+
+These can be consumed with the following commands:
+
+List all available contexts with:
+
+```shell
+kubectl config get-contexts
+```
+
+Switch contexts:
+
+```shell
+kubectl config use-context <NAME>
+```
+
+See the current context with:
+
+```shell
+kubectl config current-context
+```
+
+## Useful Links
+
+* [VS Code's development containers tutorial](https://code.visualstudio.com/docs/devcontainers/tutorial)
+
+
