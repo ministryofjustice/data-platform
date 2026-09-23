@@ -149,9 +149,7 @@ These can be used to verify connection times and user activity on the server.
 
 **Purpose:** reproduce a user’s issue by temporarily logging in as that user using your own SSH key and your IP, while inheriting the same IAM role and permissions.
 
-You may achieve similar results by using our team user `analytical-platform`. See **Using the `analytical-platform` User**.
-
-### Steps
+You may achieve similar results by [using our team user `analytical-platform`](#using-the-analytical-platform-user).
 
 1. Add your SSH public key to the user in question.
 
@@ -171,16 +169,16 @@ You may achieve similar results by using our team user `analytical-platform`. Se
 3. Connect exactly as the user.
 
    - Use the same endpoint and username the user does.
-   - Connect with SFTP using your private key that matches the public key added in step 2.
+   - Connect with SFTP using your private key that matches the public key added in step 1.
 
-   #### Production
+   Production:
 
    ```shell
    sftp -P 2222 \
      ${USERNAME}@sftp.ingestion.analytical-platform.service.justice.gov.uk
    ```
 
-   #### Development
+   Development:
 
    ```shell
    sftp -P 2222 \
@@ -248,3 +246,32 @@ You may achieve similar results by using our team user `analytical-platform`. Se
 - This method deliberately does **not** create a new Transfer Family user.
 - All access is temporary and auditable via code changes and security group updates.
 - Because you connect with the same username and IAM role, you reproduce the user’s effective permissions and pathing precisely.
+
+## Using the `analytical-platform` user
+
+Use the `analytical-platform` user to connect to the development Transfer Family server.
+
+1. Allow your IP address to connect to the server.
+
+   Update the security group to allow connections from your IP address. See step 2 in [Reproducing Transfer Family user issues](#reproducing-transfer-family-user-issues).
+
+2. Download the private key.
+
+   You can find the [private key for the `analytical-platform` user in 1Password](https://start.1password.com/open/i?a=WEXD5VMFTVBH7LG7FFDWUV7MC4&v=skgdudwgk3ojqiwigoxrmpngle&i=l42to46jqwj5d2lri6e5ipuuya&h=ministryofjustice.1password.eu).
+
+   Download the key and save it to a file called `id_rsa`.
+
+3. Connect to the development server.
+
+   From the directory containing `id_rsa`, run:
+
+   ```shell
+   sftp -P 2222 -i id_rsa analytical-platform@sftp.development.ingestion.analytical-platform.service.justice.gov.uk
+   ```
+
+   The `-i` option specifies the path to the private key. In the example above, the key is in the current working directory. If you saved the key somewhere else, specify the relative path to the key instead.
+
+   > **Note**
+   >
+   > If you already have a private key in `~/.ssh/`, the command will attempt to use this unless you specify the `analytical-platform` key using the `-i` option.
+
