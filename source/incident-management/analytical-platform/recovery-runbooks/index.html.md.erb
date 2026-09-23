@@ -13,11 +13,11 @@ Example scenario:
 
 A security incident requires we rotate all secrets.
 
-## Notifying users
+### Notifying users
 
 Locate the incident process in Loop and follow directions there for appropriate channels for notifying users that there may be interruption(s) to the service.
 
-## List of locations where secrets are stored
+### List of locations where secrets are stored
 
 1. **AWS Secrets Manager(s)** – multiple accounts. A list of accounts can be found in the MP environments repos. Don't assume they're all defined in code.
    1. Management production
@@ -36,7 +36,7 @@ Locate the incident process in Loop and follow directions there for appropriate 
 >
 > You should also refer to the team folder in **1Password** to identify and update shared secrets.
 
-## Related runbooks
+### Related runbooks
 
 - Rotate fine grained PAT
 - Rotate Slack workflow webhook URL
@@ -46,7 +46,7 @@ Locate the incident process in Loop and follow directions there for appropriate 
 
 Example scenario:
 
-In analytical-platform-production / 312423030077 the EKS cluster production-dBSvju9Y has disappeared. This has meant that there is no Control Panel or associated tooling for users.
+In the `analytical-platform-production` AWS account (`312423030077`) the EKS cluster `production-dBSvju9Y` has disappeared. This has meant that there is no Control Panel or associated tooling for users.
 
 ### Assumptions
 
