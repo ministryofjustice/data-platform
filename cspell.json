@@ -4,6 +4,7 @@
   "language": "en-GB",
   "ignorePaths": [".devcontainer/src/kubernetes/config"],
   "words": [
+    "boto",
     "botocore",
     "bottlerocket",
     "cica",
@@ -33,6 +34,7 @@
     "mwaa",
     "nxdomain",
     "openssf",
+    "pathing",
     "reimage",
     "rstudio",
     "signingkey",
