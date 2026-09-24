@@ -1,0 +1,120 @@
+---
+title: Maintaining Analytical Platform compute
+weight: 1
+last_reviewed_on: 2026-09-22
+review_in: 12 months
+---
+
+# <%= current_page.data.title %>
+
+On the first day of the month, the [`schedule-issue-compute-infrastructure.yml`](https://github.com/ministryofjustice/analytical-platform/blob/main/.github/workflows/schedule-issue-compute-infrastructure.yml) workflow will automatically raise a ticket.
+For example, [Maintenance - Analytical Platform Compute](https://github.com/ministryofjustice/analytical-platform/issues/5661).
+
+This maintenance ticket includes an EKS cluster upgrade, if applicable, and any other updates required to keep components up to date.
+
+## Check for new releases
+
+[Check if there's a new release of Amazon EKS](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar) available to upgrade to.
+
+Upgrade and patch the EKS Control Plane, EKS Nodes, EKS add-ons and all components where new releases are available.
+
+## Prepare the maintenance changes
+
+1. Create a new branch / pull request.
+2. Make changes to the code.
+3. Create one pull request for all the changes.
+4. Check the Terraform plan is as expected for each environment.
+5. Request approval.
+6. Once approved, release the apply workflow gate for each environment in turn, testing before proceeding to the next environment.
+
+## Apply changes across environments
+
+Apply in the development, test and production environments, resolving any issues before progressing to the next.
+
+## Working in Modernisation Platform
+
+Be aware that due to restrictions with the state file multiple people cannot work on the environment at once. Terraform plan is fine but once you have released the apply workflow the state file cannot be used by anyone until the changes are complete.
+This only affects the environment where you are carrying out the apply.
+
+> Make the team aware and check before starting the work to avoid conflicts.
+
+## Working with pull request workflows
+
+Once you create a pull request in the [Modernisation Platform environments repository](https://github.com/ministryofjustice/modernisation-platform-environments), a workflow run will be started that carries out the required checks etc. If you then subsequently push any changes up to the branch, you will need to go into GitHub Actions and cancel the previous workflow so the new one can start.
+
+## Before you start
+
+- You are operating in the `modernisation-platform-environments` repository development container.
+- To interrogate the cluster, you are exec'd into the same account as the cluster you are operating on `aws-sso exec --profile analytical-platform-compute-test:modernisation-platform-developer`.
+- Use account `modernisation-platform-developer` for test and production and `modernisation-platform-sandbox` for development.
+- If necessary update `~/kube/config` as follows `aws eks update-kubeconfig --region eu-west-2 --name analytical-platform-compute-test`.
+- Set context as follows `kubectl config use-context arn:aws:eks:eu-west-2:767397661611:cluster/analytical-platform-compute-test`.
+
+> Note: amend above appropriately for the environment you are working in.
+
+## Consider the impact on users
+
+As this is a live service there could be an impact on users so this will have to be taken into consideration when planning the work.
+
+The impact on users depends on what is planned to be upgraded/patched.
+
+### Examples of user impact
+
+If upgrading CloudWatch logs agent, the user impact is minimal, applications will run, logs might be delayed and you will not require a maintenance window.
+
+If upgrading Karpenter, the user impact is potentially higher because jobs might not schedule as expected so you will have to agree when to schedule a maintenance window.
+
+## Schedule a maintenance window
+
+Next you should [schedule a maintenance window on PagerDuty](../pagerduty-maintenance-windows/).
+
+## Example pull requests
+
+- [Upgrade pull request](https://github.com/ministryofjustice/analytical-platform/pull/5795)
+- [Patching pull request](https://github.com/ministryofjustice/modernisation-platform-environments/pull/7548)
+
+## Upgrade the EKS control plane
+
+1. Update the `eks_cluster_version` to the new version in `terraform/environments/analytical-platform-compute/environment-configuration.tf`.
+2. Commit and push your results to the branch.
+
+## Upgrade the EKS nodes
+
+1. Use this [script to identify the latest appropriate version](https://github.com/ministryofjustice/analytical-platform/blob/main/scripts/eks/eks-add-on-version-upgrade.sh) for the cluster.
+2. Update `eks_node_version` in `environment-configuration.tf` with the value from above.
+3. Commit and push your results to the branch.
+
+## Upgrade the EKS add-ons
+
+1. Use this [script to identify the latest appropriate version](https://github.com/ministryofjustice/analytical-platform/blob/main/scripts/eks/eks-add-on-version-upgrade.sh) for the cluster.
+2. Commit and push your results to the branch.
+
+## Update Terraform modules
+
+Updating Terraform modules is a manual process. This means you will have to check each module in each file as follows.
+
+1. Open each `.tf` file in the `terraform/environments/analytical-platform-compute` directory.
+2. Check each module i.e. `source = "terraform-aws-modules/eks/aws//modules/karpenter"` in `eks-cluster.tf` and `Cmd + click` to follow the link.
+3. Also check any `helm_release` for example in `helm-charts-system.tf` for any new versions.
+4. Amend the version if appropriate.
+5. Commit and push your results to the branch.
+
+## Apply the changes
+
+Once the Terraform plan is checked and as expected, the changes can then be applied by the workflow. This needs approving via the Review pending deployments of the apply job for the environment.
+
+- Development - The changes can be applied prior to the pull request approval.
+- Test - If the apply in the Development environment has completed as expected the changes can be applied and this can also be carried out prior to pull request approval. This should be carried out in the agreed maintenance window for Test.
+- Production - If the apply in the Test environment has completed as expected seek approval for the pull request and merge into main. The changes can then be applied by approving the workflow apply process. This should be carried out in the agreed maintenance window for Production.
+
+## PagerDuty maintenance notice periods
+
+Before performing any upgrades, you must [schedule a maintenance window on PagerDuty](../pagerduty-maintenance-windows/).
+
+Follow the notice periods below for different environments:
+
+- Development: No prior notice required. Work may proceed as needed.
+- Test: Requires a minimum of 1 working day’s notice before scheduling.
+- Production: Requires a minimum of 2 working days’ notice before scheduling.
+
+<%= partial "partials/_links.erb" %>
