@@ -1,0 +1,69 @@
+---
+title: Working with Terraform in Modernisation Platform environments
+weight: 1
+last_reviewed_on: 2026-09-22
+review_in: 12 months
+---
+
+# <%= current_page.data.title %>
+
+The Analytical Platform uses the Modernisation Platform to host some of its services, such as `analytical-platform-ingestion` which is the example account we use in this page. It's important to understand how to develop and deploy infrastructure effectively in this context.
+
+## Running Terraform in the Modernisation Platform
+
+We'll use the `analytical-platform-ingestion` environment as an example.
+
+1. **Clone the `modernisation-platform-environments` repository**
+
+   ```shell
+   git clone git@github.com:ministryofjustice/modernisation-platform-environments.git
+   ```
+
+2. **Start the Dev Container**
+
+   This requires the Dev Containers extension to be installed in Visual Studio Code.
+
+   Use the command palette:
+
+   ```text
+   Cmd + Shift + P → Dev Containers: Reopen in Container
+   ```
+
+   Alternatively, click on the pop-up to **Reopen in Container**. Depending on internet speed it can take a few minutes to complete.
+
+3. **Navigate to the environment directory**
+
+   ```shell
+   cd terraform/environments/analytical-platform-ingestion
+   ```
+
+4. **Authorise AWS in your browser**
+
+   ```shell
+   aws-sso login
+   ```
+
+   Click the link and complete the authentication. Return to your terminal.
+
+5. **Assume the specific role required for your account**
+
+   The example below assumes the role `platform-engineer-admin` in the `analytical-platform-ingestion-development` account.
+
+   ```shell
+   aws-sso exec --profile analytical-platform-ingestion-development:platform-engineer-admin
+   ```
+
+   To list available accounts and roles run `aws-sso list`
+
+6. **Select the required Terraform workspace**
+
+   Use `terraform workspace list` to list the available workspaces, the asterisk indicates the current workspace. Then run the following command to select the required workspace:
+
+   ```shell
+   terraform workspace select analytical-platform-ingestion-development
+   ```
+
+You are now able to run all Terraform commands from the present working directory in the AWS account with the specified role (step 5) and the selected Terraform workspace (step 6).
+This allows you to write Terraform and run plans without having to wait for CI/CD to run to verify its validity or efficacy.
+
+<%= partial "partials/_links.erb" %>

@@ -1,0 +1,121 @@
+---
+title: Kubernetes
+weight: 6
+last_reviewed_on: 2026-09-22
+review_in: 12 months
+---
+
+# <%= current_page.data.title %>
+
+## Troubleshooting networking issues in Kubernetes clusters
+
+This runbook exists to help outline the use of our Analytical Platform Network Diagnostics image when troubleshooting networking related issues in our Kubernetes clusters.
+
+If you attempt to use the default ubuntu image you won't be able to use network tools or install them:
+
+    ```
+
+    ubuntu@hmcts-sdp-debug:/$ nc
+    bash: nc: command not found
+
+    ubuntu@hmcts-sdp-debug:/$ ping
+    bash: ping: command not found
+
+    ubuntu@hmcts-sdp-debug:/$ traceroute
+    bash: traceroute: command not found
+
+    ```
+
+
+To solve this problem, we have created [an image with these tools installed](https://github.com/ministryofjustice/analytical-platform-network-diagnostics).
+
+
+### Assumptions
+
+- You are operating in the development container in the [analytical-platform repository](https://github.com/ministryofjustice/analytical-platform).
+- This example is in the `airflow` namespace, troubleshoot in the appropriate namespace for the problem you are trying to solve.
+
+### Consuming the image
+
+1. Authenticate to the cluster
+
+    ```
+    kubectl get pods
+    ```
+
+1. Create the YAML file.
+
+    ```
+
+    ---
+    apiVersion: v1
+    kind: Pod
+    metadata:
+    name: network-debug
+    namespace: mwaa
+    spec:
+    securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+        type: RuntimeDefault
+    containers:
+        - name: ubuntu
+        image: ghcr.io/ministryofjustice/analytical-platform-network-diagnostics:1.1.0
+        imagePullPolicy: Always
+        command: ["sleep", "infinity"]
+        securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+            drop:
+                - ALL
+        resources:
+            requests:
+            memory: "256Mi"
+            cpu: "250m"
+            limits:
+            memory: "512Mi"
+            cpu: "500m"
+    ```
+
+    NOTE: Depending on the nature of the troubleshooting that you are doing, you may need to include a hostAliases block such as the below in your YAML file:
+
+    ```
+
+    spec:
+    securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+    hostAliases:
+        - ip: "10.168.5.13"
+        hostnames:
+            - "mipersistentprod.blob.core.windows.net"
+
+    ```
+
+1. Apply the YAML file.
+Run the following command from the directory where your `pod.yml` file is located:
+
+    ```
+    kubectl apply -f pod.yml
+    ```
+
+1. Verify the pod is running.
+
+    ```
+    kubectl get pods -n mwaa
+    ```
+
+1. Exec to the container.
+
+    ```
+    kubectl exec -it network-debug -n mwaa -- /bin/bash
+    ```
+
+    Now you are in a container which has [the tools listed here](https://github.com/ministryofjustice/analytical-platform-network-diagnostics/blob/fac6afcebfe6dbf6b9e88ca81343ec9dd427dde9/Dockerfile#L36). Good luck troubleshooting!
+
+1. Delete the pod when you have finished troubleshooting.
+
+    ```
+    kubectl delete pod network-debug -n mwaa
+    ```
