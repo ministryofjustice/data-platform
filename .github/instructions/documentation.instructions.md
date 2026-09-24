@@ -85,3 +85,18 @@ When reviewing documentation, evaluate and provide feedback on:
 - Prefer "you're" over "you are", "it's" over "it is", "don't" over "do not"
 - Use contractions naturally, but avoid overly casual language
 - Maintain professionalism while being approachable
+
+## Documentation migration pull requests
+
+When reviewing documentation migration pull requests:
+
+- Do not suggest stylistic rewrites, tone changes, wording improvements or content-quality changes.
+- Preserve the source content unless the migration introduces an error.
+- Review only for:
+  - broken links
+  - malformed Markdown
+  - accidental content loss
+  - incorrect formatting
+  - broken navigation or front matter
+- Do not comment on pre-existing issues in migrated source content.
+- Do not repeat comments about the same class of issue across multiple files.
