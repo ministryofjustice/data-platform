@@ -3,7 +3,8 @@ name: 📥 Maintenance - Create Visual Studio Code Issue
 
 on:
   schedule:
-    - cron: "0 8 1 * *" # UTC time: "At 08:00 on first day-of-month"
+    - cron: "0 8 1 * *" # UTC time: "At 08:00 on first day-of-month"
+  workflow_dispatch: {} # TODO: remove after testing octo-sts migration
 
 permissions: {}
 
@@ -13,19 +14,25 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      issues: write
+      id-token: write
     steps:
       - name: Checkout
         id: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - name: Obtain Octo STS Token
+        id: octo_sts
+        uses: octo-sts/action@f603d3be9d8dd9871a265776e625a27b00effe05 # v1.1.1
+        with:
+          scope: ministryofjustice/data-platform
+          identity: schedule-maintenance-issues
       - name: Create Maintenance Issue
         id: create_maintenance_issue
         run: |
           bash scripts/github/issue-creation/create-maintenance-issue.sh
         env:
-          GH_TOKEN: ${{ secrets.MOJ_PROJECT_DATA_PLATFORM_WRITE }}
+          GH_TOKEN: ${{ steps.octo_sts.outputs.token }}
           GH_REPO: ${{ github.repository }}
           TITLE: 📥 Maintenance - Visual Studio Code
           ASSIGNEES: ""

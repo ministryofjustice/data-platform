@@ -3,7 +3,7 @@ name: 📥 Maintenance - Create Ingestion Issue
 
 on:
   schedule:
-    - cron: "0 8 1 * *" # UTC time: "At 08:00 on first day-of-month"
+    - cron: "0 8 1 * *" # UTC time: "At 08:00 on first day-of-month"
 
 permissions: {}
 
@@ -20,12 +20,22 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ secrets.DATA_PLATFORM_MAINTENANCE_GHAPP_ID }}
+          private-key: ${{ secrets.DATA_PLATFORM_MAINTENANCE_GHAPP_PK }}
+          owner: ministryofjustice
+          repositories: data-platform
+          permission-issues: write
+          permission-organization-projects: write
       - name: Create Maintenance Issue
         id: create_maintenance_issue
         run: |
           bash scripts/github/issue-creation/create-maintenance-issue.sh
         env:
-          GH_TOKEN: ${{ secrets.MOJ_PROJECT_DATA_PLATFORM_WRITE }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
           GH_REPO: ${{ github.repository }}
           TITLE: 📥 Maintenance - Ingestion
           ASSIGNEES: ""
