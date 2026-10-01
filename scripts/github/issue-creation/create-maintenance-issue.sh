@@ -51,15 +51,58 @@ if [[ -z ${project_id} || ${project_id} == "null" ]]; then
   exit 1
 fi
 
-# addProjectV2ItemById is idempotent, so this is safe even when the project's
-# built in auto-add workflow has already placed the issue on the board.
-project_item_id=$(gh project item-add "${PROJECT_NUMBER}" \
-  --owner "${PROJECT_OWNER}" \
-  --url "${new_issue_url}" \
-  --format=json | jq -r '.id')
+# When the built-in project auto-add runs at the same time, this can race with
+# the issue creation and return "Content already exists". Treat that as a
+# harmless duplicate instead of a hard failure.
+project_item_add_output=$(
+  gh project item-add "${PROJECT_NUMBER}" \
+    --owner "${PROJECT_OWNER}" \
+    --url "${new_issue_url}" \
+    --format=json 2>&1 || true
+)
+
+project_item_id=$(jq -r '.id // empty' <<<"${project_item_add_output}" 2>/dev/null || true)
+
 if [[ -z ${project_item_id} || ${project_item_id} == "null" ]]; then
-  echo "❌ Error: could not add ${new_issue_url} to project ${PROJECT_NUMBER}"
-  exit 1
+  if grep -qi "Content already exists" <<<"${project_item_add_output}"; then
+    issue_number="${new_issue_url##*/}"
+
+    project_item_id=$(
+      gh api graphql \
+        -f query='
+          query($owner: String!, $repo: String!, $issueNumber: Int!) {
+            repository(owner: $owner, name: $repo) {
+              issue(number: $issueNumber) {
+                projectItems(first: 50) {
+                  nodes {
+                    id
+                    project {
+                      number
+                    }
+                  }
+                }
+              }
+            }
+          }' \
+        -F owner="${PROJECT_OWNER}" \
+        -F repo="${GH_REPO#*/}" \
+        -F issueNumber="${issue_number}" \
+      | jq -r --arg project_number "${PROJECT_NUMBER}" '
+          .data.repository.issue.projectItems.nodes[]
+          | select(.project.number == ($project_number | tonumber))
+          | .id' \
+      | head -n 1
+    )
+
+    if [[ -z ${project_item_id} || ${project_item_id} == "null" ]]; then
+      echo "⚠️ Issue already exists in project, but the item ID could not be resolved. Continuing without project field updates."
+      exit 0
+    fi
+  else
+    echo "❌ Error: could not add ${new_issue_url} to project ${PROJECT_NUMBER}"
+    echo "${project_item_add_output}"
+    exit 1
+  fi
 fi
 
 field_list=$(gh project field-list "${PROJECT_NUMBER}" --owner "${PROJECT_OWNER}" --format=json)
