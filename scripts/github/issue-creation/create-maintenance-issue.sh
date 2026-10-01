@@ -73,8 +73,9 @@ if [[ -z ${project_item_id} || ${project_item_id} == "null" ]]; then
 
     # Auto-add may not have finished writing the item yet, so retry briefly
     # rather than immediately giving up on the field updates.
-    for attempt in 1 2 3 4 5; do
+    for _ in 1 2 3 4 5; do
       project_item_id=$(
+        # shellcheck disable=SC2016 # GraphQL variables, not shell expansion
         gh api graphql \
           -f query='
             query($owner: String!, $repo: String!, $issueNumber: Int!) {
@@ -84,7 +85,7 @@ if [[ -z ${project_item_id} || ${project_item_id} == "null" ]]; then
                     nodes {
                       id
                       project {
-                        number
+                        id
                       }
                     }
                   }
@@ -94,9 +95,9 @@ if [[ -z ${project_item_id} || ${project_item_id} == "null" ]]; then
           -F owner="${repo_owner}" \
           -F repo="${repo_name}" \
           -F issueNumber="${issue_number}" |
-          jq -r --arg project_number "${PROJECT_NUMBER}" '
+          jq -r --arg project_id "${project_id}" '
             .data.repository.issue.projectItems.nodes[]
-            | select(.project.number == ($project_number | tonumber))
+            | select(.project.id == $project_id)
             | .id' |
           head -n 1
       )
