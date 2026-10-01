@@ -69,6 +69,8 @@ if [[ -z ${project_item_id} || ${project_item_id} == "null" ]]; then
     --owner "${PROJECT_OWNER}" \
     --url "${new_issue_url}" \
     --format=json | jq -r '.id')
+else
+  echo "✅ ${new_issue_url} was added to project ${PROJECT_NUMBER} by auto-add"
 fi
 
 if [[ -z ${project_item_id} || ${project_item_id} == "null" ]]; then
