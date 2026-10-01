@@ -52,8 +52,10 @@ if [[ -z ${project_id} || ${project_id} == "null" ]]; then
 fi
 
 # When the built-in project auto-add runs at the same time, this can race with
-# the issue creation and return "Content already exists". Treat that as a
-# harmless duplicate instead of a hard failure.
+# the issue creation and return "Content already exists". Give it a head start
+# to reduce how often that race is actually hit.
+sleep 5
+
 project_item_add_output=$(
   gh project item-add "${PROJECT_NUMBER}" \
     --owner "${PROJECT_OWNER}" \
@@ -67,32 +69,42 @@ if [[ -z ${project_item_id} || ${project_item_id} == "null" ]]; then
   if grep -qi "Content already exists" <<<"${project_item_add_output}"; then
     issue_number="${new_issue_url##*/}"
 
-    project_item_id=$(
-      gh api graphql \
-        -f query='
-          query($owner: String!, $repo: String!, $issueNumber: Int!) {
-            repository(owner: $owner, name: $repo) {
-              issue(number: $issueNumber) {
-                projectItems(first: 50) {
-                  nodes {
-                    id
-                    project {
-                      number
+    # Auto-add may not have finished writing the item yet, so retry briefly
+    # rather than immediately giving up on the field updates.
+    for attempt in 1 2 3 4 5; do
+      project_item_id=$(
+        gh api graphql \
+          -f query='
+            query($owner: String!, $repo: String!, $issueNumber: Int!) {
+              repository(owner: $owner, name: $repo) {
+                issue(number: $issueNumber) {
+                  projectItems(first: 50) {
+                    nodes {
+                      id
+                      project {
+                        number
+                      }
                     }
                   }
                 }
               }
-            }
-          }' \
-        -F owner="${PROJECT_OWNER}" \
-        -F repo="${GH_REPO#*/}" \
-        -F issueNumber="${issue_number}" \
-      | jq -r --arg project_number "${PROJECT_NUMBER}" '
-          .data.repository.issue.projectItems.nodes[]
-          | select(.project.number == ($project_number | tonumber))
-          | .id' \
-      | head -n 1
-    )
+            }' \
+          -F owner="${PROJECT_OWNER}" \
+          -F repo="${GH_REPO#*/}" \
+          -F issueNumber="${issue_number}" \
+        | jq -r --arg project_number "${PROJECT_NUMBER}" '
+            .data.repository.issue.projectItems.nodes[]
+            | select(.project.number == ($project_number | tonumber))
+            | .id' \
+        | head -n 1
+      )
+
+      if [[ -n ${project_item_id} && ${project_item_id} != "null" ]]; then
+        break
+      fi
+
+      sleep 2
+    done
 
     if [[ -z ${project_item_id} || ${project_item_id} == "null" ]]; then
       echo "⚠️ Issue already exists in project, but the item ID could not be resolved. Continuing without project field updates."
