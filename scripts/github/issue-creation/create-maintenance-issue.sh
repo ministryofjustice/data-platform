@@ -64,7 +64,15 @@ project_item_id=$(
 )
 
 if [[ -z ${project_item_id} || ${project_item_id} == "null" ]]; then
-  echo "❌ Error: ${new_issue_url} was not added to project ${PROJECT_NUMBER} by auto-add"
+  echo "⚠️ ${new_issue_url} was not added to project ${PROJECT_NUMBER} by auto-add, adding it directly"
+  project_item_id=$(gh project item-add "${PROJECT_NUMBER}" \
+    --owner "${PROJECT_OWNER}" \
+    --url "${new_issue_url}" \
+    --format=json | jq -r '.id')
+fi
+
+if [[ -z ${project_item_id} || ${project_item_id} == "null" ]]; then
+  echo "❌ Error: could not add ${new_issue_url} to project ${PROJECT_NUMBER}"
   exit 1
 fi
 
