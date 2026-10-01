@@ -68,7 +68,7 @@ if [[ -z ${project_item_id} || ${project_item_id} == "null" ]]; then
   project_item_id=$(gh project item-add "${PROJECT_NUMBER}" \
     --owner "${PROJECT_OWNER}" \
     --url "${new_issue_url}" \
-    --format=json | jq -r '.id')
+    --format=json 2>/dev/null | jq -r '.id // empty' || true)
 else
   echo "✅ ${new_issue_url} was added to project ${PROJECT_NUMBER} by auto-add"
 fi
