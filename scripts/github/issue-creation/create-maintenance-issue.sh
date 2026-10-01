@@ -68,6 +68,8 @@ project_item_id=$(jq -r '.id // empty' <<<"${project_item_add_output}" 2>/dev/nu
 if [[ -z ${project_item_id} || ${project_item_id} == "null" ]]; then
   if grep -qi "Content already exists" <<<"${project_item_add_output}"; then
     issue_number="${new_issue_url##*/}"
+    repo_owner="${GH_REPO%%/*}"
+    repo_name="${GH_REPO#*/}"
 
     # Auto-add may not have finished writing the item yet, so retry briefly
     # rather than immediately giving up on the field updates.
@@ -89,8 +91,8 @@ if [[ -z ${project_item_id} || ${project_item_id} == "null" ]]; then
                 }
               }
             }' \
-          -F owner="${PROJECT_OWNER}" \
-          -F repo="${GH_REPO#*/}" \
+          -F owner="${repo_owner}" \
+          -F repo="${repo_name}" \
           -F issueNumber="${issue_number}" \
         | jq -r --arg project_number "${PROJECT_NUMBER}" '
             .data.repository.issue.projectItems.nodes[]
