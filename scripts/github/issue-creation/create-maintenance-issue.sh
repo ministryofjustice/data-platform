@@ -93,12 +93,12 @@ if [[ -z ${project_item_id} || ${project_item_id} == "null" ]]; then
             }' \
           -F owner="${repo_owner}" \
           -F repo="${repo_name}" \
-          -F issueNumber="${issue_number}" \
-        | jq -r --arg project_number "${PROJECT_NUMBER}" '
+          -F issueNumber="${issue_number}" |
+          jq -r --arg project_number "${PROJECT_NUMBER}" '
             .data.repository.issue.projectItems.nodes[]
             | select(.project.number == ($project_number | tonumber))
-            | .id' \
-        | head -n 1
+            | .id' |
+          head -n 1
       )
 
       if [[ -n ${project_item_id} && ${project_item_id} != "null" ]]; then
