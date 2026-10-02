@@ -1,0 +1,175 @@
+---
+title: Ingestion
+weight: 3
+last_reviewed_on: 2026-09-18
+review_in: 12 months
+---
+
+# <%= current_page.data.title %>
+
+Troubleshooting in Ingestion can take several forms. This page includes some steps that can help, each situation is different however and can require investigation beyond what is outlined below.
+
+> **It is recommended that you always confirm with any user that reports an issue with Ingestion the following details:**
+>
+> - name of file sent
+> - time file is sent
+> - the environment if this is not clear - you can usually establish this from the ticket and looking at the users in the configuration
+>
+> This will:
+>
+> - aid troubleshooting
+> - ensure that a file has been uploaded
+>
+> **AVOID troubleshooting without a confirmation either from the user or that it is immediately apparent in the logs that a file has been uploaded.**
+
+## Finding Lambda logs
+
+Each Lambda function has logs in CloudWatch. The primary functions to look at when troubleshooting are, in order, are `transfer`, `scan` and `definition-upload`.
+
+To access logs, open the function, select the **Monitor** tab, then choose **View CloudWatch Logs**.
+
+> **Note**
+>
+> CloudWatch Logs group multiple transfers/scans etc into one log stream. One log stream ≠ one event / file upload / file scan. Multiple transfers / scans can be included in one CloudWatch log.
+
+## Understanding transfer logs
+
+Transfer logs outline activity in a simple timestamped manner. Note the filename and destination is included.
+
+```shell
+2025-10-14T14:14:48.096Z
+START RequestId: a15be7b6-8ce0-4bc9-a541-19c9235e6478 Version: $LATEST
+
+2025-10-14T14:14:48.097Z
+Supplier: analytical-platform
+
+2025-10-14T14:14:48.097Z
+Object: file.txt
+
+2025-10-14T14:14:48.440Z
+Successfully copied analytical-platform/file.txt to mojap-land-dev/analytical-platform/file.txt
+
+2025-10-14T14:14:48.640Z
+Successfully deleted analytical-platform/file.txt from mojap-ingestion-development-processed
+
+2025-10-14T14:14:48.640Z
+handler.py completed successfully!
+
+2025-10-14T14:14:48.642Z
+END RequestId: a15be7b6-8ce0-4bc9-a541-19c9235e6478
+
+2025-10-14T14:14:48.643Z
+REPORT RequestId: a15be7b6-8ce0-4bc9-a541-19c9235e6478 Duration: 546.56 ms Billed Duration: 2915 ms
+```
+
+If you cannot see expected logs for a file in question check the `scan` lambda logs. The scan is triggered when the file first lands in the S3 bucket.
+
+## Understanding scan logs
+
+Scan logs take the following format:
+
+```shell
+2025-10-14T14:14:16.840Z
+START RequestId: 0742e282-d3e8-4dfc-bd27-5c28567697a2 Version: $LATEST
+
+2025-10-14T14:14:16.840Z
+Received event: {'Records': [{'eventVersion': '2.1', 'eventSource': 'aws:s3', 'awsRegion': 'eu-west-2', 'eventTime': '2025-10-14T14:14:13.215Z', 'eventName': 'ObjectCreated:Put', 'userIdentity': {'principalId': 'AWS:AROA2UC3A7CTUFU2UJALL:analytical-platform.0207b082585b5b48892b@s520fdf5060bc40b39'}, 'requestParameters': {'sourceIPAddress': '10.0.88.176'}, 'responseElements': {'x-amz-request-id': 'GBESBMS09N27T16B', 'x-amz-id-2': 'V/BKDiU66dfsQl+LYETy/FSRnZKPPoR3Iwm0/gfG5sSUrOFVUjKDEFFzF9QfJTX85oXTxgr77Luvodvr3mz+Ed3bI4gGYH7pFj5webmN8yg='}, 's3': {'s3SchemaVersion': '1.0', 'configurationId': 'ingestion_scan', 'bucket': {'name': 'mojap-ingestion-development-landing', 'ownerIdentity': {'principalId': 'A2Q33ER93AJQVQ'}, 'arn': 'arn:aws:s3:::mojap-ingestion-development-landing'}, 'object': {'key': 'analytical-platform/file.txt', 'size': 0, 'eTag': 'c065cc8208e66be1ed07ab3a66f83b4a', 'sequencer': '0068EE5AB52CB36BCF'}}}]}
+
+2025-10-14T14:14:18.432Z
+Successfully downloaded ClamAV definitions from S3.
+
+2025-10-14T14:14:20.104Z
+Successfully extracted ClamAV definitions.
+
+2025-10-14T14:14:43.796Z
+/tmp/clamav/scan/file.txt: Empty file
+
+2025-10-14T14:14:43.796Z
+----------- SCAN SUMMARY -----------
+
+2025-10-14T14:14:43.796Z
+Known viruses: 8708677
+
+2025-10-14T14:14:43.796Z
+Engine version: 1.4.3
+
+2025-10-14T14:14:43.796Z
+Scanned directories: 0
+
+2025-10-14T14:14:43.796Z
+Scanned files: 0
+
+2025-10-14T14:14:43.796Z
+Infected files: 0
+
+2025-10-14T14:14:43.796Z
+Data scanned: 0.00 MB
+
+2025-10-14T14:14:43.796Z
+Data read: 0.00 MB (ratio 0.00:1)
+
+2025-10-14T14:14:43.796Z
+Time: 23.550 sec (0 m 23 s)
+
+2025-10-14T14:14:43.796Z
+Start Date: 2025:10:14 14:14:20
+
+2025-10-14T14:14:43.796Z
+End Date: 2025:10:14 14:14:43
+
+2025-10-14T14:14:43.796Z
+Scan result: Clean
+
+2025-10-14T14:14:44.117Z
+File moved to processed and tagged
+
+2025-10-14T14:14:44.119Z
+END RequestId: 0742e282-d3e8-4dfc-bd27-5c28567697a2
+
+2025-10-14T14:14:44.119Z
+REPORT RequestId: 0742e282-d3e8-4dfc-bd27-5c28567697a2 Duration: 27278.50 ms Billed Duration: 29112
+```
+
+Important information included here is the time, filename and the outcome of a scan (under **Scan result**).
+
+Scan results are either **Clean** or **Infected**.
+
+If a file is **Clean** it moves to the `processed` bucket prior to the `transfer` lambda transferring it to the destination bucket.
+
+> **Note**
+>
+> If **Known viruses** is **0** check the `definition-upload` function logs.
+
+## Checking Transfer Family server logs
+
+In the unlikely event that you need to look at transfer server logs these are `/aws/transfer-structured-logs` in CloudWatch.
+These can be used to verify connection times and user activity on the server.
+
+## Using the `analytical-platform` user
+
+Use the `analytical-platform` user to connect to the development Transfer Family server.
+
+1. Allow your IP address to connect to the server.
+
+   Update the security group to allow connections from your IP address. See step 2 in [Reproducing Transfer Family user issues](#reproducing-transfer-family-user-issues).
+
+2. Download the private key.
+
+   You can find the private key for the `analytical-platform` user in 1Password.
+
+   Download the key and save it to a file called `id_rsa`.
+
+3. Connect to the development server.
+
+   From the directory containing `id_rsa`, run:
+
+   ```shell
+   sftp -P 2222 -i id_rsa analytical-platform@sftp.development.ingestion.analytical-platform.service.justice.gov.uk
+   ```
+
+   The `-i` option specifies the path to the private key. In the example above, the key is in the current working directory. If you saved the key somewhere else, specify the relative path to the key instead.
+
+   > **Note**
+   >
+   > If you already have a private key in `~/.ssh/`, the command will attempt to use this unless you specify the `analytical-platform` key using the `-i` option.
+
