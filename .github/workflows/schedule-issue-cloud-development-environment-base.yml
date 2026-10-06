@@ -3,7 +3,8 @@ name: 📥 Maintenance - Create Cloud Development Environment Base Issue
 
 on:
   schedule:
-    - cron: "0 8 1 * *" # UTC time: "At 08:00 on first day-of-month"
+    - cron: "0 8 * * 2" # UTC time: "At 08:00 on Tuesday", gated to every third week
+  workflow_dispatch:
 
 permissions: {}
 
@@ -13,29 +14,31 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      issues: write
+      id-token: write
     steps:
       - name: Checkout
         id: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Generate GitHub App token
-        id: app-token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+      - name: Check Schedule
+        id: check_schedule
+        run: |
+          bash scripts/github/issue-creation/check-three-weekly-schedule.sh
+      - name: Obtain Octo STS Token
+        id: octo_sts
+        if: steps.check_schedule.outputs.run == 'true'
+        uses: octo-sts/action@f603d3be9d8dd9871a265776e625a27b00effe05 # v1.1.1
         with:
-          app-id: ${{ secrets.DATA_PLATFORM_MAINTENANCE_GHAPP_ID }}
-          private-key: ${{ secrets.DATA_PLATFORM_MAINTENANCE_GHAPP_PK }}
-          owner: ministryofjustice
-          repositories: data-platform
-          permission-issues: write
-          permission-organization-projects: write
+          scope: ministryofjustice/data-platform
+          identity: schedule-maintenance-issues
       - name: Create Maintenance Issue
         id: create_maintenance_issue
+        if: steps.check_schedule.outputs.run == 'true'
         run: |
           bash scripts/github/issue-creation/create-maintenance-issue.sh
         env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_TOKEN: ${{ steps.octo_sts.outputs.token }}
           GH_REPO: ${{ github.repository }}
           TITLE: 📥 Maintenance - Analytical Platform Cloud Development Environment Base
           ASSIGNEES: ""

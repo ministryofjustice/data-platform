@@ -51,12 +51,28 @@ if [[ -z ${project_id} || ${project_id} == "null" ]]; then
   exit 1
 fi
 
-# addProjectV2ItemById is idempotent, so this is safe even when the project's
-# built in auto-add workflow has already placed the issue on the board.
-project_item_id=$(gh project item-add "${PROJECT_NUMBER}" \
-  --owner "${PROJECT_OWNER}" \
-  --url "${new_issue_url}" \
-  --format=json | jq -r '.id')
+# The project's built-in auto-add automation adds the issue to the board;
+# give it a moment to run before looking up the resulting item.
+sleep 5
+
+project_item_id=$(
+  gh project item-list "${PROJECT_NUMBER}" --owner "${PROJECT_OWNER}" --format=json --limit 1000 |
+    jq -r --arg url "${new_issue_url}" '
+      .items[]
+      | select(.content.url == $url)
+      | .id'
+)
+
+if [[ -z ${project_item_id} || ${project_item_id} == "null" ]]; then
+  echo "⚠️ ${new_issue_url} was not added to project ${PROJECT_NUMBER} by auto-add, adding it directly"
+  project_item_id=$(gh project item-add "${PROJECT_NUMBER}" \
+    --owner "${PROJECT_OWNER}" \
+    --url "${new_issue_url}" \
+    --format=json | jq -r '.id // empty' || true)
+else
+  echo "✅ ${new_issue_url} was added to project ${PROJECT_NUMBER} by auto-add"
+fi
+
 if [[ -z ${project_item_id} || ${project_item_id} == "null" ]]; then
   echo "❌ Error: could not add ${new_issue_url} to project ${PROJECT_NUMBER}"
   exit 1
