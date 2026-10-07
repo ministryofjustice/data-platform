@@ -7,9 +7,7 @@ review_in: 12 months
 
 # <%= current_page.data.title %>
 
-This module provides the cross-account IAM access used by the [secret expiry workflow](https://github.com/ministryofjustice/analytical-platform/blob/main/.github/workflows/secret-scan.yml). The workflow runs the [scanner script](https://github.com/ministryofjustice/analytical-platform/blob/main/scripts/secret-scan/check_secret_expiry.py), which reports expiry dates recorded as tags on AWS Secrets Manager secrets. It does not retrieve or inspect secret values. -->
-
-The GithHub workflow [secret expiry workflow](https://github.com/ministryofjustice/analytical-platform/blob/main/.github/workflows/secret-scan.yml), runs [the scanner script](https://github.com/ministryofjustice/analytical-platform/blob/main/scripts/secret-scan/check_secret_expiry.py), which reports expiry dates recorded as tags on AWS Secrets Manager secrets. It does not retrieve or inspect secret values.
+The [secret expiry workflow](https://github.com/ministryofjustice/analytical-platform/blob/main/.github/workflows/secret-scan.yml) uses cross-account IAM access to run [the scanner script](https://github.com/ministryofjustice/analytical-platform/blob/main/scripts/secret-scan/check_secret_expiry.py). The script reports expiry dates recorded as tags on AWS Secrets Manager secrets; it does not retrieve or inspect secret values.
 
 ## What runs
 
