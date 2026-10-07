@@ -11,7 +11,7 @@ The [secret expiry workflow](https://github.com/ministryofjustice/analytical-pla
 
 ## What runs
 
-The workflow is named **Secret expiry check** and is shceduled to run daily Monday to Friday:
+The workflow is named **Secret expiry check** and is scheduled to run daily Monday to Friday:
 
 1. Checks out the repository without persisting the checkout token.
 2. Uses GitHub's OIDC identity to assume `github-actions-secret-check` in the management production account (`042130406152`).
@@ -76,6 +76,6 @@ The current account list and scanned regions are defined in the script's `ACCOUN
 
 ## Rotating the contents of the secret
 
-How to update the source contents of the secret are beyond the scope of this document and hopefully the tags will give some clues on how to proceeed.
+How to update the source contents of the secret are beyond the scope of this document and hopefully the tags will give some clues on how to proceed.
 
 Once the the secret has been rotated the `expiry-date` will have to be updated in code.
