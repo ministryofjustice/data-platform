@@ -19,7 +19,7 @@ The workflow is named **Secret expiry check** and is scheduled to run daily Mond
 4. Runs the scanner. It checks Secrets Manager in `eu-west-1` and `eu-west-2` for each account listed in the script.
 5. Writes a status table to the GitHub Actions run summary. For expired, critical, or warning results, it assumes `GlobalGitHubActionAccess`, retrieves the Slack webhook URL from Secrets Manager, and posts a Slack notification in the [#analytical-platform-engineering](https://moj.enterprise.slack.com/archives/C06NFN4FMNG) Slack channel.
 
-The scanner uses the `analytical platform management production` role's credentials for that account and assumes `github-actions-secret-check` in each other account. This Terraform module creates those roles, their `secretsmanager:ListSecrets` policies, and the cross-account trust/access required by the scanner. The role in management production also has GitHub OIDC trust for this repository.
+The scanner workflow assumes  the `analytical platform management production` role's credentials for that account and then assumes `github-actions-secret-check` in each of the other accounts to be scanned. See this Terraform [module](https://github.com/ministryofjustice/analytical-platform/blob/main/terraform/aws/analytical-platform/secret-scan/iam-roles.tf) for an example of how to create those roles, their `secretsmanager:ListSecrets` policies, and the cross-account trust/access required by the scanner. The role in management production also has GitHub OIDC trust for this repository.
 
 For a successful scan, the GitHub role must be able to list secrets in management production and assume the scanner role in every configured target account to be scanned. The target roles must trust the management production scanner role and allow `secretsmanager:ListSecrets`. Slack alerts additionally require the `GlobalGitHubActionAccess` role to read `arn:aws:secretsmanager:eu-west-1:042130406152:secret:secret-scan-webhook-url`.
 
@@ -52,11 +52,11 @@ tags = {
 
 `source-location` is optional and is shown in the run summary to help identify where a credential needs updating; when absent, it is shown as `N/A`. A secret without an `expiry-date` tag is ignored entirely. A tagged secret with a blank or recognised "not set" value is included as `NOT SET`; other malformed dates are `INVALID`. The scanner reads secret names and tags through `ListSecrets`, not secret values.
 
-To include a secret in the scan add the tag to the terraform for the secret as per the example above.
+To include a secret in the scan add the tag to the Terraform for the secret, as per the example above.
 
 ## Adding an AWS account to the scan
 
-In the account to be scanned
+In the account to be scanned:
 
 Create the role `github-actions-secret-check` and associated policy as follows:
 
@@ -76,6 +76,6 @@ The current account list and scanned regions are defined in the script's `ACCOUN
 
 ## Rotating the contents of the secret
 
-How to update the source contents of the secret are beyond the scope of this document and hopefully the tags will give some clues on how to proceed.
+How to update the source contents of the secret are beyond the scope of this document and the tags should give some clues on how to proceed.
 
 Once the the secret has been rotated the `expiry-date` will have to be updated in code.
