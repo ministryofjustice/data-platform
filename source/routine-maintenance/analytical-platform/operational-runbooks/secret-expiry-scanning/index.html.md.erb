@@ -14,7 +14,7 @@ The [secret expiry workflow](https://github.com/ministryofjustice/analytical-pla
 The workflow is named **Secret expiry check** and is scheduled to run daily Monday to Friday:
 
 1. Checks out the repository without persisting the checkout token.
-2. Uses GitHub's OIDC identity to assume `github-actions-secret-check` in the management production account (`042130406152`).
+2. Uses GitHub's OpenID Connect (OIDC) identity to assume `github-actions-secret-check` in the management production account (`042130406152`).
 3. Sets up Python 3.13 and installs `boto3`.
 4. Runs the scanner. It checks Secrets Manager in `eu-west-1` and `eu-west-2` for each account listed in the script.
 5. Writes a status table to the GitHub Actions run summary. For expired, critical, or warning results, it assumes `GlobalGitHubActionAccess`, retrieves the Slack webhook URL from Secrets Manager, and posts a Slack notification in the [#analytical-platform-engineering](https://moj.enterprise.slack.com/archives/C06NFN4FMNG) Slack channel.
