@@ -52,7 +52,8 @@
     "valkey",
     "venv",
     "webapps",
-    "zizmor"
+    "zizmor",
+    "tfvars"
   ],
   "overrides": [
     {
