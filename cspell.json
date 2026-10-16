@@ -57,6 +57,25 @@
   ],
   "overrides": [
     {
+      "filename": ".github/extensions/proserve-delivery/**",
+      "words": [
+        "mcard",
+        "mdate",
+        "mdesc",
+        "mstat",
+        "mstrip",
+        "noopener",
+        "noreferrer",
+        "nosniff",
+        "nowline",
+        "phasebadge",
+        "proserve",
+        "quot",
+        "unticketed",
+        "valuenow"
+      ]
+    },
+    {
       "filename": ["**/*.{md,mdx}", "**/*.html.md.erb"],
       "ignoreRegExpList": ["```[\\s\\S]*?```", "`[^`\\n]+`"]
     }

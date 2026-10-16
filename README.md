@@ -5,3 +5,9 @@
 [![Open in Dev Container](https://raw.githubusercontent.com/ministryofjustice/.devcontainer/refs/heads/main/contrib/badge.svg)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/ministryofjustice/data-platform)
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/ministryofjustice/data-platform)
+
+## Delivery reporting
+
+The [JDP delivery progress canvas](.github/extensions/proserve-delivery/README.md)
+provides the ProServe delivery report in the GitHub Copilot app, with refreshable
+GitHub issue and project-board statuses.
