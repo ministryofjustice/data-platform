@@ -9,6 +9,53 @@ const data = {
   issues: [{ number: 1, epic: false, status: "Done" }],
 };
 
+test("print opens only a validated report view and surfaces launch failures", async (t) => {
+  const opened = [];
+  let fail = false;
+  const errors = [];
+  const { server, url } = await startServer({
+    loadData: async () => data,
+    refreshData: async () => data,
+    logError: (error) => errors.push(error.message),
+    openPrint: async (origin, view) => {
+      if (fail) throw new Error("Browser launch failed");
+      opened.push({ origin, view });
+    },
+  });
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+  const headers = { Origin: url.slice(0, -1), "X-Canvas-Action": "print" };
+  assert.equal(
+    (await fetch(url + "print?view=current", { method: "POST" })).status,
+    403,
+  );
+  assert.equal(
+    (await fetch(url + "print?view=invalid", { method: "POST", headers }))
+      .status,
+    400,
+  );
+  assert.equal(opened.length, 0);
+  for (const view of ["current", "original"]) {
+    const response = await fetch(url + `print?view=${view}`, {
+      method: "POST",
+      headers,
+    });
+    assert.equal(response.status, 200);
+    assert.match((await response.json()).message, /system browser/);
+  }
+  assert.deepEqual(opened, [
+    { origin: url.slice(0, -1), view: "current" },
+    { origin: url.slice(0, -1), view: "original" },
+  ]);
+  fail = true;
+  const response = await fetch(url + "print?view=current", {
+    method: "POST",
+    headers,
+  });
+  assert.equal(response.status, 500);
+  assert.equal((await response.json()).error, "Browser launch failed");
+  assert.deepEqual(errors, ["Browser launch failed"]);
+});
+
 test("serves the report and fixed asset allowlist on loopback", async (t) => {
   const { server, url } = await startServer({
     loadData: async () => data,

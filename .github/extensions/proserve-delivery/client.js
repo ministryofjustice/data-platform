@@ -3,7 +3,9 @@ const original = wrap.innerHTML;
 const sourceStatus = document.querySelector("#source-status");
 const errorBox = document.querySelector("#error");
 let data;
-let view = "current";
+const parameters = new URLSearchParams(window.location.search);
+const printView = parameters.get("print") === "1";
+let view = parameters.get("view") === "original" ? "original" : "current";
 const classes = {
   Done: "t-ok",
   "In Review": "t-rev",
@@ -298,9 +300,35 @@ document.querySelector("#current-view").addEventListener("click", () => {
     render();
   }
 });
-document
-  .querySelector("#print")
-  .addEventListener("click", () => window.print());
+document.querySelector("#print").addEventListener("click", async (event) => {
+  if (printView) {
+    window.print();
+    return;
+  }
+  const button = event.currentTarget;
+  button.disabled = true;
+  errorBox.hidden = true;
+  try {
+    const response = await fetch(`/print?view=${view}`, {
+      method: "POST",
+      headers: { "X-Canvas-Action": "print" },
+    });
+    if (!response.ok) {
+      const message = response.headers
+        .get("content-type")
+        ?.includes("application/json")
+        ? (await response.json()).error
+        : await response.text();
+      throw new Error(message || "Could not open the system browser.");
+    }
+    sourceStatus.textContent = (await response.json()).message;
+  } catch (error) {
+    errorBox.textContent = `Could not open the print view. ${error.message}`;
+    errorBox.hidden = false;
+  } finally {
+    button.disabled = false;
+  }
+});
 document.querySelector("#refresh").addEventListener("click", async (event) => {
   const button = event.currentTarget;
   button.disabled = true;
@@ -324,10 +352,30 @@ document.querySelector("#refresh").addEventListener("click", async (event) => {
     button.textContent = "Refresh from GitHub";
   }
 });
-load().catch((error) => {
-  errorBox.textContent = `Could not load current data. The document below is the original report only. ${error.message}`;
-  errorBox.hidden = false;
-  sourceStatus.textContent = "GitHub snapshot unavailable";
-  document.querySelector("#current-view").setAttribute("aria-pressed", "false");
-  document.querySelector("#original-view").setAttribute("aria-pressed", "true");
-});
+function printWhenReady() {
+  if (printView) {
+    document.title = `JDP delivery progress — ${view} report`;
+    requestAnimationFrame(() => requestAnimationFrame(() => window.print()));
+  }
+}
+load()
+  .then(printWhenReady)
+  .catch((error) => {
+    view = "original";
+    errorBox.textContent = `Could not load current data. The document below is the original report only. ${error.message}`;
+    errorBox.hidden = false;
+    sourceStatus.textContent = "GitHub snapshot unavailable";
+    document
+      .querySelector("#current-view")
+      .setAttribute("aria-pressed", "false");
+    document
+      .querySelector("#original-view")
+      .setAttribute("aria-pressed", "true");
+    if (printView) {
+      const warning = document.createElement("p");
+      warning.className = "source-note";
+      warning.textContent = `GitHub snapshot unavailable. This is the original report, not current data. ${error.message}`;
+      wrap.prepend(warning);
+      printWhenReady();
+    }
+  });

@@ -49,7 +49,13 @@ The canvas type is `proserve-delivery`. When opening it through a tool, supply
 
 Use **Current GitHub data** or **Original report** to switch views,
 **Refresh from GitHub** to fetch a new snapshot, and **Print / save PDF** to
-export the selected view. The source register supports searching and filtering
+open the selected report in your system browser, where the print dialogue lets
+you print or save as PDF. The embedded canvas does not support printing directly.
+Keep the canvas and Copilot session open until you finish printing. A desktop
+browser must be available on the machine running the session; remote or headless
+sessions cannot open a browser on your local machine. The browser uses the saved
+GitHub snapshot at load time and exports the full report, not source-register
+search filters. The source register supports searching and filtering
 all labelled issues, including epics and excluded issues.
 
 ## Understand the data
