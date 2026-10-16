@@ -2,7 +2,10 @@
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
   "version": "0.2",
   "language": "en-GB",
-  "ignorePaths": [".devcontainer/src/kubernetes/config"],
+  "ignorePaths": [
+    ".devcontainer/src/kubernetes/config",
+    ".github/extensions/proserve-delivery/**"
+  ],
   "words": [
     "boto",
     "botocore",
@@ -39,6 +42,7 @@
     "openssf",
     "pathing",
     "preemptively",
+    "proserve",
     "reimage",
     "rstudio",
     "signingkey",
@@ -56,25 +60,6 @@
     "tfvars"
   ],
   "overrides": [
-    {
-      "filename": ".github/extensions/proserve-delivery/**",
-      "words": [
-        "mcard",
-        "mdate",
-        "mdesc",
-        "mstat",
-        "mstrip",
-        "noopener",
-        "noreferrer",
-        "nosniff",
-        "nowline",
-        "phasebadge",
-        "proserve",
-        "quot",
-        "unticketed",
-        "valuenow"
-      ]
-    },
     {
       "filename": ["**/*.{md,mdx}", "**/*.html.md.erb"],
       "ignoreRegExpList": ["```[\\s\\S]*?```", "`[^`\\n]+`"]
