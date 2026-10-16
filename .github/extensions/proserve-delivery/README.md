@@ -6,9 +6,10 @@ reference and a view backed by GitHub issues labelled `pro-serve`.
 
 ## Open the report
 
-Use a version of the GitHub Copilot app that supports extension canvases, with
-this repository checked out. The app supplies the Copilot SDK and Node.js runtime;
-there are no extension packages to install and no APM setup is needed.
+Download and install the [GitHub Copilot app](https://github.com/github/app/releases/latest)
+for your operating system, then sign in with your GitHub account. Use a version
+that supports extension canvases. The app supplies the Copilot SDK and Node.js
+runtime; there are no extension packages to install and no APM setup is needed.
 
 Install the [GitHub CLI](https://cli.github.com/) on the machine running the
 Copilot session, then authenticate:
@@ -25,8 +26,20 @@ For a classic OAuth token, project access may require the `read:project` scope:
 gh auth refresh --scopes read:project
 ```
 
-Start a new Copilot session in this repository, or ask Copilot to reload
-extensions in an existing session. Then ask:
+To try this pull request before it is merged, check out its branch:
+
+```bash
+gh repo clone ministryofjustice/data-platform
+cd data-platform
+gh pr checkout 902
+```
+
+If you already have a clone, run `gh pr checkout 902` from that checkout instead.
+After the pull request is merged, use an up-to-date checkout of `main`.
+
+Add the local `data-platform` folder as a project in the GitHub Copilot app and
+start a session in that project. If you already have a session using this
+checkout, ask Copilot to reload extensions. Then ask:
 
 > Open the JDP delivery progress canvas.
 
