@@ -1,0 +1,1292 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>JDP: delivery phases, milestones and progress</title>
+    <style>
+      :root {
+        --ink: #1b1f24;
+        --muted: #5b6470;
+        --line: #d9dee5;
+        --ok: #1f9d55;
+        --warn: #d97706;
+        --bad: #c62828;
+        --open: #1e40af;
+        --bg: #f6f7f9;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family:
+          "Amazon Ember",
+          -apple-system,
+          Segoe UI,
+          Helvetica,
+          Arial,
+          sans-serif;
+        color: var(--ink);
+        background: #fff;
+        font-size: 14px;
+        line-height: 1.45;
+      }
+      .wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 28px 32px 52px;
+      }
+      h1 {
+        font-size: 25px;
+        margin: 0 0 4px;
+      }
+      h2 {
+        font-size: 18px;
+        margin: 34px 0 10px;
+        padding-bottom: 6px;
+        border-bottom: 2px solid var(--line);
+      }
+      h3 {
+        font-size: 14.5px;
+        margin: 18px 0 6px;
+      }
+      .sub {
+        color: var(--muted);
+        margin: 0 0 18px;
+      }
+      .kpis {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin: 16px 0 6px;
+      }
+      .kpi {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 12px 14px;
+        background: var(--bg);
+      }
+      .kpi .l {
+        font-size: 11.5px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .kpi .v {
+        font-size: 21px;
+        font-weight: 700;
+        margin-top: 3px;
+      }
+      .kpi .d {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 3px;
+      }
+      .kpi.green .v {
+        color: var(--ok);
+      }
+      .kpi.amber .v {
+        color: var(--warn);
+      }
+      .kpi.red .v {
+        color: var(--bad);
+      }
+      .kpi.blue .v {
+        color: var(--open);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        margin-top: 8px;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 8px 10px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      th {
+        background: var(--bg);
+        font-size: 11.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: var(--muted);
+      }
+      .tag {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .t-ok {
+        background: #e3f5ea;
+        color: #166534;
+      }
+      .t-prog {
+        background: #fff3e0;
+        color: #9a5200;
+      }
+      .t-rev {
+        background: #e8eefc;
+        color: #1e40af;
+      }
+      .t-todo {
+        background: #eef0f3;
+        color: #4b5563;
+      }
+      .t-gap {
+        background: #fde8e8;
+        color: #8f1d1d;
+      }
+      .phase {
+        font-weight: 700;
+        background: #eef2f7;
+      }
+      .ms {
+        font-weight: 600;
+        color: var(--open);
+        white-space: nowrap;
+      }
+      .note {
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-left: 4px solid var(--warn);
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin: 14px 0;
+      }
+      .note.bad {
+        border-left-color: var(--bad);
+      }
+      .note.ok {
+        border-left-color: var(--ok);
+      }
+      ul {
+        margin: 6px 0;
+        padding-left: 18px;
+      }
+      li {
+        margin: 3px 0;
+      }
+      .legend {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        font-size: 12px;
+        color: var(--muted);
+        margin: 10px 0 0;
+      }
+      .foot {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 28px;
+      }
+      .bar {
+        height: 10px;
+        border-radius: 5px;
+        background: #e4e8ee;
+        overflow: hidden;
+        margin: 4px 0;
+      }
+      .bar > span {
+        display: block;
+        height: 100%;
+        background: var(--ok);
+      }
+      .scope-tbl {
+        table-layout: fixed;
+      }
+      .scope-tbl td,
+      .scope-tbl th {
+        overflow-wrap: anywhere;
+        word-break: normal;
+      }
+      .scope-tbl th:nth-child(1),
+      .scope-tbl td:nth-child(1) {
+        width: 44%;
+      }
+      .scope-tbl th:nth-child(2),
+      .scope-tbl td:nth-child(2) {
+        width: 16%;
+      }
+      .scope-tbl th:nth-child(3),
+      .scope-tbl td:nth-child(3) {
+        width: 18%;
+      }
+      .scope-tbl th:nth-child(4),
+      .scope-tbl td:nth-child(4) {
+        width: 22%;
+      }
+      .scope-tbl td .tag {
+        white-space: normal;
+        display: inline-block;
+        line-height: 1.35;
+      }
+      .scope-tbl .note-s {
+        display: block;
+        margin-top: 4px;
+        font-size: 11px;
+        color: var(--muted);
+        line-height: 1.3;
+      }
+      /* sprint plan table (moved from the roadmap) */
+      .mt td {
+        font-size: 12.5px;
+        vertical-align: top;
+      }
+      .mt .mt-d {
+        color: var(--muted);
+      }
+      .mt.plan a {
+        color: #1d70b8;
+        text-decoration: none;
+      }
+      .mt.plan a:hover {
+        text-decoration: underline;
+      }
+      .mt.plan ul.items {
+        margin: 0;
+        padding-left: 14px;
+      }
+      .mt.plan ul.items li {
+        margin: 1px 0;
+        font-size: 12px;
+      }
+      .mt.plan .tag {
+        font-size: 10px;
+        padding: 1px 6px;
+      }
+      .t-na {
+        background: #eef0f3;
+        color: #4b5563;
+      }
+      .t-open {
+        background: #e8eefc;
+        color: #1e40af;
+      }
+      .t-warn {
+        background: #fff3e0;
+        color: #9a5200;
+      }
+      /* milestone legend cards */
+      .mstrip {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 10px;
+        margin: 12px 0 6px;
+      }
+      .mcard {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 12px;
+        background: #fff;
+        position: relative;
+      }
+      .mcard .mid {
+        font-weight: 700;
+        font-size: 13px;
+        color: var(--open);
+      }
+      .mcard .mdate {
+        font-size: 12px;
+        font-weight: 700;
+        margin: 2px 0;
+      }
+      .mcard .mdesc {
+        font-size: 11.5px;
+        color: var(--muted);
+      }
+      .mcard.hit {
+        background: #f0faf4;
+        border-color: #bfe6cd;
+      }
+      .mcard.now {
+        background: #fff8ec;
+        border-color: #f0d9a8;
+        box-shadow: 0 0 0 2px #f0d9a8 inset;
+      }
+      .mcard .mstat {
+        font-size: 10.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        margin-top: 4px;
+      }
+      .mcard.hit .mstat {
+        color: var(--ok);
+      }
+      .mcard.now .mstat {
+        color: var(--warn);
+      }
+      .mcard.future .mstat {
+        color: var(--muted);
+      }
+      /* dated timeline */
+      .tl {
+        position: relative;
+        height: 70px;
+        margin: 18px 0 8px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--bg);
+      }
+      .tl .axis {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 34px;
+        height: 2px;
+        background: #c7ccd4;
+      }
+      .tl .pt {
+        position: absolute;
+        top: 26px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        transform: translateX(-50%);
+        border: 2px solid #fff;
+      }
+      .tl .pt.hit {
+        background: var(--ok);
+      }
+      .tl .pt.now {
+        background: var(--warn);
+      }
+      .tl .pt.future {
+        background: #9aa3ad;
+      }
+      .tl .lab {
+        position: absolute;
+        top: 4px;
+        transform: translateX(-50%);
+        font-size: 10.5px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      .tl .dt {
+        position: absolute;
+        top: 48px;
+        transform: translateX(-50%);
+        font-size: 10px;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .tl .nowline {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: var(--bad);
+        z-index: 2;
+      }
+      .phasebadge {
+        display: inline-block;
+        padding: 1px 7px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 600;
+        background: #eef2f7;
+        color: #334155;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>Justice Data Platform: delivery phases, milestones and progress</h1>
+
+      <div class="kpis" style="grid-template-columns: repeat(4, 1fr)">
+        <div class="kpi green">
+          <div class="l">Done</div>
+          <div class="v">5</div>
+          <div class="d">
+            Tag vocabulary, logging baseline, credential isolation, producer
+            hard wall, Iceberg sharing
+          </div>
+        </div>
+        <div class="kpi blue">
+          <div class="l">In Review</div>
+          <div class="v">1</div>
+          <div class="d">Preventive guardrails (SCPs)</div>
+        </div>
+        <div class="kpi amber">
+          <div class="l">In Progress</div>
+          <div class="v">5</div>
+          <div class="d">
+            Connectivity, kill switch, SSO design, structure design, cost
+            attribution
+          </div>
+        </div>
+        <div class="kpi">
+          <div class="l">To do</div>
+          <div class="v">4</div>
+          <div class="d">
+            Hub catalogue bootstrap, provisioning contract, platform
+            connectivity, synthetic data
+          </div>
+        </div>
+      </div>
+
+      <div
+        style="
+          background: #fdecea;
+          color: #1b1f24;
+          border: 1px solid #f5c6c0;
+          border-radius: 8px;
+          padding: 12px 18px;
+          margin: 14px 0;
+          font-size: 14px;
+          font-weight: 600;
+        "
+      >
+        Access delayed to 29 Sep. Build start was gated on access; schedule
+        reflects this.
+      </div>
+
+      <h2>Milestones at a glance</h2>
+      <p class="sub">
+        These are the delivery team's sprint milestones. Each milestone is a
+        dated gate proven at a sprint show-and-tell: M0 and M1 are behind us, M2
+        is today, and M3 to M5 run to the MVP demo on 18 December.
+      </p>
+
+      <div class="mstrip">
+        <div class="mcard hit">
+          <div class="mid">M0</div>
+          <div class="mdate">29 Sep</div>
+          <div class="mdesc">Kick-off: repo and accounts agreed</div>
+          <div class="mstat">Hit</div>
+        </div>
+        <div class="mcard hit">
+          <div class="mid">M1</div>
+          <div class="mdate">5 Oct</div>
+          <div class="mdesc">Dev environment ready</div>
+          <div class="mstat">Hit</div>
+        </div>
+        <div class="mcard now">
+          <div class="mid">M2</div>
+          <div class="mdate">16 Oct</div>
+          <div class="mdesc">Foundations proven, spikes decided</div>
+          <div class="mstat">Hit, S2 close</div>
+        </div>
+        <div class="mcard future">
+          <div class="mid">M3</div>
+          <div class="mdate">6 Nov</div>
+          <div class="mdesc">Alpha: end to end on one domain</div>
+          <div class="mstat">Due 6 Nov, S3 close</div>
+        </div>
+        <div class="mcard future">
+          <div class="mid">M4</div>
+          <div class="mdate">28 Nov</div>
+          <div class="mdesc">MVP feature complete</div>
+          <div class="mstat">Due 28 Nov, S4 close</div>
+        </div>
+        <div class="mcard future">
+          <div class="mid">M5</div>
+          <div class="mdate">18 Dec</div>
+          <div class="mdesc">MVP demo and handover</div>
+          <div class="mstat">Due 18 Dec, S5 close</div>
+        </div>
+      </div>
+
+      <div class="tl">
+        <div class="axis"></div>
+        <div class="nowline" style="left: 40%"></div>
+        <div class="pt hit" style="left: 6%"></div>
+        <div class="lab" style="left: 6%">M0</div>
+        <div class="dt" style="left: 6%">29 Sep</div>
+        <div class="pt hit" style="left: 22%"></div>
+        <div class="lab" style="left: 22%">M1</div>
+        <div class="dt" style="left: 22%">5 Oct</div>
+        <div class="pt now" style="left: 40%"></div>
+        <div class="lab" style="left: 40%; color: #9a5200">M2 (now)</div>
+        <div class="dt" style="left: 40%">16 Oct</div>
+        <div class="pt future" style="left: 62%"></div>
+        <div class="lab" style="left: 62%">M3</div>
+        <div class="dt" style="left: 62%">6 Nov</div>
+        <div class="pt future" style="left: 81%"></div>
+        <div class="lab" style="left: 81%">M4</div>
+        <div class="dt" style="left: 81%">28 Nov</div>
+        <div class="pt future" style="left: 97%"></div>
+        <div class="lab" style="left: 97%">M5</div>
+        <div class="dt" style="left: 97%">18 Dec</div>
+      </div>
+
+      <h2>Which phase must be complete by which date</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Phase</th>
+            <th>Milestones that carry it</th>
+            <th>Must be complete by</th>
+            <th>What "complete" means</th>
+            <th>On track?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="phasebadge">Phase 1 Discovery</span></td>
+            <td>M0, M1, M2</td>
+            <td class="ms">16 Oct (M2)</td>
+            <td>
+              Current-state and target-vs-current documented; domain/project
+              structure, SSO, and cost attribution designs agreed; foundational
+              spikes decided.
+            </td>
+            <td>
+              <span class="tag t-ok"
+                >On track: all spikes proven; 3 design docs ticketed and in
+                progress (#895, #896, #852)</span
+              >
+            </td>
+          </tr>
+          <tr>
+            <td><span class="phasebadge">Phase 2 Foundation</span></td>
+            <td>M3, M4</td>
+            <td class="ms">28 Nov (M4)</td>
+            <td>
+              Vending and approval/sharing workflows, SSO implementation,
+              catalogue governance, and cost tagging built and tested; Hub
+              catalogue bootstrapped.
+            </td>
+            <td><span class="tag t-ok">On track</span></td>
+          </tr>
+          <tr>
+            <td><span class="phasebadge">Phase 3 Pilot</span></td>
+            <td>M5</td>
+            <td class="ms">18 Dec (M5)</td>
+            <td>
+              Permission model validated on a pilot business unit; pattern
+              library usable by MoJ unaided; per-BU isolation and federated
+              Athena catalogue proven.
+            </td>
+            <td>
+              <span class="tag t-todo"
+                >Not started; the underlying mechanisms are already proven by
+                the spikes</span
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>Phase 1 Discovery &rarr; M0 to M2</h2>
+      <table class="scope-tbl">
+        <thead>
+          <tr>
+            <th>Scope item</th>
+            <th>Milestone gate</th>
+            <th>Board item(s)</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              Platform onboarding and current-state validation (environment
+              access, deep-dives, current-state findings)
+            </td>
+            <td class="ms">M0 Kick-off &rarr; M1 Env ready</td>
+            <td>#769; current-state doc</td>
+            <td><span class="tag t-ok">Done</span></td>
+          </tr>
+          <tr>
+            <td>Architecture assessment, current vs. target state</td>
+            <td class="ms">M1 &rarr; M2</td>
+            <td>architecture docs</td>
+            <td><span class="tag t-prog">In Progress</span></td>
+          </tr>
+          <tr>
+            <td>Custom domain and project structure design document</td>
+            <td class="ms">M2 Foundations</td>
+            <td>#895</td>
+            <td><span class="tag t-prog">In Progress</span></td>
+          </tr>
+          <tr>
+            <td>SSO integration design document</td>
+            <td class="ms">M2</td>
+            <td>#852</td>
+            <td><span class="tag t-rev">In Review</span></td>
+          </tr>
+          <tr>
+            <td>Cost attribution model design document</td>
+            <td class="ms">M2</td>
+            <td>#896</td>
+            <td><span class="tag t-prog">In Progress</span></td>
+          </tr>
+          <tr class="phase">
+            <td colspan="4">
+              Foundational spikes that de-risk Phase 1 (surfaced early by the
+              delivery team)
+            </td>
+          </tr>
+          <tr>
+            <td>Tag vocabulary (domain, data_product, classification)</td>
+            <td class="ms">M2</td>
+            <td>#771</td>
+            <td><span class="tag t-ok">Done</span></td>
+          </tr>
+          <tr>
+            <td>Per-project credential isolation</td>
+            <td class="ms">M2</td>
+            <td>#777</td>
+            <td><span class="tag t-rev">In Review</span></td>
+          </tr>
+          <tr>
+            <td>Producer-domain hard wall (negative test)</td>
+            <td class="ms">M2</td>
+            <td>#821</td>
+            <td><span class="tag t-rev">In Review</span></td>
+          </tr>
+          <tr>
+            <td>Cross-account Iceberg sharing + KMS trust chain + data mesh</td>
+            <td class="ms">M2</td>
+            <td>#773</td>
+            <td><span class="tag t-rev">In Review</span></td>
+          </tr>
+          <tr>
+            <td>Org CloudTrail logging baseline</td>
+            <td class="ms">M2</td>
+            <td>#820</td>
+            <td><span class="tag t-ok">Done</span></td>
+          </tr>
+          <tr>
+            <td>Preventive guardrails (SCPs) at OU level</td>
+            <td class="ms">M2</td>
+            <td>#819</td>
+            <td><span class="tag t-rev">In Review</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Phase 2 Foundation &rarr; M3 to M4</h2>
+      <table class="scope-tbl">
+        <thead>
+          <tr>
+            <th>Scope item</th>
+            <th>Milestone gate</th>
+            <th>Board item(s)</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              Project and domain vending workflows (self-service provisioning,
+              approval gates, guardrails)
+            </td>
+            <td class="ms">M3 Alpha</td>
+            <td>#781, #778 (epic)</td>
+            <td><span class="tag t-todo">TODO</span></td>
+          </tr>
+          <tr>
+            <td>
+              Approval and sharing workflows (access requests, cross-domain
+              sharing, audit trail)
+            </td>
+            <td class="ms">M3 &rarr; M4</td>
+            <td>#774</td>
+            <td><span class="tag t-prog">In Progress</span></td>
+          </tr>
+          <tr>
+            <td>
+              Bootstrap the Hub governance catalogue (foundation for the above)
+            </td>
+            <td class="ms">M3</td>
+            <td>#772</td>
+            <td>
+              <span class="tag t-prog">In Progress</span
+              ><span class="note-s"
+                >Pattern proven live in the spikes; codification into IaC to
+                follow.</span
+              >
+            </td>
+          </tr>
+          <tr>
+            <td>
+              SSO integration implementation (AD groups via IAM Identity Center,
+              end-to-end access test)
+            </td>
+            <td class="ms">M3</td>
+            <td>#776 (epic)</td>
+            <td>
+              <span class="tag t-todo">TODO (design in progress, #852)</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Data catalogue configuration and governance workflows
+              (registration, classification, lineage, subscriber access)
+            </td>
+            <td class="ms">M3 &rarr; M4</td>
+            <td>#770 (epic)</td>
+            <td>
+              <span class="tag t-prog">In Progress</span
+              ><span class="note-s"
+                >Tag vocabulary, product registration and tagging prototyped in
+                the spikes; governance workflows to follow.</span
+              >
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Platform-to-AWS connectivity with no long-lived keys (enabler for
+              provisioning)
+            </td>
+            <td class="ms">M3</td>
+            <td>#780</td>
+            <td>
+              <span class="tag t-todo">TODO (joint with Cloud Platform)</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Provisioning interface contract with Analytical and Cloud Platform
+            </td>
+            <td class="ms">M3</td>
+            <td>#779</td>
+            <td><span class="tag t-todo">TODO (joint with MoJ teams)</span></td>
+          </tr>
+          <tr>
+            <td>
+              Kill switch design (levels, credential lifetime, restore rules)
+            </td>
+            <td class="ms">M3</td>
+            <td>#775</td>
+            <td><span class="tag t-prog">In Progress</span></td>
+          </tr>
+          <tr>
+            <td>
+              Cost tagging implementation at domain/project/user level
+              (enforcement, propagation, QuickSight reporting)
+            </td>
+            <td class="ms">M4 MVP complete</td>
+            <td>(follows cost attribution design)</td>
+            <td><span class="tag t-todo">TODO</span></td>
+          </tr>
+          <tr>
+            <td>Realistic synthetic dataset and generator (demo enabler)</td>
+            <td class="ms">M3</td>
+            <td>#783</td>
+            <td><span class="tag t-todo">TODO</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Phase 3 Pilot Onboarding &rarr; M5</h2>
+      <table class="scope-tbl">
+        <thead>
+          <tr>
+            <th>Scope item</th>
+            <th>Milestone gate</th>
+            <th>Board item(s)</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              Permission model aligned to the Data Factories pattern (implement,
+              validate, document as reusable pattern)
+            </td>
+            <td class="ms">M4 &rarr; M5 MVP demo</td>
+            <td>#782 (epic)</td>
+            <td><span class="tag t-todo">TODO</span></td>
+          </tr>
+          <tr>
+            <td>
+              Onboarding replication using a pattern library (codify; pilot
+              onboards unaided; update from lessons)
+            </td>
+            <td class="ms">M5</td>
+            <td>(not yet a ticket)</td>
+            <td><span class="tag t-todo">TODO</span></td>
+          </tr>
+          <tr>
+            <td>
+              Per-business-unit isolation and governance (segregation,
+              cross-domain policies, audit)
+            </td>
+            <td class="ms">M5</td>
+            <td>#821 proves the pattern; pilot application TODO</td>
+            <td><span class="tag t-todo">TODO</span></td>
+          </tr>
+          <tr>
+            <td>
+              Federated catalogue via Athena (cross-domain discovery and query
+              by analysts)
+            </td>
+            <td class="ms">M5</td>
+            <td>#773 proves the mechanism; pilot application TODO</td>
+            <td><span class="tag t-todo">TODO</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Phase scorecard</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Phase</th>
+            <th>Due</th>
+            <th>Progress</th>
+            <th>RAG</th>
+            <th>Assessment</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="phasebadge">Phase 1 Discovery</span></td>
+            <td class="ms">16 Oct (M2)</td>
+            <td>
+              <div class="bar"><span style="width: 80%"></span></div>
+            </td>
+            <td><span class="tag t-ok">Green</span></td>
+            <td>
+              On track. All foundational spikes proven. The three design
+              documents are ticketed and in progress (#895, #896, #852) and on
+              schedule; nothing at risk.
+            </td>
+          </tr>
+          <tr>
+            <td><span class="phasebadge">Phase 2 Foundation</span></td>
+            <td class="ms">28 Nov (M4)</td>
+            <td>
+              <div class="bar"><span style="width: 35%"></span></div>
+            </td>
+            <td><span class="tag t-ok">On track</span></td>
+            <td>
+              Not yet due, and ahead of a cold start: the sharing, catalogue and
+              isolation mechanics Phase 2 builds were prototyped live in the
+              spikes. Build can begin in parallel with closing out the Discovery
+              design documents. Watch item is external dependencies
+              (connectivity #780, provisioning contract #779).
+            </td>
+          </tr>
+          <tr>
+            <td><span class="phasebadge">Phase 3 Pilot</span></td>
+            <td class="ms">18 Dec (M5)</td>
+            <td>
+              <div class="bar"><span style="width: 15%"></span></div>
+            </td>
+            <td><span class="tag t-todo">Not started</span></td>
+            <td>
+              Not started, but the underlying patterns (isolation, cross-domain
+              sharing, federated query) are already proven, so the pilot is
+              applying proven building blocks rather than inventing them.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Risks and dependencies</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Risk / dependency</th>
+            <th>Likelihood</th>
+            <th>Impact</th>
+            <th>Mitigation and owner</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              Provisioning interface contract (#779): the integration seam
+              between the provisioning backend and the MoJ frontend/platform.
+              The frontend is not yet mapped, so the contract cannot be fully
+              specified or firmly estimated until that is defined with the MoJ
+              teams.
+            </td>
+            <td><span class="tag t-prog">Medium</span></td>
+            <td><span class="tag t-prog">Medium</span></td>
+            <td>
+              Agree a basic contract (request/response shape, auth, ownership
+              split) now to unblock the build, then refine it once the frontend
+              is ready. Owned by MoJ when the frontend is ready.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="foot">
+        Source of truth for tasks: the Justice Data Platform board.
+      </p>
+
+      <h2>Plan to MVP: sprint goals, gates and the board items behind them</h2>
+      <p class="sub">
+        MVP scope (18 Dec): one synthetic domain, one project, discover,
+        request, approve, automatic grant, query, deny, kill switch, audit.
+        Board items are the source of truth; sprints without items yet are
+        refined onto the board at their sprint planning.
+      </p>
+      <table class="mt plan">
+        <thead>
+          <tr>
+            <th>Sprint</th>
+            <th>Sprint goal (outcome)</th>
+            <th>Milestone (gate)</th>
+            <th>Board items</th>
+            <th>Exit criteria</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>S1</b><br /><span class="mt-d">8 to 26 Sep</span></td>
+            <td>
+              Backlog agreed, board live in MoJ issue types, first spikes
+              started.
+            </td>
+            <td>
+              <b>Board live</b><br /><span class="mt-d">18 Sep, hit</span>
+            </td>
+            <td>
+              <ul class="items">
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/771"
+                    target="_blank"
+                    >#771</a
+                  >
+                  Tag vocabulary <span class="tag t-ok">Done</span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/777"
+                    target="_blank"
+                    >#777</a
+                  >
+                  Credential model spike <span class="tag t-ok">Done</span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/769"
+                    target="_blank"
+                    >#769</a
+                  >
+                  Account baseline <span class="tag t-warn">In Progress</span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/773"
+                    target="_blank"
+                    >#773</a
+                  >
+                  Sharing spike <span class="tag t-ok">Done</span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/779"
+                    target="_blank"
+                    >#779</a
+                  >
+                  Provisioning interface contract
+                  <span class="tag t-na">TODO</span>
+                </li>
+              </ul>
+            </td>
+            <td>
+              Backlog agreed; 20 items on the board; accounts and access
+              provisioned, delayed access provided on 29 September.
+            </td>
+            <td><span class="tag t-warn">Closed, 3 carried</span></td>
+          </tr>
+          <tr>
+            <td><b>S2</b><br /><span class="mt-d">29 Sep to 16 Oct</span></td>
+            <td>
+              Foundations proven: cross-account sharing, isolated credentials,
+              provisioning interface contract, frontend API contract, codified
+              account baseline with guardrails.
+            </td>
+            <td>
+              <b>M1 env ready, M2 foundations</b><br /><span class="mt-d"
+                >5 Oct checkpoint, 16 Oct gate</span
+              >
+            </td>
+            <td>
+              <ul class="items">
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/771"
+                    target="_blank"
+                    >#771</a
+                  >
+                  Tag vocabulary recorded <span class="tag t-ok">Done</span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/820"
+                    target="_blank"
+                    >#820</a
+                  >
+                  Org CloudTrail baseline <span class="tag t-ok">Done</span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/773"
+                    target="_blank"
+                    >#773</a
+                  >
+                  Spike: cross-account sharing with Iceberg
+                  <span class="tag t-ok">Done</span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/777"
+                    target="_blank"
+                    >#777</a
+                  >
+                  Spike: per-project credential isolation
+                  <span class="tag t-ok">Done</span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/821"
+                    target="_blank"
+                    >#821</a
+                  >
+                  Negative test: producer isolation
+                  <span class="tag t-ok">Done</span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/819"
+                    target="_blank"
+                    >#819</a
+                  >
+                  SCP guardrails at OU level
+                  <span class="tag t-open">In Review</span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/852"
+                    target="_blank"
+                    >#852</a
+                  >
+                  SSO integration design
+                  <span class="tag t-warn">In Progress</span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/895"
+                    target="_blank"
+                    >#895</a
+                  >
+                  Domain and project structure design
+                  <span class="tag t-warn">In Progress</span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/896"
+                    target="_blank"
+                    >#896</a
+                  >
+                  Cost attribution model design
+                  <span class="tag t-warn">In Progress</span>
+                </li>
+              </ul>
+            </td>
+            <td>
+              Cross-account Athena query passes; cross-domain query denied;
+              sharing and credential go/no-go recorded; contracts signed off.
+            </td>
+            <td>
+              <span class="tag t-warn">Closing 16 Oct, 6 carried to S3</span>
+            </td>
+          </tr>
+          <tr>
+            <td><b>S3</b><br /><span class="mt-d">19 Oct to 6 Nov</span></td>
+            <td>
+              One synthetic domain end to end through the API: request, approve,
+              automatic grant, query, deny, kill switch; Entra ID sign-in wired
+              to Identity Center.
+            </td>
+            <td><b>M3 Alpha</b><br /><span class="mt-d">6 Nov</span></td>
+            <td>
+              <ul class="items">
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/769"
+                    target="_blank"
+                    >#769</a
+                  >
+                  Baseline accounts, hub-and-spoke connectivity
+                  <span class="tag t-warn">In Progress</span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/772"
+                    target="_blank"
+                    >#772</a
+                  >
+                  Bootstrap Hub governance catalogue
+                  <span class="tag t-na">TODO</span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/775"
+                    target="_blank"
+                    >#775</a
+                  >
+                  Kill switch design <span class="tag t-warn">In Progress</span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/779"
+                    target="_blank"
+                    >#779</a
+                  >
+                  Provisioning interface contract
+                  <span class="tag t-na">TODO</span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/780"
+                    target="_blank"
+                    >#780</a
+                  >
+                  Platform-to-AWS connectivity with no long-lived keys
+                  <span class="tag t-na">TODO</span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/783"
+                    target="_blank"
+                    >#783</a
+                  >
+                  Synthetic dataset and generator
+                  <span class="tag t-na">TODO</span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/852"
+                    target="_blank"
+                    >#852</a
+                  >
+                  SSO integration design
+                  <span class="tag t-warn">In Progress</span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/895"
+                    target="_blank"
+                    >#895</a
+                  >
+                  Domain and project structure design
+                  <span class="tag t-warn">In Progress</span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/896"
+                    target="_blank"
+                    >#896</a
+                  >
+                  Cost attribution model design
+                  <span class="tag t-warn">In Progress</span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/781"
+                    target="_blank"
+                    >#781</a
+                  >
+                  Provisioning module in data-platform-app
+                  <span class="tag t-na">TODO</span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/774"
+                    target="_blank"
+                    >#774</a
+                  >
+                  Project data grants and catalogue browse
+                  <span class="tag t-na">TODO</span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/776"
+                    target="_blank"
+                    >#776</a
+                  >
+                  Entra ID to IAM Identity Center wiring (epic scope, story to
+                  be refined) <span class="tag t-na">TODO</span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/ministryofjustice/data-platform/issues/843"
+                    target="_blank"
+                    >#843</a
+                  >
+                  Publish API contract for the MoJ frontend team
+                  <span class="tag t-na">TODO</span>
+                </li>
+                <li>
+                  <span class="mt-d">
+                    Remaining S3 items refined onto the board at S3 planning
+                    (w/c 13 Oct)</span
+                  >
+                </li>
+              </ul>
+            </td>
+            <td>
+              Recorded API-driven demo of the full loop; MoJ engineer onboards
+              the second domain unaided; kill switch stops a running query.
+            </td>
+            <td><span class="tag t-na">Planned</span></td>
+          </tr>
+          <tr>
+            <td><b>S4</b><br /><span class="mt-d">10 to 28 Nov</span></td>
+            <td>
+              Full project lifecycle: grant, use, revoke, audit; MoJ frontend
+              live on the API contract.
+            </td>
+            <td>
+              <b>M4 MVP feature complete</b><br /><span class="mt-d"
+                >28 Nov</span
+              >
+            </td>
+            <td>
+              <ul class="items">
+                <li>
+                  <span class="mt-d">
+                    Refined onto the board at S4 planning (w/c 3 Nov)</span
+                  >
+                </li>
+              </ul>
+            </td>
+            <td>
+              Regression test green; auditor query answers who accessed what;
+              frontend walkthrough in the development environment.
+            </td>
+            <td><span class="tag t-na">Planned</span></td>
+          </tr>
+          <tr>
+            <td><b>S5</b><br /><span class="mt-d">1 to 18 Dec</span></td>
+            <td>
+              MVP demonstrated and handed over; MoJ operates the platform.
+            </td>
+            <td><b>M5 MVP demo</b><br /><span class="mt-d">18 Dec</span></td>
+            <td>
+              <ul class="items">
+                <li>
+                  <span class="mt-d">
+                    Refined onto the board at S5 planning (w/c 24 Nov)</span
+                  >
+                </li>
+              </ul>
+            </td>
+            <td>
+              Stakeholder demo delivered; runbooks merged; MoJ runs one full
+              cycle without AWS.
+            </td>
+            <td><span class="tag t-na">Planned</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>
