@@ -66,8 +66,9 @@ jobs:
                   Note: Determine this tag first. It should match the `ACTIONS_RUNNER_VERSION` pinned in the [Dockerfile](https://github.com/ministryofjustice/analytical-platform-actions-runner/blob/main/Dockerfile), unless a [release](https://github.com/ministryofjustice/analytical-platform-actions-runner/releases) already exists for that version, in which case append or increment a `-N` suffix (for example `2.337.0-1`, `2.337.0-2`).
             - [ ] Create new [release](https://github.com/ministryofjustice/analytical-platform-actions-runner) using that same tag, from the commit containing the merged chart changes.
                   Note: `chart-release.yml` and `container-release.yml` both trigger on tag push and package from that tagged commit, so the chart must already be updated and merged before the tag is created, or the old chart will be published against the new tag.
-            - [ ] Update the images used in the Modernisation Platform environments repository (in the manner done [here](https://github.com/ministryofjustice/modernisation-platform-environments/commit/13f8345673fc128b5219eab23ae5556292a73051)) with new release tag.
-            - [ ] Deployment to relevant the Modernisation Platform environments.
+            - [ ] Update the images used in the Modernisation Platform environments repository (file [terraform/environments/analytical-platform-compute/actions-runner/helm-charts-actions-runners.tf](https://github.com/ministryofjustice/modernisation-platform-environments/pull/20308/changes )) with new release tag.
+            - [ ] Deploy to the relevant Modernisation Platform environments.
+            - [ ] Verify that the new release is functioning correctly in all relevant environments. For example monitor [CaDeT Deploy dbt dev workflows](https://github.com/moj-analytical-services/create-a-derived-table/actions/workflows/deploy-dev.yml).
 
           PINNED: false
           CLOSE_PREVIOUS: false
