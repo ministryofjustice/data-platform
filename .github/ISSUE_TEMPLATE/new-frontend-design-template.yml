@@ -48,7 +48,6 @@ body:
         -
     validations:
       required: false
-      
   - type: textarea
     id: figma-prototype-link
     attributes:
