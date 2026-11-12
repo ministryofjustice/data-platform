@@ -30,7 +30,7 @@ body:
         - [ ] Task 2
         - [ ] Task 3
         - [ ] Task 4
-   - type: textarea
+  - type: textarea
     id: functional-requirements
     attributes:
       label: Functional Requirements
