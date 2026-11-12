@@ -1,7 +1,7 @@
 name: Frontend Design Implementation
 description: Create a new Frontend Design Implementation
 title: "FDI:"
-labels: ["frontend-design-implementation"]
+labels: ["software-engineering"]
 type: "Frontend Design Implementation"
 
 body:
@@ -31,12 +31,30 @@ body:
         - [ ] Task 3
         - [ ] Task 4
   - type: textarea
+    id: functional-requirements
+    attributes:
+      label: Functional Requirements
+      description: Only if essential. High-level capability needed for this story.
+      placeholder: |
+        -
+    validations:
+      required: false
+  - type: textarea
+    id: non-functional-requirements
+    attributes:
+      label: Non-Functional Requirements
+      description: Performance/security/usability expectations
+      placeholder: |
+        -
+    validations:
+      required: false
+  - type: textarea
     id: figma-prototype-link
     attributes:
       description: Please add a link to the Figma prototype if available.
       label: Figma Prototype Link
       value: |
-        [Figma File](https://www.figma.com/file/xxxxxx)
+        [Figma ](https://www.figma.com/file/xxxxxx)
     validations:
       required: false
   - type: textarea
@@ -46,7 +64,7 @@ body:
       placeholder: https://www.figma.com/file/xxxxxx
       label: Figma Dev Mode Link
       value: |
-        [Figma File](https://www.figma.com/file/xxxxxx)
+        [Figma Dev](https://www.figma.com/file/xxxxxx)
     validations:
       required: false
   - type: textarea
@@ -55,18 +73,16 @@ body:
       description: Please add any links to content documents if available.
       label: Content Link(s)
       value: |
-        [Content File 1](https://www.figma.com/file/xxxxxx)
-        [Content File 2](https://www.figma.com/file/xxxxxx)
+        [Content Doc](https://www.figma.com/file/xxxxxx)
     validations:
       required: false
   - type: textarea
     id: screenshots
     attributes:
-      description: Please add any links to content screenshots if available.
+      description: Please add any links to content screenshots or diagrams if available.
       label: Screenshots
-      value: |
-        [Screenshot 1](https://www.figma.com/file/xxxxxx)
-        [Screenshot 2](https://www.figma.com/file/xxxxxx)
+      placeholder: |
+        -
     validations:
       required: false
   - type: textarea
