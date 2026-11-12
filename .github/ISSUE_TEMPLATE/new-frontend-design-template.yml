@@ -81,7 +81,7 @@ body:
     attributes:
       description: Please add any links to content screenshots or diagrams if available.
       label: Screenshots
-       placeholder: |
+      placeholder: |
         -
     validations:
       required: false
