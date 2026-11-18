@@ -183,6 +183,8 @@ For example, a user requested that files sent to `mojap-land/hmpps/prisons-bt-pi
 
    In the `modernisation-platform-environments` repository, add the bucket to the `target_buckets` list in `terraform/environments/analytical-platform-ingestion/environment-configuration.tf`. The [example pull request](https://github.com/ministryofjustice/modernisation-platform-environments/pull/20478/changes#diff-ae00344573a5f7f767c45ed31b6d204211fd633b7138e0b0b35e9d96cc1d5954L108) adds the bucket for production only.
 
+   Commit the change and create a pull request. Apply the change to the confirmed environment using the `analytical-platform-ingestion` workflow in the repository's **Actions** tab. For production, wait until the pull request is approved and merged, then apply from `main`. Wait for the apply to succeed before updating the transfer's target bucket secret.
+
 2. **Update the destination bucket policy.**
 
    Alpha buckets are not managed in code, so update the bucket policy in the AWS console. In the `analytical-platform-data-production` account, open Amazon S3, select the destination bucket, then select **Permissions** and edit the **Bucket policy**. Append the statement from the [destination bucket permissions guidance](https://user-guidance.analytical-platform.service.justice.gov.uk/tools/ingestion/#destination-bucket-permissions).
