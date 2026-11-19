@@ -191,7 +191,7 @@ For example, a user requested that files sent to `mojap-land/hmpps/prisons-bt-pi
 
 3. **Update the transfer's target bucket secret.**
 
-   In the `analytical-platform-ingestion-production` account, open AWS Secrets Manager and select `ingestion/sftp/transfer-name/target-bucket`. Retrieve and edit the secret's plaintext value. Set it to `<bucketname>/<prefix>` when an explicit destination prefix is required, or `<bucketname>` to use the transfer's username as the prefix. Confirm whether any existing prefix should be retained or changed, then save the change.
+   In the ingestion account for the confirmed environment (for example, `analytical-platform-ingestion-production` for production), open AWS Secrets Manager and select `ingestion/sftp/transfer-name/target-bucket`. Retrieve and edit the secret's plaintext value. Set it to `<bucketname>/<prefix>` when an explicit destination prefix is required, or `<bucketname>` to use the transfer's username as the prefix. Confirm whether any existing prefix should be retained or changed, then save the change.
 
 4. **Verify the transfer.**
 
