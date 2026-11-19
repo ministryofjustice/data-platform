@@ -173,3 +173,26 @@ Use the `analytical-platform` user to connect to the development Transfer Family
    >
    > If you already have a private key in `~/.ssh/`, the command will attempt to use this unless you specify the `analytical-platform` key using the `-i` option.
 
+## Change an Ingestion destination bucket
+
+Use these steps when a transfer needs to send files to a different destination bucket. This changes the transfer's destination; it does not change the Ingestion landing bucket.
+
+For example, a user requested that files sent to `mojap-land/hmpps/prisons-bt-pin/` instead go to the `alpha-hmpps-bt-pin-historic-data` bucket. The configuration change in the example was for production only. Confirm the environment before making changes; the development configuration was not changed.
+
+1. **Add the destination bucket to the Ingestion configuration.**
+
+   In the `modernisation-platform-environments` repository, add the bucket to the `target_buckets` list in `terraform/environments/analytical-platform-ingestion/environment-configuration.tf`. The [example pull request](https://github.com/ministryofjustice/modernisation-platform-environments/pull/20478/changes#diff-ae00344573a5f7f767c45ed31b6d204211fd633b7138e0b0b35e9d96cc1d5954L108) adds the bucket for production only.
+
+   Commit the change and create a pull request. Apply the change to the confirmed environment using the `analytical-platform-ingestion` workflow in the repository's **Actions** tab. For production, wait until the pull request is approved and merged, then apply from `main`. Wait for the apply to succeed before updating the transfer's target bucket secret.
+
+2. **Update the destination bucket policy.**
+
+   Alpha buckets are not managed in code, so update the bucket policy in the AWS console. In the `analytical-platform-data-production` account, open Amazon S3, select the destination bucket, then select **Permissions** and edit the **Bucket policy**. Append the statement from the [destination bucket permissions guidance](https://user-guidance.analytical-platform.service.justice.gov.uk/tools/ingestion/#destination-bucket-permissions).
+
+3. **Update the transfer's target bucket secret.**
+
+   In the ingestion account for the confirmed environment (for example, `analytical-platform-ingestion-production` for production), open AWS Secrets Manager and select `ingestion/sftp/transfer-name/target-bucket`. Retrieve and edit the secret's plaintext value. Set it to `<bucketname>/<prefix>` when an explicit destination prefix is required, or `<bucketname>` to use the transfer's username as the prefix. Confirm whether any existing prefix should be retained or changed, then save the change.
+
+4. **Verify the transfer.**
+
+   Ask the user to send a test file. Check the `transfer` Lambda logs and confirm that the file was copied to the new destination bucket.
